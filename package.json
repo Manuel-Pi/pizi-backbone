@@ -1,0 +1,21 @@
+{
+  "name": "pizi-backbone",
+  "homepage": "https://github.com/Manuel-Pi/pizi-backbone",
+  "main": "build/pizi-backbone.js",
+  "dependencies": {
+    "backbone": "*"
+  },
+  "version": "0.0.0",
+  "authors": "Manuel-Pi",
+  "devDependencies": {
+    "babel-plugin-transform-es2015-modules-umd": "^6.4.0",
+    "grunt": "*",
+    "grunt-babel": "*",
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-copy": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-npmcopy": "*",
+    "jquery": "*",
+    "zurb-foundation-5": "^5.4.7"
+  }
+}

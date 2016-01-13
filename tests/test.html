@@ -1,13 +1,23 @@
 <html>
-	<head>
-		<title>Test</title>
-		<script src="require.js"/>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"/>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"/>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.3/backbone-min.js"/>
-		<script src="pizi-backbone.js"/>
-	</head>
-	<body>
-		
-	</body>
+<head>
+  <meta charset="utf-8">
+  <title>pizi-backbone test</title>
+  <link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.18.0.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/5.5.3/css/foundation.css">
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="jquery.js"></script>
+  <script src="//code.jquery.com/qunit/qunit-1.18.0.js"></script>
+  <script src="underscore.js"></script>
+  <script src="backbone.js"></script>
+  <script src="foundation.js"></script>
+  <script src="pizi-backbone.js"></script>
+  <script>
+	  // TODO: tests!
+    var notif = new piziBackbone.default.NotificationView();
+    notif.notify('Test!');
+  </script>
+</body>
 </html>
