@@ -48,7 +48,7 @@ var NotificationView = Backbone.View.extend({
 	}
 });
 
-var PopUpView = Backbone.View.extend({
+var PopupView = Backbone.View.extend({
 	tagName: "popup",
 	className: "reveal-modal container-fluid small",
 	template: _.template('<a class="close-reveal-modal" aria-label="Close">&#215;</a><div class="row message"><%= message %></div><div class="actions right"><button class="ok button">Ok</button><button class="cancel button">Cancel</button></div>'),
@@ -62,10 +62,10 @@ var PopUpView = Backbone.View.extend({
 		this.$el.foundation({
 			reveal: {
 				close_on_background_click: false,
+				dismiss_modal_class: 'close-modal',
 				close_on_esc: false
 			}
 		});
-		this.index = 0;
 	},
 	events: {
 		'click button.cancel': 'onClose',
@@ -75,6 +75,7 @@ var PopUpView = Backbone.View.extend({
 		options = options || {};
 		this.ok = options.ok;
 		this.close = options.close;
+		
 		this.render({
 			message: options.message
 		});
@@ -99,5 +100,5 @@ var PopUpView = Backbone.View.extend({
 
 export default {
 	NotificationView: NotificationView,
-	PopUpView: PopUpView
+	PopupView: PopupView
 };

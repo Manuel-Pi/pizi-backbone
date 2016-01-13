@@ -78,7 +78,7 @@
 		}
 	});
 
-	var PopUpView = _Backbone2.default.View.extend({
+	var PopupView = _Backbone2.default.View.extend({
 		tagName: "popup",
 		className: "reveal-modal container-fluid small",
 		template: _.template('<a class="close-reveal-modal" aria-label="Close">&#215;</a><div class="row message"><%= message %></div><div class="actions right"><button class="ok button">Ok</button><button class="cancel button">Cancel</button></div>'),
@@ -93,10 +93,10 @@
 			this.$el.foundation({
 				reveal: {
 					close_on_background_click: false,
+					dismiss_modal_class: 'close-modal',
 					close_on_esc: false
 				}
 			});
-			this.index = 0;
 		},
 		events: {
 			'click button.cancel': 'onClose',
@@ -128,6 +128,6 @@
 
 	exports.default = {
 		NotificationView: NotificationView,
-		PopUpView: PopUpView
+		PopupView: PopupView
 	};
 });

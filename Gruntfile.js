@@ -51,7 +51,8 @@ module.exports = function(grunt) {
 							'backbone/backbone.js',
 							'backbone/node_modules/underscore/underscore.js',
 							'jquery/dist/jquery.js',
-							'zurb-foundation-5/js/foundation/foundation.js'
+							'zurb-foundation-5/js/foundation/foundation.js',
+							'zurb-foundation-5/js/foundation/foundation.reveal.js'
 						],
 						dest: '<%= serverFolder %>',
 						flatten: true

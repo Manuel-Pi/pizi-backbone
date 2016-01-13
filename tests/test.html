@@ -4,6 +4,16 @@
   <title>pizi-backbone test</title>
   <link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.18.0.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/5.5.3/css/foundation.css">
+  <style>
+    notification{
+      position: fixed;
+      width: 100%;
+    }
+    .alert-box{
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+  </style>
 </head>
 <body>
   <div id="qunit"></div>
@@ -13,11 +23,14 @@
   <script src="underscore.js"></script>
   <script src="backbone.js"></script>
   <script src="foundation.js"></script>
+  <script src="foundation.reveal.js"></script>
   <script src="pizi-backbone.js"></script>
   <script>
 	  // TODO: tests!
-    var notif = new piziBackbone.default.NotificationView();
+    notif = new piziBackbone.default.NotificationView();
+    popup = new piziBackbone.default.PopupView();
     notif.notify('Test!');
+    popup.confirm({message: 'Test!'});
   </script>
 </body>
 </html>
