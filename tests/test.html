@@ -2,48 +2,69 @@
 <head>
   <meta charset="utf-8">
   <title>pizi-backbone test</title>
-  <link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.18.0.css">
+  <!--<link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.18.0.css">-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/5.5.3/css/foundation.css">
   <style>
-    notification{
-      position: fixed;
-      width: 100%;
-    }
-    .alert-box{
-      padding-top: 5px;
-      padding-bottom: 5px;
+    input[type="radio"] + input[type="radio"], input[type="checkbox"] + input[type="checkbox"]{
+      margin-left: 10px;
     }
   </style>
 </head>
 <body>
-  <div id="qunit"></div>
-  <div id="qunit-fixture"></div>
+  <!--<div id="qunit"></div>
+  <div id="qunit-fixture"></div>-->
   <script src="jquery.js"></script>
-  <script src="//code.jquery.com/qunit/qunit-1.18.0.js"></script>
+  <!--<script src="//code.jquery.com/qunit/qunit-1.18.0.js"></script>-->
   <script src="underscore.js"></script>
   <script src="backbone.js"></script>
   <script src="foundation.js"></script>
   <script src="foundation.reveal.js"></script>
   <script src="pizi-backbone.js"></script>
-  <input type="text" class="popup" value="Test!"/>
-  <button onclick="pop()"></button>
-  <input type="text" class="notif" value="Test!"/>
-  <button onclick="notify()"/>
+  <div style="padding: 10px;padding-top: 50px;">
+    <h1>pizi-backbone test</h1>
+    <textarea type="text" class="confirm" style="width:50%;">Test!</textarea>
+    <input type="checkbox" class="ok" checked/>Ok
+    <input type="checkbox" class="close"/>Close
+    <input type="checkbox" class="custom"/>Custom
+    <br>
+    <button onclick="confirm()">Confirm Popup</button>
+    
+    <textarea type="text" class="alert" style="width:50%;">Test!</textarea>
+    <button onclick="popup.alert($('.alert').val());">Alert Popup</button>
+    
+    <input type="text" class="notif" value="Test!" style="width:50%"/>
+    <input type="radio" name="type" value="notify" checked/>Notif
+    <input type="radio" name="type" value="success"/>Success
+    <input type="radio" name="type" value="warn"/>Warning
+    <input type="radio" name="type" value="error"/>Error
+    <br>
+    <button onclick="notify()">Notification</button>
+  </div>
   <script>
     notif = new piziBackbone.default.NotificationView();
     popup = new piziBackbone.default.PopupView();
     function notify(){
-        notif.notify($('.notif').val());
+        notif[$('input[name=type]:checked').val()]($('.notif').val());
     }
-    function pop(){
+    function confirm(){
         popup.confirm({
-            message: $('.popup').val(),
-            custom: function(){
-                alert(':)');
+            message: $('.confirm').val(),
+            custom: !$('.custom:checked').length ? null : function(){
+                alert('Custom');
+            },
+            ok: !$('.ok:checked').length ? null : function(){
+                alert('Ok');
+            },
+            close: !$('.close:checked').length ? null : function(){
+                alert('Close');
             },
             customName: 'Pizi'
         });
-    }  
+        
+    }
+    function aler(){
+      
+    }
   </script>
 </body>
 </html>

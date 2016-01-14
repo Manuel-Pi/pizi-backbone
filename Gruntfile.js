@@ -3,8 +3,8 @@ module.exports = function(grunt) {
 		srcFile: 'src/',
 		build: 'build/',
 		testFile: 'tests/',
-		serverFolder: 'C:/Developppment/Web/Servers/pizi-express-server/Apps/pizi-backbone/',
-        //serverFolder: 'C:/Users/e_na/Documents/GitHub/pizi-express-server/Apps/pizi-backbone/',
+		//serverFolder: 'C:/Developppment/Web/Servers/pizi-express-server/Apps/pizi-backbone/',
+        serverFolder: 'C:/Users/e_na/Documents/GitHub/pizi-express-server/Apps/pizi-backbone/',
 		jshint: {
 			all: {
 				options: {

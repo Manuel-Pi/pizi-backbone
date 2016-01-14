@@ -28,7 +28,7 @@
 	var NotificationView = _Backbone2.default.View.extend({
 		tagName: "notification",
 		className: "container-fluid",
-		template: _.template("\n        <div data-alert class=\"alert-box <%= type %>\" style=\"margin-bottom: 0\">\n            <%= message %><a href=\"#\" class=\"close\">&times;</a>\n        </div>"),
+		template: _.template("\n        <div data-alert class=\"alert-box <%= type %>\" style=\"margin-bottom: 0;\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t padding-top: 5px;\n      \t\t\t\t\t\t\t\t\t\t\t\t\t\t padding-bottom: 5px;\">\n            <%= message %><a href=\"#\" class=\"close\">&times;</a>\n        </div>"),
 		initialize: function initialize() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 			this.duration = options.duration || 3000;
@@ -38,6 +38,12 @@
 			} else {
 				this.$el = $($('notification')[0]);
 			}
+
+			this.$el.css({
+				'position': 'fixed',
+				'top': '0',
+				'width': '100%'
+			});
 		},
 		success: function success(message) {
 			this.render({
@@ -79,7 +85,7 @@
 	var PopupView = _Backbone2.default.View.extend({
 		tagName: "popup",
 		className: "reveal-modal container-fluid small",
-		template: _.template("\n        <a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n        <div style=\"overflow-x: hidden;\n                    overflow-y: auto;\n                    height: 100%;\n                    width:100%;\">\n            <div class=\"row content\" style=\"overflow:hidden;\n                                            padding-right: 10px;\">\n                <%= message %>\n            </div>\n            <div class=\"actions right\" style=\"margin-top: 30px;\n                                              margin-right: 10px;\n                                              overflow: hidden;\">\n                <button class=\"ok button\" style=\"margin:0;\">Ok</button>\n                <button class=\"custom button\" style=\"margin:0;\"><%= customName %></button>\n                <button class=\"cancel button\" style=\"margin:0;\">Cancel</button>\n            </div>\n        </div>"),
+		template: _.template("\n        <a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n        <div style=\"overflow-x: hidden;\n                    overflow-y: auto;\n                    height: 100%;\n                    width:100%;\">\n            <div class=\"row content\" style=\"overflow:hidden;\n                                            padding-right: 10px;\n                                            word-wrap: break-word;\n\t\t\t\t\t\t\t\t\t\t\ttext-align: justify;\">\n                <%= message %>\n            </div>\n            <div class=\"actions right\" style=\"margin-top: 30px;\n                                              margin-right: 10px;\n                                              overflow: hidden;\">\n                <button class=\"ok button\" style=\"margin:0;\">Ok</button>\n                <button class=\"custom button\" style=\"margin:0;\"><%= customName %></button>\n                <button class=\"cancel button\" style=\"margin:0;\">Cancel</button>\n            </div>\n        </div>"),
 		initialize: function initialize() {
 			if ($('popup').length === 0) {
 				this.$el.prependTo('body');
@@ -95,6 +101,19 @@
 					close_on_esc: false
 				}
 			});
+			var view = this;
+			$(document).on('closed.fndtn.reveal', '[data-reveal]', function () {
+				if (view.basicView) {
+					view.basicView.remove();
+					view.basicView = null;
+					view.undelegateEvents();
+				}
+
+				window.removeEventListener('resize', this.resize);
+			});
+			$(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
+				view.resize();
+			});
 			this.$el.css({
 				'padding-top': '50px',
 				'padding-right': 'calc(1.875rem - 10px)'
@@ -108,6 +127,7 @@
 		},
 		confirm: function confirm() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+			this.type = 'confirm';
 			this.ok = options.ok;
 			this.close = options.close;
 			this.custom = options.custom;
@@ -116,17 +136,26 @@
 				customName: options.customName
 			});
 		},
+		alert: function alert(message) {
+			this.type = 'alert';
+			this.ok = true;
+			this.close = null;
+			this.custom = null;
+			this.render({
+				message: message
+			});
+		},
 		onClose: function onClose() {
 			this.$el.foundation('reveal', 'close');
-			if (this.close) this.close();
+			if (this.close && this.type === 'confirm') this.close(this);
 		},
 		onOk: function onOk() {
 			this.$el.foundation('reveal', 'close');
-			if (this.ok) this.ok();
+			if (this.ok && this.type === 'confirm') this.ok(this);
 		},
 		onCustom: function onCustom() {
 			this.$el.foundation('reveal', 'close');
-			if (this.custom) this.custom();
+			if (this.custom && this.type === 'confirm') this.custom(this);
 		},
 		renderActions: function renderActions() {
 			if (this.ok) {
@@ -168,21 +197,15 @@
 
 			$popup.css('top', top > 100 ? 100 : top + 'px');
 		},
-		render: function render(data) {
+		render: function render() {
+			var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+			data = _.extend({
+				message: "",
+				customName: ""
+			}, data);
 			this.$el.html(this.template(data));
 			this.renderActions();
-			var view = this;
-			this.resize();
 			window.addEventListener('resize', this.resize, true);
-			$(document).on('closed.fndtn.reveal', '[data-reveal]', function () {
-				if (view.basicView) {
-					view.basicView.remove();
-					view.basicView = null;
-					view.undelegateEvents();
-				}
-
-				window.removeEventListener('resize', this.resize);
-			});
 			this.$el.foundation('reveal', 'open');
 			this.delegateEvents();
 		}
