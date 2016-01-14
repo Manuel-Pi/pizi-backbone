@@ -3,7 +3,8 @@ module.exports = function(grunt) {
 		srcFile: 'src/',
 		build: 'build/',
 		testFile: 'tests/',
-		serverFolder: 'C:/Users/e_na/Documents/GitHub/pizi-express-server/Apps/pizi-backbone/',
+		serverFolder: 'C:/Developppment/Web/Servers/pizi-express-server/Apps/pizi-backbone/',
+        //serverFolder: 'C:/Users/e_na/Documents/GitHub/pizi-express-server/Apps/pizi-backbone/',
 		jshint: {
 			all: {
 				options: {
@@ -70,7 +71,8 @@ module.exports = function(grunt) {
 		babel: {
 			options: {
 				sourceMaps: false,
-        		"plugins": ["transform-es2015-modules-umd"]
+        		"plugins": ["transform-es2015-modules-umd"],
+                "presets": ["es2015"]
 			},
 			dist: {
 				files: [{

@@ -25,12 +25,25 @@
   <script src="foundation.js"></script>
   <script src="foundation.reveal.js"></script>
   <script src="pizi-backbone.js"></script>
+  <input type="text" class="popup" value="Test!"/>
+  <button onclick="pop()"></button>
+  <input type="text" class="notif" value="Test!"/>
+  <button onclick="notify()"/>
   <script>
-	  // TODO: tests!
     notif = new piziBackbone.default.NotificationView();
     popup = new piziBackbone.default.PopupView();
-    notif.notify('Test!');
-    popup.confirm({message: 'Test!'});
+    function notify(){
+        notif.notify($('.notif').val());
+    }
+    function pop(){
+        popup.confirm({
+            message: $('.popup').val(),
+            custom: function(){
+                alert(':)');
+            },
+            customName: 'Pizi'
+        });
+    }  
   </script>
 </body>
 </html>

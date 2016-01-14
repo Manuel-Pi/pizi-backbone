@@ -1,58 +1,77 @@
 import Backbone from "Backbone";
 			
-var NotificationView = Backbone.View.extend({
+let NotificationView = Backbone.View.extend({
 	tagName: "notification",
 	className: "container-fluid",
-	template:  _.template('<div data-alert class="alert-box <%= type %>" style="margin-bottom: 0"><%= message %><a href="#" class="close">&times;</a></div>'),
-	initialize: function(options){
-		options = options || {};
+	template:  _.template(`
+        <div data-alert class="alert-box <%= type %>" style="margin-bottom: 0">
+            <%= message %><a href="#" class="close">&times;</a>
+        </div>`),
+	initialize(options = {}){
 		this.duration = options.duration || 3000;
 		if($('notification').length === 0){
 			this.$el.prependTo('body');
 		} else {
 			this.$el = $($('notification')[0]);
 		}
-		this.index = 0;
 	},
-	success: function(message){
+	success(message){
 		this.render({
 			type: "success",
 			message: message
 		});
 	},
-	error: function(message){
+	error(message){
 		this.render({
 			type: "alert",
 			message: message
 		});
 	},
-	warn: function(message){
+	warn(message){
 		this.render({
 			type: "warning",
 			message: message
 		});
 	},
-	notify: function(message){
+	notify(message){
 		this.render({
 			message: message
 		});
 	},
-	render: function(news){
-		var $news = $(this.template({type: news.type, message: news.message}));
+	render(news){
+		let $news = $(this.template({type: news.type, message: news.message}));
 		this.$el.append($news);
 		this.$el.foundation();
-		setTimeout(function(){
+		setTimeout(() => {
 			$news.slideUp();
 			$news.find("a.close").click();
 		}, this.duration);
 	}
 });
 
-var PopupView = Backbone.View.extend({
+let PopupView = Backbone.View.extend({
 	tagName: "popup",
 	className: "reveal-modal container-fluid small",
-	template: _.template('<a class="close-reveal-modal" aria-label="Close">&#215;</a><div class="row message"><%= message %></div><div class="actions right"><button class="ok button">Ok</button><button class="cancel button">Cancel</button></div>'),
-	initialize: function(){
+	template: _.template(`
+        <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        <div style="overflow-x: hidden;
+                    overflow-y: auto;
+                    height: 100%;
+                    width:100%;">
+            <div class="row content" style="overflow:hidden;
+                                            padding-right: 10px;
+                                            word-wrap: break-word;">
+                <%= message %>
+            </div>
+            <div class="actions right" style="margin-top: 30px;
+                                              margin-right: 10px;
+                                              overflow: hidden;">
+                <button class="ok button" style="margin:0;">Ok</button>
+                <button class="custom button" style="margin:0;"><%= customName %></button>
+                <button class="cancel button" style="margin:0;">Cancel</button>
+            </div>
+        </div>`),
+	initialize(){
 		if($('popup').length === 0){
 			this.$el.prependTo('body');
 		} else {
@@ -66,33 +85,88 @@ var PopupView = Backbone.View.extend({
 				close_on_esc: false
 			}
 		});
+        this.$el.css({
+            'padding-top': '50px',
+            'padding-right': 'calc(1.875rem - 10px)'
+        });
 	},
 	events: {
-		'click button.cancel': 'onClose',
-		'click button.ok': 'onOk'
+		'click a.close-reveal-modal': 'onClose',
+        'click button.cancel': 'onClose',
+		'click button.ok': 'onOk',
+        'click button.custom': 'onCustom'
 	},
-	confirm: function(options){
-		options = options || {};
+	confirm(options = {}){
 		this.ok = options.ok;
 		this.close = options.close;
-		
+        this.custom = options.custom;
 		this.render({
-			message: options.message
+			message: options.message,
+            customName: options.customName
 		});
 	},
-	onClose: function(){
+	onClose(){
 		this.$el.foundation('reveal', 'close');
 		if(this.close) this.close();
 	},
-	onOk: function(){
+	onOk(){
 		this.$el.foundation('reveal', 'close');
 		if(this.ok) this.ok();
 	},
-	renderActions: function(){
-		
+    onCustom(){
+		this.$el.foundation('reveal', 'close');
+		if(this.custom) this.custom();
 	},
-	render: function(data){
+	renderActions: function(){
+        if(this.ok){
+            this.$el.find('.ok').show(); 
+        } else {
+            this.$el.find('.ok').hide();  
+        }
+        if(this.close){
+            this.$el.find('.cancel').show(); 
+        } else {
+            this.$el.find('.cancel').hide();  
+        }
+        if(this.custom){
+            this.$el.find('.custom').show(); 
+        } else {
+            this.$el.find('.custom').hide();  
+        }
+        if(!this.ok && !this.close && !this.custom){
+            this.$el.find('.actions').hide();
+        } else {
+            this.$el.find('.actions').show();
+        }
+    },
+    resize: function(){
+        var $popup = $('popup');
+        $popup.height("");
+        var bodyHeight = $('body').height() - 10;
+        var height = $popup.outerHeight();
+        var top = 5;
+        if(height > bodyHeight){
+            $popup.outerHeight(bodyHeight);
+        } else {
+            top = (bodyHeight + 10 - height) / 2;
+        }
+        $popup.css('top', top > 100 ? 100 : top + 'px');
+        
+    },
+	render(data){
 		this.$el.html(this.template(data));
+        this.renderActions();
+        var view = this;
+        this.resize();
+        window.addEventListener('resize', this.resize, true);
+        $(document).on('closed.fndtn.reveal', '[data-reveal]', function () {
+            if(view.basicView){
+                    view.basicView.remove();
+                    view.basicView = null;
+                    view.undelegateEvents();
+            }
+            window.removeEventListener('resize', this.resize);
+        });
 		this.$el.foundation('reveal', 'open');
 		this.delegateEvents();
 	}
