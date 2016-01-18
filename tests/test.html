@@ -8,6 +8,9 @@
     input[type="radio"] + input[type="radio"], input[type="checkbox"] + input[type="checkbox"]{
       margin-left: 10px;
     }
+    input[type="radio"], input[type="checkbox"]{
+      margin-right: 5px;
+    }
   </style>
 </head>
 <body>
@@ -18,20 +21,25 @@
   <script src="underscore.js"></script>
   <script src="backbone.js"></script>
   <script src="foundation.js"></script>
+  <script src="foundation.alert.js"></script>
   <script src="foundation.reveal.js"></script>
   <script src="pizi-backbone.js"></script>
-  <div style="padding: 10px;padding-top: 50px;">
+  <div style="padding: 10px;padding-top: 30px;">
     <h1>pizi-backbone test</h1>
+    <!-- Confirm Popup -->
     <textarea type="text" class="confirm" style="width:50%;">Test!</textarea>
     <input type="checkbox" class="ok" checked/>Ok
     <input type="checkbox" class="close"/>Close
     <input type="checkbox" class="custom"/>Custom
     <br>
     <button onclick="confirm()">Confirm Popup</button>
-    
+    <!-- Alert Popup -->
     <textarea type="text" class="alert" style="width:50%;">Test!</textarea>
     <button onclick="popup.alert($('.alert').val());">Alert Popup</button>
-    
+    <!-- Form Popup -->
+    <textarea type="text" class="alert" style="width:50%;">Test!</textarea>
+    <button onclick="formPopup()">View Popup</button>
+    <!--  Notification -->
     <input type="text" class="notif" value="Test!" style="width:50%"/>
     <input type="radio" name="type" value="notify" checked/>Notif
     <input type="radio" name="type" value="success"/>Success
@@ -62,8 +70,20 @@
         });
         
     }
-    function aler(){
-      
+    function viewPopup(){
+      popup.display(Backbone.View.extend({
+        render: function(){
+          
+        }
+      }));
+    }
+    function formPopup(){
+      popup.form({
+        tempale: '<input type="text" name="login"/>',
+        ok: function(data){
+          console.log(data);
+        }
+      });
     }
   </script>
 </body>

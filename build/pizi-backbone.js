@@ -28,7 +28,7 @@
 	var NotificationView = _Backbone2.default.View.extend({
 		tagName: "notification",
 		className: "container-fluid",
-		template: _.template("\n        <div data-alert class=\"alert-box <%= type %>\" style=\"margin-bottom: 0;\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t padding-top: 5px;\n      \t\t\t\t\t\t\t\t\t\t\t\t\t\t padding-bottom: 5px;\">\n            <%= message %><a href=\"#\" class=\"close\">&times;</a>\n        </div>"),
+		template: _.template("\n        <div data-alert class=\"alert-box <%= type %>\" style=\"margin-bottom: 0;\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t padding-top: 5px;\n      \t\t\t\t\t\t\t\t\t\t\t\t\t\t padding-bottom: 5px;\">\n            <%= message %><a class=\"close\">&times;</a>\n        </div>"),
 		initialize: function initialize() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 			this.duration = options.duration || 3000;
@@ -42,7 +42,8 @@
 			this.$el.css({
 				'position': 'fixed',
 				'top': '0',
-				'width': '100%'
+				'width': '100%',
+				'z-index': '1000'
 			});
 		},
 		success: function success(message) {
@@ -79,6 +80,7 @@
 				$news.slideUp();
 				$news.find("a.close").click();
 			}, this.duration);
+			$(document).foundation('alert', 'events');
 		}
 	});
 
@@ -118,6 +120,7 @@
 				'padding-top': '50px',
 				'padding-right': 'calc(1.875rem - 10px)'
 			});
+			$(document).foundation('reveal', 'events');
 		},
 		events: {
 			'click a.close-reveal-modal': 'onClose',
@@ -136,7 +139,8 @@
 				customName: options.customName
 			});
 		},
-		alert: function alert(message) {
+		alert: function alert() {
+			var message = arguments.length <= 0 || arguments[0] === undefined ? "" : arguments[0];
 			this.type = 'alert';
 			this.ok = true;
 			this.close = null;
@@ -144,6 +148,10 @@
 			this.render({
 				message: message
 			});
+		},
+		form: function form() {
+			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+			this.render({});
 		},
 		onClose: function onClose() {
 			this.$el.foundation('reveal', 'close');

@@ -1,5 +1,4 @@
-import Backbone from "Backbone";
-			
+import Backbone from "Backbone";		
 let NotificationView = Backbone.View.extend({
 	tagName: "notification",
 	className: "container-fluid",
@@ -7,7 +6,7 @@ let NotificationView = Backbone.View.extend({
         <div data-alert class="alert-box <%= type %>" style="margin-bottom: 0;
 															 padding-top: 5px;
       														 padding-bottom: 5px;">
-            <%= message %><a href="#" class="close">&times;</a>
+            <%= message %><a class="close">&times;</a>
         </div>`),
 	initialize(options = {}){
 		this.duration = options.duration || 3000;
@@ -19,7 +18,8 @@ let NotificationView = Backbone.View.extend({
 		this.$el.css({
 			'position': 'fixed',
 			'top': '0',
-			'width': '100%'
+			'width': '100%',
+			'z-index': '1000'
 		});
 	},
 	success(message){
@@ -109,6 +109,8 @@ let PopupView = Backbone.View.extend({
             'padding-top': '50px',
             'padding-right': 'calc(1.875rem - 10px)'
         });
+		
+		$(document).foundation('reveal', 'events');
 	},
 	events: {
 		'click a.close-reveal-modal': 'onClose',
@@ -126,13 +128,18 @@ let PopupView = Backbone.View.extend({
             customName: options.customName
 		});
 	},
-	alert(message){
+	alert(message = ""){
 		this.type = 'alert';
 		this.ok = true;
 		this.close = null;
 		this.custom = null;
 		this.render({
 			message: message
+		});
+	},
+	form(options = {}){
+		this.render({
+			
 		});
 	},
 	onClose(){
