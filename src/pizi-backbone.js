@@ -22,37 +22,42 @@ let NotificationView = Backbone.View.extend({
 			'z-index': '1000'
 		});
 	},
-	success(message){
+	success(message, options = {}){
 		this.render({
 			type: "success",
 			message: message
-		});
+		}, options);
 	},
-	error(message){
+	error(message, options = {}){
 		this.render({
 			type: "alert",
 			message: message
-		});
+		}, options);
 	},
-	warn(message){
+	warn(message, options = {}){
 		this.render({
 			type: "warning",
 			message: message
-		});
+		}, options);
 	},
-	notify(message){
+	notify(message, options = {}){
 		this.render({
 			message: message
-		});
+		}, options);
 	},
-	render(news){
+	render(news, options = {}){
 		let $news = $(this.template({type: news.type, message: news.message}));
 		this.$el.append($news);
-		this.$el.foundation();
-		setTimeout(() => {
-			$news.slideUp();
-			$news.find("a.close").click();
-		}, this.duration);
+		if(!options.permanent){
+			setTimeout(() => {
+				$news.slideUp();
+				$news.find("a.close").click();
+			}, options.duration || this.duration);
+		}
+		if(!this.foundationInitilized){
+			$(document).foundation('alert', 'reflow');
+			this.foundationInitilized = true;
+		}
 	}
 });
 
@@ -61,22 +66,14 @@ let PopupView = Backbone.View.extend({
 	className: "reveal-modal container-fluid small",
 	template: _.template(`
         <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-        <div style="overflow-x: hidden;
-                    overflow-y: auto;
-                    height: 100%;
-                    width:100%;">
-            <div class="row content" style="overflow:hidden;
-                                            padding-right: 10px;
-                                            word-wrap: break-word;
-											text-align: justify;">
-                <%= message %>
+        <div>
+            <div class="row content">
+                <% template ? print(template) : print(message) %>
             </div>
-            <div class="actions right" style="margin-top: 30px;
-                                              margin-right: 10px;
-                                              overflow: hidden;">
-                <button class="ok button" style="margin:0;">Ok</button>
-                <button class="custom button" style="margin:0;"><%= customName %></button>
-                <button class="cancel button" style="margin:0;">Cancel</button>
+            <div class="actions right">
+                <button class="ok button">Ok</button>
+                <button class="custom button"><%= customName %></button>
+                <button class="cancel button">Cancel</button>
             </div>
         </div>`),
 	initialize(){
@@ -90,7 +87,8 @@ let PopupView = Backbone.View.extend({
 			reveal: {
 				close_on_background_click: false,
 				dismiss_modal_class: 'close-modal',
-				close_on_esc: false
+				close_on_esc: false,
+				animation: 'none'
 			}
 		});
 		let view = this;
@@ -101,16 +99,12 @@ let PopupView = Backbone.View.extend({
                     view.undelegateEvents();
             }
             window.removeEventListener('resize', this.resize);
+			$('body').css('overflow', 'auto');
         });
 		$(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
             view.resize();
+			$('body').css('overflow', 'hidden');
         });
-        this.$el.css({
-            'padding-top': '50px',
-            'padding-right': 'calc(1.875rem - 10px)'
-        });
-		
-		$(document).foundation('reveal', 'events');
 	},
 	events: {
 		'click a.close-reveal-modal': 'onClose',
@@ -138,8 +132,13 @@ let PopupView = Backbone.View.extend({
 		});
 	},
 	form(options = {}){
+		this.type = 'form';
+		this.ok = options.ok;
+		this.close = options.close;
+        this.custom = options.custom;
 		this.render({
-			
+			template: options.template,
+			customName: options.customName
 		});
 	},
 	onClose(){
@@ -148,35 +147,25 @@ let PopupView = Backbone.View.extend({
 	},
 	onOk(){
 		this.$el.foundation('reveal', 'close');
-		if(this.ok && this.type === 'confirm') this.ok(this);
+		if(this.ok && this.type === 'confirm'){
+			this.ok(this);
+		}
+		else if(this.ok && this.type === 'form'){
+			let data = this.$el.find('form').serializeArray();
+			this.ok(this, data);
+		}
 	},
     onCustom(){
 		this.$el.foundation('reveal', 'close');
 		if(this.custom && this.type === 'confirm') this.custom(this);
 	},
-	renderActions: function(){
-        if(this.ok){
-            this.$el.find('.ok').show(); 
-        } else {
-            this.$el.find('.ok').hide();  
-        }
-        if(this.close){
-            this.$el.find('.cancel').show(); 
-        } else {
-            this.$el.find('.cancel').hide();  
-        }
-        if(this.custom){
-            this.$el.find('.custom').show(); 
-        } else {
-            this.$el.find('.custom').hide();  
-        }
-        if(!this.ok && !this.close && !this.custom){
-            this.$el.find('.actions').hide();
-        } else {
-            this.$el.find('.actions').show();
-        }
+	renderActions(){
+		this.$el.find('.ok')[this.ok ? 'show' : 'hide']();
+		this.$el.find('.cancel')[this.close ? 'show' : 'hide']();
+		this.$el.find('.custom')[this.custom ? 'show' : 'hide']();
+		this.$el.find('.actions')[!this.ok && !this.close && !this.custom ? 'hide' : 'show']();
     },
-    resize: function(){
+    resize(){
         var $popup = $('popup');
         $popup.height("");
         var bodyHeight = $('body').height() - 10;
@@ -187,12 +176,13 @@ let PopupView = Backbone.View.extend({
         } else {
             top = (bodyHeight + 10 - height) / 2;
         }
-        $popup.css('top', top > 100 ? 100 : top + 'px');	
+        $popup.css('top', top > 100 ? 100 : top + 'px');
     },
 	render(data = {}){
 		data = _.extend({
 			message: "",
-			customName: ""
+			customName: "",
+			template: ""
 		}, data);
 		this.$el.html(this.template(data));
         this.renderActions();

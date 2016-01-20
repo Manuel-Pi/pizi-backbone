@@ -1,0 +1,30 @@
+popup.reveal-modal{
+	padding-top: 50px;
+	padding-right: calc(1.875rem - 10px);
+	position: fixed;
+	display: block;
+	opacity: 1;
+	visibility: visible;
+	top: 59.5px;
+	display: none;
+}
+popup.reveal-modal > div{
+	overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+    width: 100%;
+}
+popup.reveal-modal .content{
+	overflow: hidden;
+	padding-right: 10px;
+	word-wrap: break-word;
+	text-align: justify;
+}
+popup.reveal-modal .actions{
+	margin-top: 30px;
+	margin-right: 10px;
+	overflow: hidden;
+}
+popup.reveal-modal .actions button{
+	margin: 0;
+}

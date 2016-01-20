@@ -47,47 +47,58 @@
 			});
 		},
 		success: function success(message) {
+			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 			this.render({
 				type: "success",
 				message: message
-			});
+			}, options);
 		},
 		error: function error(message) {
+			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 			this.render({
 				type: "alert",
 				message: message
-			});
+			}, options);
 		},
 		warn: function warn(message) {
+			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 			this.render({
 				type: "warning",
 				message: message
-			});
+			}, options);
 		},
 		notify: function notify(message) {
+			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 			this.render({
 				message: message
-			});
+			}, options);
 		},
 		render: function render(news) {
+			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 			var $news = $(this.template({
 				type: news.type,
 				message: news.message
 			}));
 			this.$el.append($news);
-			this.$el.foundation();
-			setTimeout(function () {
-				$news.slideUp();
-				$news.find("a.close").click();
-			}, this.duration);
-			$(document).foundation('alert', 'events');
+
+			if (!options.permanent) {
+				setTimeout(function () {
+					$news.slideUp();
+					$news.find("a.close").click();
+				}, options.duration || this.duration);
+			}
+
+			if (!this.foundationInitilized) {
+				$(document).foundation('alert', 'reflow');
+				this.foundationInitilized = true;
+			}
 		}
 	});
 
 	var PopupView = _Backbone2.default.View.extend({
 		tagName: "popup",
 		className: "reveal-modal container-fluid small",
-		template: _.template("\n        <a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n        <div style=\"overflow-x: hidden;\n                    overflow-y: auto;\n                    height: 100%;\n                    width:100%;\">\n            <div class=\"row content\" style=\"overflow:hidden;\n                                            padding-right: 10px;\n                                            word-wrap: break-word;\n\t\t\t\t\t\t\t\t\t\t\ttext-align: justify;\">\n                <%= message %>\n            </div>\n            <div class=\"actions right\" style=\"margin-top: 30px;\n                                              margin-right: 10px;\n                                              overflow: hidden;\">\n                <button class=\"ok button\" style=\"margin:0;\">Ok</button>\n                <button class=\"custom button\" style=\"margin:0;\"><%= customName %></button>\n                <button class=\"cancel button\" style=\"margin:0;\">Cancel</button>\n            </div>\n        </div>"),
+		template: _.template("\n        <a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n        <div>\n            <div class=\"row content\">\n                <% template ? print(template) : print(message) %>\n            </div>\n            <div class=\"actions right\">\n                <button class=\"ok button\">Ok</button>\n                <button class=\"custom button\"><%= customName %></button>\n                <button class=\"cancel button\">Cancel</button>\n            </div>\n        </div>"),
 		initialize: function initialize() {
 			if ($('popup').length === 0) {
 				this.$el.prependTo('body');
@@ -100,7 +111,8 @@
 				reveal: {
 					close_on_background_click: false,
 					dismiss_modal_class: 'close-modal',
-					close_on_esc: false
+					close_on_esc: false,
+					animation: 'none'
 				}
 			});
 			var view = this;
@@ -112,15 +124,12 @@
 				}
 
 				window.removeEventListener('resize', this.resize);
+				$('body').css('overflow', 'auto');
 			});
 			$(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
 				view.resize();
+				$('body').css('overflow', 'hidden');
 			});
-			this.$el.css({
-				'padding-top': '50px',
-				'padding-right': 'calc(1.875rem - 10px)'
-			});
-			$(document).foundation('reveal', 'events');
 		},
 		events: {
 			'click a.close-reveal-modal': 'onClose',
@@ -151,7 +160,14 @@
 		},
 		form: function form() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-			this.render({});
+			this.type = 'form';
+			this.ok = options.ok;
+			this.close = options.close;
+			this.custom = options.custom;
+			this.render({
+				template: options.template,
+				customName: options.customName
+			});
 		},
 		onClose: function onClose() {
 			this.$el.foundation('reveal', 'close');
@@ -159,36 +175,23 @@
 		},
 		onOk: function onOk() {
 			this.$el.foundation('reveal', 'close');
-			if (this.ok && this.type === 'confirm') this.ok(this);
+
+			if (this.ok && this.type === 'confirm') {
+				this.ok(this);
+			} else if (this.ok && this.type === 'form') {
+				var data = this.$el.find('form').serializeArray();
+				this.ok(this, data);
+			}
 		},
 		onCustom: function onCustom() {
 			this.$el.foundation('reveal', 'close');
 			if (this.custom && this.type === 'confirm') this.custom(this);
 		},
 		renderActions: function renderActions() {
-			if (this.ok) {
-				this.$el.find('.ok').show();
-			} else {
-				this.$el.find('.ok').hide();
-			}
-
-			if (this.close) {
-				this.$el.find('.cancel').show();
-			} else {
-				this.$el.find('.cancel').hide();
-			}
-
-			if (this.custom) {
-				this.$el.find('.custom').show();
-			} else {
-				this.$el.find('.custom').hide();
-			}
-
-			if (!this.ok && !this.close && !this.custom) {
-				this.$el.find('.actions').hide();
-			} else {
-				this.$el.find('.actions').show();
-			}
+			this.$el.find('.ok')[this.ok ? 'show' : 'hide']();
+			this.$el.find('.cancel')[this.close ? 'show' : 'hide']();
+			this.$el.find('.custom')[this.custom ? 'show' : 'hide']();
+			this.$el.find('.actions')[!this.ok && !this.close && !this.custom ? 'hide' : 'show']();
 		},
 		resize: function resize() {
 			var $popup = $('popup');
@@ -209,7 +212,8 @@
 			var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 			data = _.extend({
 				message: "",
-				customName: ""
+				customName: "",
+				template: ""
 			}, data);
 			this.$el.html(this.template(data));
 			this.renderActions();

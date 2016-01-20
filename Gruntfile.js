@@ -1,4 +1,5 @@
 module.exports = function(grunt) {
+	require('load-grunt-tasks')(grunt);
 	grunt.initConfig({
 		srcFile: 'src/',
 		build: 'build/',
@@ -44,21 +45,20 @@ module.exports = function(grunt) {
 						cwd: '<%= testFile %>',
 						src: ['**'],
 						dest: '<%= serverFolder %>'
-					},
+					}
+				]
+			},
+			css: {
+				files: [
 					{
 						expand: true,
-						cwd: 'node_modules/',
-						src: [
-							'backbone/backbone.js',
-							'backbone/node_modules/underscore/underscore.js',
-							'jquery/dist/jquery.js',
-							'zurb-foundation-5/js/foundation/foundation.js',
-							'zurb-foundation-5/js/foundation/foundation.alert.js',
-							'zurb-foundation-5/js/foundation/foundation.reveal.js'
+						cwd: 'bower_components/',
+						src: ['foundation/css/foundation.css',
+							'foundation/css/normalize.css'
 						],
-						dest: '<%= serverFolder %>',
-						flatten: true
-					}
+						dest: '<%= serverFolder %>'
+					},
+					{ '<%= serverFolder %>/pizi-backbone.css': 'src/pizi-backbone.css'}
 				]
 			}
 		},
@@ -67,7 +67,8 @@ module.exports = function(grunt) {
 				force : true
 			},
 			deployDev: '<%= serverFolder %>',
-			build: '<%= build %>'
+			build: '<%= build %>',
+			bower: "<%= serverFolder %>/trash",
 		},
 		babel: {
 			options: {
@@ -84,14 +85,19 @@ module.exports = function(grunt) {
 					"ext": ".js"
 				}]
 			}
+		},
+		bower: {
+			dev : {
+				dest: '<%= serverFolder %>/trash',
+				js_dest: '<%= serverFolder %>',
+				options: {
+					expand: true
+				}       
+			}
 		}
 	});
-	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-babel');
 	
 	grunt.registerTask('build', ['jshint', 'clean:build', 'babel']);
 	grunt.registerTask('deployDev', ['jshint', 'clean:deployDev', 'copy:deployDev']);
-	grunt.registerTask('deployBuild', ['build', 'clean:deployDev', 'copy:deployDevBabel']);
+	grunt.registerTask('deployBuild', ['build', 'clean:deployDev', 'copy:deployDevBabel', 'copy:css', 'bower', 'clean:bower']);
 };

@@ -3,9 +3,11 @@
   <meta charset="utf-8">
   <title>pizi-backbone test</title>
   <!--<link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.18.0.css">-->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/5.5.3/css/foundation.css">
+  <link rel="stylesheet" href="foundation/css/normalize.css">
+  <link rel="stylesheet" href="foundation/css/foundation.css">
+  <link rel="stylesheet" href="pizi-backbone.css">
   <style>
-    input[type="radio"] + input[type="radio"], input[type="checkbox"] + input[type="checkbox"]{
+    input[type="radio"] + input[type="radio"], input[type="checkbox"] + input[type="checkbox"], input[type="radio"] + input[type="checkbox"]{
       margin-left: 10px;
     }
     input[type="radio"], input[type="checkbox"]{
@@ -16,13 +18,15 @@
 <body>
   <!--<div id="qunit"></div>
   <div id="qunit-fixture"></div>-->
-  <script src="jquery.js"></script>
+  <script src="jquery/dist/jquery.js"></script>
   <!--<script src="//code.jquery.com/qunit/qunit-1.18.0.js"></script>-->
-  <script src="underscore.js"></script>
-  <script src="backbone.js"></script>
-  <script src="foundation.js"></script>
-  <script src="foundation.alert.js"></script>
-  <script src="foundation.reveal.js"></script>
+  <script src="underscore/underscore.js"></script>
+  <script src="backbone/backbone.js"></script>
+  <script src="modernizr/modernizr.js"></script>
+  <script src="fastclick/lib/fastclick.js"></script>
+  <script src="jquery.cookie/jquery.cookie.js"></script>
+  <script src="jquery-placeholder/jquery.placeholder.js"></script>
+  <script src="foundation/js/foundation.js"></script>
   <script src="pizi-backbone.js"></script>
   <div style="padding: 10px;padding-top: 30px;">
     <h1>pizi-backbone test</h1>
@@ -38,13 +42,14 @@
     <button onclick="popup.alert($('.alert').val());">Alert Popup</button>
     <!-- Form Popup -->
     <textarea type="text" class="alert" style="width:50%;">Test!</textarea>
-    <button onclick="formPopup()">View Popup</button>
+    <button onclick="formPopup()">Form Popup</button>
     <!--  Notification -->
     <input type="text" class="notif" value="Test!" style="width:50%"/>
     <input type="radio" name="type" value="notify" checked/>Notif
     <input type="radio" name="type" value="success"/>Success
     <input type="radio" name="type" value="warn"/>Warning
     <input type="radio" name="type" value="error"/>Error
+    <input type="checkbox" class="permanent"/>Permanent
     <br>
     <button onclick="notify()">Notification</button>
   </div>
@@ -52,7 +57,7 @@
     notif = new piziBackbone.default.NotificationView();
     popup = new piziBackbone.default.PopupView();
     function notify(){
-        notif[$('input[name=type]:checked').val()]($('.notif').val());
+        notif[$('input[name=type]:checked').val()]($('.notif').val(), {permanent: $('input.permanent')[0].checked});
     }
     function confirm(){
         popup.confirm({
@@ -79,12 +84,13 @@
     }
     function formPopup(){
       popup.form({
-        tempale: '<input type="text" name="login"/>',
-        ok: function(data){
+        template: '<form><input type="text" name="login"/></form>',
+        ok: function(popup, data){
           console.log(data);
         }
       });
     }
+    $(document).foundation();
   </script>
 </body>
 </html>
