@@ -7,10 +7,10 @@
   <link rel="stylesheet" href="foundation/css/foundation.css">
   <link rel="stylesheet" href="pizi-backbone.css">
   <style>
-    input[type="radio"] + input[type="radio"], input[type="checkbox"] + input[type="checkbox"], input[type="radio"] + input[type="checkbox"]{
+    body > div input[type="radio"] + input[type="radio"], body > div input[type="checkbox"] + input[type="checkbox"], body > div input[type="radio"] + input[type="checkbox"]{
       margin-left: 10px;
     }
-    input[type="radio"], input[type="checkbox"]{
+    body > div  input[type="radio"], body > div input[type="checkbox"]{
       margin-right: 5px;
     }
   </style>
@@ -84,10 +84,31 @@
     }
     function formPopup(){
       popup.form({
-        template: '<form><input type="text" name="login"/></form>',
+        template: '<form> <div class="row"> <div class="large-12 columns"> <label>Input Label <input name="input1" type="text" placeholder="large-12.columns" /> </label> </div> </div> <div class="row"> <div class="large-4 columns"> <label>Input Label <input type="text" name="input2" placeholder="large-4.columns" /> </label> </div> <div class="large-4 columns"> <label>Input Label <input name="input3" type="text" placeholder="large-4.columns" /> </label> </div> <div class="large-4 columns"> <div class="row collapse"> <label>Input Label</label> <div class="small-9 columns"> <input type="text" name="input4" placeholder="small-9.columns" /> </div> <div class="small-3 columns"> <span class="postfix">.com</span> </div> </div> </div> </div> <div class="row"> <div class="large-12 columns"> <label>Select Box <select name="select"> <option value="husker">Husker</option> <option value="starbuck">Starbuck</option> <option value="hotdog">Hot Dog</option> <option value="apollo">Apollo</option> </select> </label> </div> </div> <div class="row"> <div class="large-6 columns"> <label>Choose Your Favorite</label> <input type="radio" name="pokemon" value="Red" id="pokemonRed"><label for="pokemonRed">Red</label> <input type="radio" name="pokemon" value="Blue" id="pokemonBlue"><label for="pokemonBlue">Blue</label> </div> <div class="large-6 columns"> <label>Check these out</label> <input id="checkbox1" type="checkbox" name="check1"><label for="checkbox1">Checkbox 1</label> <input id="checkbox2" name="check2" type="checkbox"><label for="checkbox2">Checkbox 2</label> </div> </div> <div class="row"> <div class="large-12 columns"> <label>Textarea Label <textarea name="textarea" placeholder="small-12.columns"></textarea> </label> </div> </div> </form>',
         ok: function(popup, data){
           console.log(data);
-        }
+        },
+        validate: [
+          {
+            name: 'input1',
+            regex: /\w+/,
+            message: 'Il faut saisir un truc quand même!'
+          },
+          {
+            name: 'input2',
+            regex: /\w+/,
+            message: 'Il faut saisir un truc quand même!'
+          },
+          {
+            name: 'input3',
+            regex: /\w+/,
+            message: 'Il faut saisir un truc quand même!'
+          },{
+            name: 'input4',
+            regex: /\w+/,
+            message: 'Il faut saisir un truc quand même!'
+          }
+        ]
       });
     }
     $(document).foundation();

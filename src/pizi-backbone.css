@@ -1,3 +1,14 @@
+notification{
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 1000;
+}
+notification div.alert-box{
+	margin-bottom: 0;
+	padding-top: 5px;
+    padding-bottom: 5px;
+}
 popup.reveal-modal{
 	padding-top: 50px;
 	padding-right: calc(1.875rem - 10px);
@@ -20,7 +31,15 @@ popup.reveal-modal .content{
 	word-wrap: break-word;
 	text-align: justify;
 }
+popup.reveal-modal .content form{
+	text-align: left;
+}
 popup.reveal-modal .actions{
+	margin-top: 30px;
+	margin-right: 10px;
+	overflow: hidden;
+}
+popup.reveal-modal .actions.{
 	margin-top: 30px;
 	margin-right: 10px;
 	overflow: hidden;

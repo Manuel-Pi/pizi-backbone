@@ -1,13 +1,48 @@
-import Backbone from "Backbone";		
+import Backbone from "Backbone";
+
+let FormView = Backbone.View.extend({
+	tagName: "form",
+	initialize(options){
+		this.container = options.container;
+		this.template = options.template;
+		this.validate = options.validate;
+	},
+	inputError(name, error){
+		this.$el.find(`input[name="${name}"]`).addClass('error');
+	},
+	getValues(){
+		return this.$el.serializeArray();
+	},
+	check(){
+		let valid = true;
+		for(let rule of this.validate){
+			let el = this.$el.find('*[name="' + rule.name + '"]');
+			if(el.length && !el.val().match(rule.regex)){
+				if(!el.hasClass('error')){
+					el.addClass('error');
+					el.after('<small class="error">' + rule.message + '</small>');
+				}
+				valid = false;
+			} else if(el.length){
+				el.removeClass('error');
+				el.next('small.error').remove();
+			}
+		}
+		return valid;
+	},
+	render(options = {}){
+		if(this.template){
+			this.$el.html(this.template);
+		}
+	}
+});
+
 let NotificationView = Backbone.View.extend({
 	tagName: "notification",
 	className: "container-fluid",
-	template:  _.template(`
-        <div data-alert class="alert-box <%= type %>" style="margin-bottom: 0;
-															 padding-top: 5px;
-      														 padding-bottom: 5px;">
-            <%= message %><a class="close">&times;</a>
-        </div>`),
+	template:  _.template(`<div data-alert class="alert-box <%= type %>">
+            			   	<%= message %><a class="close">&times;</a>
+        				   </div>`),
 	initialize(options = {}){
 		this.duration = options.duration || 3000;
 		if($('notification').length === 0){
@@ -15,12 +50,6 @@ let NotificationView = Backbone.View.extend({
 		} else {
 			this.$el = $($('notification')[0]);
 		}
-		this.$el.css({
-			'position': 'fixed',
-			'top': '0',
-			'width': '100%',
-			'z-index': '1000'
-		});
 	},
 	success(message, options = {}){
 		this.render({
@@ -64,18 +93,17 @@ let NotificationView = Backbone.View.extend({
 let PopupView = Backbone.View.extend({
 	tagName: "popup",
 	className: "reveal-modal container-fluid small",
-	template: _.template(`
-        <a class="close-reveal-modal" aria-label="Close">&#215;</a>
-        <div>
-            <div class="row content">
-                <% template ? print(template) : print(message) %>
-            </div>
-            <div class="actions right">
-                <button class="ok button">Ok</button>
-                <button class="custom button"><%= customName %></button>
-                <button class="cancel button">Cancel</button>
-            </div>
-        </div>`),
+	template: _.template(`<a class="close-reveal-modal" aria-label="Close">&#215;</a>
+						  <div>
+							<div class="row content">
+								<% template ? print(template) : print(message) %>
+							</div>
+							<div class="actions right">
+								<button class="ok button">Ok</button>
+								<button class="custom button"><%= customName %></button>
+								<button class="cancel button">Cancel</button>
+							</div>
+						  </div>`),
 	initialize(){
 		if($('popup').length === 0){
 			this.$el.prependTo('body');
@@ -92,17 +120,13 @@ let PopupView = Backbone.View.extend({
 			}
 		});
 		let view = this;
-		$(document).on('closed.fndtn.reveal', '[data-reveal]', function () {
-            if(view.basicView){
-                    view.basicView.remove();
-                    view.basicView = null;
-                    view.undelegateEvents();
-            }
+		$(document).on('closed.fndtn.reveal', '[data-reveal]',()=>{
             window.removeEventListener('resize', this.resize);
 			$('body').css('overflow', 'auto');
         });
-		$(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
-            view.resize();
+		$(document).on('opened.fndtn.reveal', '[data-reveal]',()=>{
+			view.resize();
+			window.addEventListener('resize', this.resize, true);
 			$('body').css('overflow', 'hidden');
         });
 	},
@@ -136,8 +160,8 @@ let PopupView = Backbone.View.extend({
 		this.ok = options.ok;
 		this.close = options.close;
         this.custom = options.custom;
+		this.view = new FormView({template: options.template, validate: options.validate});
 		this.render({
-			template: options.template,
 			customName: options.customName
 		});
 	},
@@ -146,14 +170,15 @@ let PopupView = Backbone.View.extend({
 		if(this.close && this.type === 'confirm') this.close(this);
 	},
 	onOk(){
-		this.$el.foundation('reveal', 'close');
+		let close = true;
 		if(this.ok && this.type === 'confirm'){
 			this.ok(this);
 		}
 		else if(this.ok && this.type === 'form'){
-			let data = this.$el.find('form').serializeArray();
-			this.ok(this, data);
+			close = this.view.check();
+			this.ok(this, this.view.getValues());
 		}
+		if(close) this.$el.foundation('reveal', 'close');
 	},
     onCustom(){
 		this.$el.foundation('reveal', 'close');
@@ -185,14 +210,18 @@ let PopupView = Backbone.View.extend({
 			template: ""
 		}, data);
 		this.$el.html(this.template(data));
+		if(this.view){
+			this.view.render();
+			this.$el.find('.content').html(this.view.$el);
+		}
         this.renderActions();
-        window.addEventListener('resize', this.resize, true);
 		this.$el.foundation('reveal', 'open');
 		this.delegateEvents();
 	}
 });
 
 export default {
-	NotificationView: NotificationView,
-	PopupView: PopupView
+	NotificationView,
+	PopupView,
+	FormView
 };

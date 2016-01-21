@@ -25,10 +25,72 @@
 		};
 	}
 
+	var FormView = _Backbone2.default.View.extend({
+		tagName: "form",
+		initialize: function initialize(options) {
+			this.container = options.container;
+			this.template = options.template;
+			this.validate = options.validate;
+		},
+		inputError: function inputError(name, error) {
+			this.$el.find("input[name=\"" + name + "\"]").addClass('error');
+		},
+		getValues: function getValues() {
+			return this.$el.serializeArray();
+		},
+		check: function check() {
+			var valid = true;
+			var _iteratorNormalCompletion = true;
+			var _didIteratorError = false;
+			var _iteratorError = undefined;
+
+			try {
+				for (var _iterator = this.validate[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+					var rule = _step.value;
+					var el = this.$el.find('*[name="' + rule.name + '"]');
+
+					if (el.length && !el.val().match(rule.regex)) {
+						if (!el.hasClass('error')) {
+							el.addClass('error');
+							el.after('<small class="error">' + rule.message + '</small>');
+						}
+
+						valid = false;
+					} else if (el.length) {
+						el.removeClass('error');
+						el.next('small.error').remove();
+					}
+				}
+			} catch (err) {
+				_didIteratorError = true;
+				_iteratorError = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion && _iterator.return) {
+						_iterator.return();
+					}
+				} finally {
+					if (_didIteratorError) {
+						throw _iteratorError;
+					}
+				}
+			}
+
+			return valid;
+		},
+		render: function render() {
+			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+			if (this.template) {
+				this.$el.html(this.template);
+			}
+		}
+	});
+
 	var NotificationView = _Backbone2.default.View.extend({
 		tagName: "notification",
 		className: "container-fluid",
-		template: _.template("\n        <div data-alert class=\"alert-box <%= type %>\" style=\"margin-bottom: 0;\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t padding-top: 5px;\n      \t\t\t\t\t\t\t\t\t\t\t\t\t\t padding-bottom: 5px;\">\n            <%= message %><a class=\"close\">&times;</a>\n        </div>"),
+		template: _.template("<div data-alert class=\"alert-box <%= type %>\">\n            \t\t\t   \t<%= message %><a class=\"close\">&times;</a>\n        \t\t\t\t   </div>"),
 		initialize: function initialize() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 			this.duration = options.duration || 3000;
@@ -38,13 +100,6 @@
 			} else {
 				this.$el = $($('notification')[0]);
 			}
-
-			this.$el.css({
-				'position': 'fixed',
-				'top': '0',
-				'width': '100%',
-				'z-index': '1000'
-			});
 		},
 		success: function success(message) {
 			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
@@ -98,8 +153,10 @@
 	var PopupView = _Backbone2.default.View.extend({
 		tagName: "popup",
 		className: "reveal-modal container-fluid small",
-		template: _.template("\n        <a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n        <div>\n            <div class=\"row content\">\n                <% template ? print(template) : print(message) %>\n            </div>\n            <div class=\"actions right\">\n                <button class=\"ok button\">Ok</button>\n                <button class=\"custom button\"><%= customName %></button>\n                <button class=\"cancel button\">Cancel</button>\n            </div>\n        </div>"),
+		template: _.template("<a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n\t\t\t\t\t\t  <div>\n\t\t\t\t\t\t\t<div class=\"row content\">\n\t\t\t\t\t\t\t\t<% template ? print(template) : print(message) %>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"actions right\">\n\t\t\t\t\t\t\t\t<button class=\"ok button\">Ok</button>\n\t\t\t\t\t\t\t\t<button class=\"custom button\"><%= customName %></button>\n\t\t\t\t\t\t\t\t<button class=\"cancel button\">Cancel</button>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t  </div>"),
 		initialize: function initialize() {
+			var _this = this;
+
 			if ($('popup').length === 0) {
 				this.$el.prependTo('body');
 			} else {
@@ -117,17 +174,12 @@
 			});
 			var view = this;
 			$(document).on('closed.fndtn.reveal', '[data-reveal]', function () {
-				if (view.basicView) {
-					view.basicView.remove();
-					view.basicView = null;
-					view.undelegateEvents();
-				}
-
-				window.removeEventListener('resize', this.resize);
+				window.removeEventListener('resize', _this.resize);
 				$('body').css('overflow', 'auto');
 			});
 			$(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
 				view.resize();
+				window.addEventListener('resize', _this.resize, true);
 				$('body').css('overflow', 'hidden');
 			});
 		},
@@ -164,8 +216,11 @@
 			this.ok = options.ok;
 			this.close = options.close;
 			this.custom = options.custom;
-			this.render({
+			this.view = new FormView({
 				template: options.template,
+				validate: options.validate
+			});
+			this.render({
 				customName: options.customName
 			});
 		},
@@ -174,14 +229,16 @@
 			if (this.close && this.type === 'confirm') this.close(this);
 		},
 		onOk: function onOk() {
-			this.$el.foundation('reveal', 'close');
+			var close = true;
 
 			if (this.ok && this.type === 'confirm') {
 				this.ok(this);
 			} else if (this.ok && this.type === 'form') {
-				var data = this.$el.find('form').serializeArray();
-				this.ok(this, data);
+				close = this.view.check();
+				this.ok(this, this.view.getValues());
 			}
+
+			if (close) this.$el.foundation('reveal', 'close');
 		},
 		onCustom: function onCustom() {
 			this.$el.foundation('reveal', 'close');
@@ -216,8 +273,13 @@
 				template: ""
 			}, data);
 			this.$el.html(this.template(data));
+
+			if (this.view) {
+				this.view.render();
+				this.$el.find('.content').html(this.view.$el);
+			}
+
 			this.renderActions();
-			window.addEventListener('resize', this.resize, true);
 			this.$el.foundation('reveal', 'open');
 			this.delegateEvents();
 		}
@@ -225,6 +287,7 @@
 
 	exports.default = {
 		NotificationView: NotificationView,
-		PopupView: PopupView
+		PopupView: PopupView,
+		FormView: FormView
 	};
 });
