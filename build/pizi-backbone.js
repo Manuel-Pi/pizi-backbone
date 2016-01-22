@@ -169,51 +169,32 @@
 			'click .ok': 'onOk',
 			'click .custom': 'onCustom'
 		},
-		resetParam: function resetParam() {
-			this.type = null;
-			this.ok = null;
-			this.close = null;
-			this.custom = null;
-			this.view = null;
+		setParam: function setParam(params) {
+			this.type = params.type;
+			this.ok = params.ok;
+			this.close = params.close;
+			this.custom = params.custom;
+
+			if (params.template) {
+				this.view = params.template instanceof FormView ? params.template : new FormView({
+					template: params.template,
+					validate: params.validate
+				});
+			} else {
+				this.view = null;
+			}
 		},
-		confirm: function confirm() {
+		basic: function basic() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-			this.resetParam();
-			this.type = 'confirm';
-			this.ok = options.ok;
-			this.close = options.close;
-			this.custom = options.custom;
-			this.render({
-				message: options.message,
-				customName: options.customName,
-				staticActions: options.staticActions
-			});
-		},
-		alert: function alert() {
-			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-			this.resetParam();
-			this.type = 'alert';
-			this.ok = true;
-			this.render({
-				message: options.message,
-				staticActions: options.staticActions
-			});
+			options.type = 'popup';
+			this.setParam(options);
+			this.render(options);
 		},
 		form: function form() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-			this.resetParam();
-			this.type = 'form';
-			this.ok = options.ok;
-			this.close = options.close;
-			this.custom = options.custom;
-			this.view = options.template instanceof FormView ? options.template : new FormView({
-				template: options.template,
-				validate: options.validate
-			});
-			this.render({
-				customName: options.customName,
-				staticActions: options.staticActions
-			});
+			options.type = 'form';
+			this.setParam(options);
+			this.render(options);
 		},
 		onClose: function onClose() {
 			if (this.close) this.close.apply(this, this.callbackArgs());
@@ -273,7 +254,7 @@
 				message: "",
 				customName: "",
 				template: ""
-			}, data);
+			}, _.pick(data, ['message', 'customName', 'template', 'staticActions']));
 			this.$el.html(this.template(data));
 
 			if (this.view) {

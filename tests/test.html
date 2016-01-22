@@ -66,23 +66,17 @@ Vbi curarum abiectis ponderibus aliis tamquam nodum et codicem difficillimum Cae
         notif[$('input[name=type]:checked').val()]($('.notif').val(), {permanent: $('input.permanent')[0].checked});
     }
     function alerte(){
-      popup.alert({
+      popup.basic({
         message: $('.confirm').val(),
-        custom: !$('.custom:checked').length ? null : function(popup){
-            alert('Custom');
-        },
         ok: !$('.ok:checked').length ? null : function(popup){
             alert('Ok');
-        },
-        close: !$('.close:checked').length ? null : function(popup){
-            alert('Close');
         },
         customName: 'Pizi',
         staticActions: true
       });
     }
     function confirm(){
-        popup.confirm({
+        popup.basic({
             message: $('.confirm').val(),
             custom: !$('.custom:checked').length ? null : function(popup){
                 alert('Custom');
