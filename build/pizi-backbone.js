@@ -28,7 +28,6 @@
 	var FormView = _Backbone2.default.View.extend({
 		tagName: "form",
 		initialize: function initialize(options) {
-			this.container = options.container;
 			this.template = options.template;
 			this.validate = options.validate;
 		},
@@ -59,14 +58,12 @@
 				}
 			}
 
+			this.isValid = valid;
 			return valid;
 		},
 		render: function render() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-			if (this.template) {
-				this.$el.html(this.template);
-			}
+			if (this.template) this.$el.html(this.template);
 		}
 	});
 
@@ -136,7 +133,7 @@
 	var PopupView = _Backbone2.default.View.extend({
 		tagName: "popup",
 		className: "reveal-modal container-fluid small",
-		template: _.template("<a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n\t\t\t\t\t\t  <div>\n\t\t\t\t\t\t\t<div class=\"row content\">\n\t\t\t\t\t\t\t\t<% template ? print(template) : print(message) %>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<ul class=\"actions button-group right radius\">\n\t\t\t\t\t\t\t\t<li class=\"ok\"><a class=\"button\">Ok</a></li>\n\t\t\t\t\t\t\t\t<li class=\"custom\"><a class=\"button\"><%= customName %></a></li>\n\t\t\t\t\t\t\t\t<li class=\"cancel\"><a class=\"button alert\">Cancel</a></li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t  </div>"),
+		template: _.template("<a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n\t\t\t\t\t\t  <div>\n\t\t\t\t\t\t\t<div class=\"row content\">\n\t\t\t\t\t\t\t\t<% template ? print(template) : print(message) %>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<ul class=\"actions button-group right\">\n\t\t\t\t\t\t\t\t<li class=\"ok\"><a class=\"button\">Ok</a></li>\n\t\t\t\t\t\t\t\t<li class=\"custom\"><a class=\"button\"><%= customName %></a></li>\n\t\t\t\t\t\t\t\t<li class=\"cancel\"><a class=\"button alert\">Cancel</a></li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t  </div>"),
 		initialize: function initialize() {
 			var _this = this;
 
@@ -172,8 +169,16 @@
 			'click .ok': 'onOk',
 			'click .custom': 'onCustom'
 		},
+		resetParam: function resetParam() {
+			this.type = null;
+			this.ok = null;
+			this.close = null;
+			this.custom = null;
+			this.view = null;
+		},
 		confirm: function confirm() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+			this.resetParam();
 			this.type = 'confirm';
 			this.ok = options.ok;
 			this.close = options.close;
@@ -186,10 +191,9 @@
 		},
 		alert: function alert() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+			this.resetParam();
 			this.type = 'alert';
 			this.ok = true;
-			this.close = null;
-			this.custom = null;
 			this.render({
 				message: options.message,
 				staticActions: options.staticActions
@@ -197,6 +201,7 @@
 		},
 		form: function form() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+			this.resetParam();
 			this.type = 'form';
 			this.ok = options.ok;
 			this.close = options.close;
@@ -211,38 +216,41 @@
 			});
 		},
 		onClose: function onClose() {
-			this.$el.foundation('reveal', 'close');
-			if (this.close && this.type === 'confirm') this.close(this);
+			if (this.close) this.close.apply(this, this.callbackArgs());
+			this.closePopup();
 		},
 		onOk: function onOk() {
-			var valid = true;
-
-			if (this.ok && this.type === 'confirm') {
-				this.ok(this);
-			} else if (this.ok && this.type === 'form') {
-				valid = this.view.check();
-				this.ok(this.view.getValues(), valid, this);
-			}
-
-			if (valid) this.$el.foundation('reveal', 'close');
+			if (this.ok) this.ok.apply(this, this.callbackArgs());
+			if (this.type === 'form' && this.view.isValid) this.closePopup();
 		},
 		onCustom: function onCustom() {
+			if (this.custom) this.custom.apply(this, this.callbackArgs());
+			this.closePopup();
+		},
+		closePopup: function closePopup() {
 			this.$el.foundation('reveal', 'close');
-			if (this.custom && this.type === 'confirm') this.custom(this);
+		},
+		callbackArgs: function callbackArgs() {
+			var valid = true;
+			var args = [];
+
+			if (this.type === 'form') {
+				valid = this.view.check();
+				args.push(this.view.getValues());
+				args.push(valid);
+			}
+
+			args.push(this);
+			return args;
 		},
 		renderActions: function renderActions(staticActions) {
 			this.$el.find('.ok')[this.ok ? 'show' : 'hide']();
 			this.$el.find('.cancel')[this.close ? 'show' : 'hide']();
 			this.$el.find('.custom')[this.custom ? 'show' : 'hide']();
 			this.$el.find('.actions')[!this.ok && !this.close && !this.custom ? 'hide' : 'show']();
-
-			if (staticActions) {
-				this.$el.find('.actions').addClass('static');
-				this.$el.addClass('static-actions');
-			} else {
-				this.$el.find('.actions').removeClass('static');
-				this.$el.removeClass('static-actions');
-			}
+			staticActions = staticActions ? 'addClass' : 'removeClass';
+			this.$el.find('.actions')[staticActions]('static');
+			this.$el[staticActions]('static-actions');
 		},
 		resize: function resize() {
 			var $popup = $('popup');

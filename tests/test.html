@@ -31,17 +31,23 @@
   <div style="padding: 10px;padding-top: 30px;">
     <h1>pizi-backbone test</h1>
     <!-- Confirm Popup -->
-    <textarea type="text" class="confirm" style="width:50%;">Test!</textarea>
+    <textarea type="text" class="confirm" style="width:50%;">Iamque lituis cladium concrepantibus internarum non celate ut antea turbidum saeviebat ingenium a veri consideratione detortum et nullo inpositorum vel conpositorum fidem sollemniter inquirente nec discernente a societate noxiorum insontes velut exturbatum e iudiciis fas omne discessit, et causarum legitima silente defensione carnifex rapinarum sequester et obductio capitum et bonorum ubique multatio versabatur per orientales provincias, quas recensere puto nunc oportunum absque Mesopotamia digesta, cum bella Parthica dicerentur, et Aegypto, quam necessario aliud reieci ad tempus.
+
+Vide, quantum, inquam, fallare, Torquate. oratio me istius philosophi non offendit; nam et complectitur verbis, quod vult, et dicit plane, quod intellegam; et tamen ego a philosopho, si afferat eloquentiam, non asperner, si non habeat, non admodum flagitem. re mihi non aeque satisfacit, et quidem locis pluribus. sed quot homines, tot sententiae; falli igitur possumus.
+
+Nec sane haec sola pernicies orientem diversis cladibus adfligebat. Namque et Isauri, quibus est usitatum saepe pacari saepeque inopinis excursibus cuncta miscere, ex latrociniis occultis et raris, alente inpunitate adulescentem in peius audaciam ad bella gravia proruperunt, diu quidem perduelles spiritus inrequietis motibus erigentes, hac tamen indignitate perciti vehementer, ut iactitabant, quod eorum capiti quidam consortes apud Iconium Pisidiae oppidum in amphitheatrali spectaculo feris praedatricibus obiecti sunt praeter morem.
+
+Cognitis enim pilatorum caesorumque funeribus nemo deinde ad has stationes appulit navem, sed ut Scironis praerupta letalia declinantes litoribus Cypriis contigui navigabant, quae Isauriae scopulis sunt controversa.
+
+Vbi curarum abiectis ponderibus aliis tamquam nodum et codicem difficillimum Caesarem convellere nisu valido cogitabat, eique deliberanti cum proximis clandestinis conloquiis et nocturnis qua vi, quibusve commentis id fieret, antequam effundendis rebus pertinacius incumberet confidentia, acciri mollioribus scriptis per simulationem tractatus publici nimis urgentis eundem placuerat Gallum, ut auxilio destitutus sine ullo interiret obstaculo.</textarea>
     <input type="checkbox" class="ok" checked/>Ok
     <input type="checkbox" class="close"/>Close
     <input type="checkbox" class="custom"/>Custom
     <br>
     <button onclick="confirm()">Confirm Popup</button>
     <!-- Alert Popup -->
-    <textarea type="text" class="alert" style="width:50%;">Test!</textarea>
     <button onclick="alerte()">Alert Popup</button>
     <!-- Form Popup -->
-    <textarea type="text" class="alert" style="width:50%;">Test!</textarea>
     <button onclick="formPopup()">Form Popup</button>
     <!--  Notification -->
     <input type="text" class="notif" value="Test!" style="width:50%"/>
@@ -60,18 +66,31 @@
         notif[$('input[name=type]:checked').val()]($('.notif').val(), {permanent: $('input.permanent')[0].checked});
     }
     function alerte(){
-      popup.alert({message: $('.alert').val(), staticActions: true});
+      popup.alert({
+        message: $('.confirm').val(),
+        custom: !$('.custom:checked').length ? null : function(popup){
+            alert('Custom');
+        },
+        ok: !$('.ok:checked').length ? null : function(popup){
+            alert('Ok');
+        },
+        close: !$('.close:checked').length ? null : function(popup){
+            alert('Close');
+        },
+        customName: 'Pizi',
+        staticActions: true
+      });
     }
     function confirm(){
         popup.confirm({
             message: $('.confirm').val(),
-            custom: !$('.custom:checked').length ? null : function(){
+            custom: !$('.custom:checked').length ? null : function(popup){
                 alert('Custom');
             },
-            ok: !$('.ok:checked').length ? null : function(){
+            ok: !$('.ok:checked').length ? null : function(popup){
                 alert('Ok');
             },
-            close: !$('.close:checked').length ? null : function(){
+            close: !$('.close:checked').length ? null : function(popup){
                 alert('Close');
             },
             customName: 'Pizi'
@@ -88,9 +107,17 @@
     function formPopup(){
       popup.form({
         template: '<form> <div class="row"> <div class="large-12 columns"> <label>Input Label <input name="input1" type="text" placeholder="large-12.columns" /> </label> </div> </div> <div class="row"> <div class="large-4 columns"> <label>Input Label <input type="text" name="input2" placeholder="large-4.columns" /> </label> </div> <div class="large-4 columns"> <label>Input Label <input name="input3" type="text" placeholder="large-4.columns" /> </label> </div> <div class="large-4 columns"> <div class="row collapse"> <label>Input Label</label> <div class="small-9 columns"> <input type="text" name="input4" placeholder="small-9.columns" /> </div> <div class="small-3 columns"> <span class="postfix">.com</span> </div> </div> </div> </div> <div class="row"> <div class="large-12 columns"> <label>Select Box <select name="select"> <option value="husker">Husker</option> <option value="starbuck">Starbuck</option> <option value="hotdog">Hot Dog</option> <option value="apollo">Apollo</option> </select> </label> </div> </div> <div class="row"> <div class="large-6 columns"> <label>Choose Your Favorite</label> <input type="radio" name="pokemon" value="Red" id="pokemonRed"><label for="pokemonRed">Red</label> <input type="radio" name="pokemon" value="Blue" id="pokemonBlue"><label for="pokemonBlue">Blue</label> </div> <div class="large-6 columns"> <label>Check these out</label> <input id="checkbox1" type="checkbox" name="check1"><label for="checkbox1">Checkbox 1</label> <input id="checkbox2" name="check2" type="checkbox"><label for="checkbox2">Checkbox 2</label> </div> </div> <div class="row"> <div class="large-12 columns"> <label>Textarea Label <textarea name="textarea" placeholder="small-12.columns"></textarea> </label> </div> </div> </form>',
-        ok: function(data, valid){
-          console.log(data);
+        custom: !$('.custom:checked').length ? null : function(popup){
+            alert('Custom');
         },
+        ok: !$('.ok:checked').length ? null : function(data, valid, popup){
+            alert('Ok');
+            console.log(data);
+        },
+        close: !$('.close:checked').length ? null : function(popup){
+            alert('Close');
+        },
+        customName: 'Pizi',
         validate: [
           {
             name: 'input1',

@@ -37,9 +37,13 @@ popup.reveal-modal .content{
 popup.reveal-modal .content form{
 	text-align: left;
 }
+popup.reveal-modal .content form .row:last-child{
+	margin-bottom: 0;
+}
 popup.reveal-modal .actions{
-	margin-top: 30px;
+	margin-top: 10px;
 	margin-right: 10px;
+	text-align: right;
 }
 popup.reveal-modal .actions.static{
 	position: absolute;

@@ -3,7 +3,6 @@ import Backbone from "Backbone";
 let FormView = Backbone.View.extend({
 	tagName: "form",
 	initialize(options){
-		this.container = options.container;
 		this.template = options.template;
 		this.validate = options.validate;
 	},
@@ -30,12 +29,11 @@ let FormView = Backbone.View.extend({
 				el.next('small.error').remove();
 			}
 		}
+		this.isValid = valid;
 		return valid;
 	},
 	render(options = {}){
-		if(this.template){
-			this.$el.html(this.template);
-		}
+		if(this.template) this.$el.html(this.template);
 	}
 });
 
@@ -100,7 +98,7 @@ let PopupView = Backbone.View.extend({
 							<div class="row content">
 								<% template ? print(template) : print(message) %>
 							</div>
-							<ul class="actions button-group right radius">
+							<ul class="actions button-group right">
 								<li class="ok"><a class="button">Ok</a></li>
 								<li class="custom"><a class="button"><%= customName %></a></li>
 								<li class="cancel"><a class="button alert">Cancel</a></li>
@@ -138,7 +136,15 @@ let PopupView = Backbone.View.extend({
 		'click .ok': 'onOk',
         'click .custom': 'onCustom'
 	},
+	resetParam(){
+		this.type = null;
+		this.ok = null;
+		this.close = null;
+		this.custom = null;
+		this.view = null;
+	},
 	confirm(options = {}){
+		this.resetParam();
 		this.type = 'confirm';
 		this.ok = options.ok;
 		this.close = options.close;
@@ -150,16 +156,16 @@ let PopupView = Backbone.View.extend({
 		});
 	},
 	alert(options = {}){
+		this.resetParam();
 		this.type = 'alert';
 		this.ok = true;
-		this.close = null;
-		this.custom = null;
 		this.render({
 			message: options.message,
 			staticActions: options.staticActions
 		});
 	},
 	form(options = {}){
+		this.resetParam();
 		this.type = 'form';
 		this.ok = options.ok;
 		this.close = options.close;
@@ -171,36 +177,39 @@ let PopupView = Backbone.View.extend({
 		});
 	},
 	onClose(){
-		this.$el.foundation('reveal', 'close');
-		if(this.close && this.type === 'confirm') this.close(this);
+		if(this.close) this.close.apply(this, this.callbackArgs());
+		this.closePopup();
 	},
 	onOk(){
-		let valid = true;
-		if(this.ok && this.type === 'confirm'){
-			this.ok(this);
-		}
-		else if(this.ok && this.type === 'form'){
-			valid = this.view.check();
-			this.ok(this.view.getValues(), valid, this);
-		}
-		if(valid) this.$el.foundation('reveal', 'close');
+		if(this.ok) this.ok.apply(this, this.callbackArgs());
+		if(this.type === 'form' && this.view.isValid) this.closePopup();
 	},
     onCustom(){
+		if(this.custom) this.custom.apply(this, this.callbackArgs());
+		this.closePopup();
+	},
+	closePopup(){
 		this.$el.foundation('reveal', 'close');
-		if(this.custom && this.type === 'confirm') this.custom(this);
+	},
+	callbackArgs(){
+		let valid = true;
+		let args = [];
+		if(this.type === 'form'){
+			valid = this.view.check();
+			args.push(this.view.getValues());
+			args.push(valid);
+		}
+		args.push(this);
+		return args;
 	},
 	renderActions(staticActions){
 		this.$el.find('.ok')[this.ok ? 'show' : 'hide']();
 		this.$el.find('.cancel')[this.close ? 'show' : 'hide']();
 		this.$el.find('.custom')[this.custom ? 'show' : 'hide']();
 		this.$el.find('.actions')[!this.ok && !this.close && !this.custom ? 'hide' : 'show']();
-		if(staticActions){
-			this.$el.find('.actions').addClass('static');
-			this.$el.addClass('static-actions');
-		} else {
-			this.$el.find('.actions').removeClass('static');
-			this.$el.removeClass('static-actions');
-		}
+		staticActions = staticActions ? 'addClass': 'removeClass' ;
+		this.$el.find('.actions')[staticActions]('static');
+		this.$el[staticActions]('static-actions');
     },
     resize(){
         var $popup = $('popup');
