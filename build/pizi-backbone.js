@@ -40,39 +40,22 @@
 		},
 		check: function check() {
 			var valid = true;
-			var _iteratorNormalCompletion = true;
-			var _didIteratorError = false;
-			var _iteratorError = undefined;
+			var i = this.validate.length;
 
-			try {
-				for (var _iterator = this.validate[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-					var rule = _step.value;
-					var el = this.$el.find('*[name="' + rule.name + '"]');
+			while (i--) {
+				var rule = this.validate[i];
+				var el = this.$el.find('*[name="' + rule.name + '"]');
 
-					if (el.length && !el.val().match(rule.regex)) {
-						if (!el.hasClass('error')) {
-							el.addClass('error');
-							el.after('<small class="error">' + rule.message + '</small>');
-						}
+				if (el.length && !el.val().match(rule.regex)) {
+					if (!el.hasClass('error')) {
+						el.addClass('error');
+						el.after('<small class="error">' + rule.message + '</small>');
+					}
 
-						valid = false;
-					} else if (el.length) {
-						el.removeClass('error');
-						el.next('small.error').remove();
-					}
-				}
-			} catch (err) {
-				_didIteratorError = true;
-				_iteratorError = err;
-			} finally {
-				try {
-					if (!_iteratorNormalCompletion && _iterator.return) {
-						_iterator.return();
-					}
-				} finally {
-					if (_didIteratorError) {
-						throw _iteratorError;
-					}
+					valid = false;
+				} else if (el.length) {
+					el.removeClass('error');
+					el.next('small.error').remove();
 				}
 			}
 
@@ -153,7 +136,7 @@
 	var PopupView = _Backbone2.default.View.extend({
 		tagName: "popup",
 		className: "reveal-modal container-fluid small",
-		template: _.template("<a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n\t\t\t\t\t\t  <div>\n\t\t\t\t\t\t\t<div class=\"row content\">\n\t\t\t\t\t\t\t\t<% template ? print(template) : print(message) %>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class=\"actions right\">\n\t\t\t\t\t\t\t\t<button class=\"ok button\">Ok</button>\n\t\t\t\t\t\t\t\t<button class=\"custom button\"><%= customName %></button>\n\t\t\t\t\t\t\t\t<button class=\"cancel button\">Cancel</button>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t  </div>"),
+		template: _.template("<a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n\t\t\t\t\t\t  <div>\n\t\t\t\t\t\t\t<div class=\"row content\">\n\t\t\t\t\t\t\t\t<% template ? print(template) : print(message) %>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<ul class=\"actions button-group right radius\">\n\t\t\t\t\t\t\t\t<li class=\"ok\"><a class=\"button\">Ok</a></li>\n\t\t\t\t\t\t\t\t<li class=\"custom\"><a class=\"button\"><%= customName %></a></li>\n\t\t\t\t\t\t\t\t<li class=\"cancel\"><a class=\"button alert\">Cancel</a></li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t  </div>"),
 		initialize: function initialize() {
 			var _this = this;
 
@@ -184,10 +167,10 @@
 			});
 		},
 		events: {
-			'click a.close-reveal-modal': 'onClose',
-			'click button.cancel': 'onClose',
-			'click button.ok': 'onOk',
-			'click button.custom': 'onCustom'
+			'click .close-reveal-modal': 'onClose',
+			'click .cancel': 'onClose',
+			'click .ok': 'onOk',
+			'click .custom': 'onCustom'
 		},
 		confirm: function confirm() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
@@ -197,17 +180,19 @@
 			this.custom = options.custom;
 			this.render({
 				message: options.message,
-				customName: options.customName
+				customName: options.customName,
+				staticActions: options.staticActions
 			});
 		},
 		alert: function alert() {
-			var message = arguments.length <= 0 || arguments[0] === undefined ? "" : arguments[0];
+			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 			this.type = 'alert';
 			this.ok = true;
 			this.close = null;
 			this.custom = null;
 			this.render({
-				message: message
+				message: options.message,
+				staticActions: options.staticActions
 			});
 		},
 		form: function form() {
@@ -216,12 +201,13 @@
 			this.ok = options.ok;
 			this.close = options.close;
 			this.custom = options.custom;
-			this.view = new FormView({
+			this.view = options.template instanceof FormView ? options.template : new FormView({
 				template: options.template,
 				validate: options.validate
 			});
 			this.render({
-				customName: options.customName
+				customName: options.customName,
+				staticActions: options.staticActions
 			});
 		},
 		onClose: function onClose() {
@@ -229,26 +215,34 @@
 			if (this.close && this.type === 'confirm') this.close(this);
 		},
 		onOk: function onOk() {
-			var close = true;
+			var valid = true;
 
 			if (this.ok && this.type === 'confirm') {
 				this.ok(this);
 			} else if (this.ok && this.type === 'form') {
-				close = this.view.check();
-				this.ok(this, this.view.getValues());
+				valid = this.view.check();
+				this.ok(this.view.getValues(), valid, this);
 			}
 
-			if (close) this.$el.foundation('reveal', 'close');
+			if (valid) this.$el.foundation('reveal', 'close');
 		},
 		onCustom: function onCustom() {
 			this.$el.foundation('reveal', 'close');
 			if (this.custom && this.type === 'confirm') this.custom(this);
 		},
-		renderActions: function renderActions() {
+		renderActions: function renderActions(staticActions) {
 			this.$el.find('.ok')[this.ok ? 'show' : 'hide']();
 			this.$el.find('.cancel')[this.close ? 'show' : 'hide']();
 			this.$el.find('.custom')[this.custom ? 'show' : 'hide']();
 			this.$el.find('.actions')[!this.ok && !this.close && !this.custom ? 'hide' : 'show']();
+
+			if (staticActions) {
+				this.$el.find('.actions').addClass('static');
+				this.$el.addClass('static-actions');
+			} else {
+				this.$el.find('.actions').removeClass('static');
+				this.$el.removeClass('static-actions');
+			}
 		},
 		resize: function resize() {
 			var $popup = $('popup');
@@ -279,7 +273,7 @@
 				this.$el.find('.content').html(this.view.$el);
 			}
 
-			this.renderActions();
+			this.renderActions(data.staticActions);
 			this.$el.foundation('reveal', 'open');
 			this.delegateEvents();
 		}

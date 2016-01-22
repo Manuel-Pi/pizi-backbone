@@ -15,7 +15,9 @@ let FormView = Backbone.View.extend({
 	},
 	check(){
 		let valid = true;
-		for(let rule of this.validate){
+		let i = this.validate.length;
+		while(i--){
+			let rule = this.validate[i];
 			let el = this.$el.find('*[name="' + rule.name + '"]');
 			if(el.length && !el.val().match(rule.regex)){
 				if(!el.hasClass('error')){
@@ -98,11 +100,11 @@ let PopupView = Backbone.View.extend({
 							<div class="row content">
 								<% template ? print(template) : print(message) %>
 							</div>
-							<div class="actions right">
-								<button class="ok button">Ok</button>
-								<button class="custom button"><%= customName %></button>
-								<button class="cancel button">Cancel</button>
-							</div>
+							<ul class="actions button-group right radius">
+								<li class="ok"><a class="button">Ok</a></li>
+								<li class="custom"><a class="button"><%= customName %></a></li>
+								<li class="cancel"><a class="button alert">Cancel</a></li>
+							</ul>
 						  </div>`),
 	initialize(){
 		if($('popup').length === 0){
@@ -131,10 +133,10 @@ let PopupView = Backbone.View.extend({
         });
 	},
 	events: {
-		'click a.close-reveal-modal': 'onClose',
-        'click button.cancel': 'onClose',
-		'click button.ok': 'onOk',
-        'click button.custom': 'onCustom'
+		'click .close-reveal-modal': 'onClose',
+        'click .cancel': 'onClose',
+		'click .ok': 'onOk',
+        'click .custom': 'onCustom'
 	},
 	confirm(options = {}){
 		this.type = 'confirm';
@@ -143,16 +145,18 @@ let PopupView = Backbone.View.extend({
         this.custom = options.custom;
 		this.render({
 			message: options.message,
-            customName: options.customName
+            customName: options.customName,
+			staticActions: options.staticActions
 		});
 	},
-	alert(message = ""){
+	alert(options = {}){
 		this.type = 'alert';
 		this.ok = true;
 		this.close = null;
 		this.custom = null;
 		this.render({
-			message: message
+			message: options.message,
+			staticActions: options.staticActions
 		});
 	},
 	form(options = {}){
@@ -160,9 +164,10 @@ let PopupView = Backbone.View.extend({
 		this.ok = options.ok;
 		this.close = options.close;
         this.custom = options.custom;
-		this.view = new FormView({template: options.template, validate: options.validate});
+		this.view = options.template instanceof FormView ? options.template : new FormView({template: options.template, validate: options.validate});
 		this.render({
-			customName: options.customName
+			customName: options.customName,
+			staticActions: options.staticActions
 		});
 	},
 	onClose(){
@@ -170,25 +175,32 @@ let PopupView = Backbone.View.extend({
 		if(this.close && this.type === 'confirm') this.close(this);
 	},
 	onOk(){
-		let close = true;
+		let valid = true;
 		if(this.ok && this.type === 'confirm'){
 			this.ok(this);
 		}
 		else if(this.ok && this.type === 'form'){
-			close = this.view.check();
-			this.ok(this, this.view.getValues());
+			valid = this.view.check();
+			this.ok(this.view.getValues(), valid, this);
 		}
-		if(close) this.$el.foundation('reveal', 'close');
+		if(valid) this.$el.foundation('reveal', 'close');
 	},
     onCustom(){
 		this.$el.foundation('reveal', 'close');
 		if(this.custom && this.type === 'confirm') this.custom(this);
 	},
-	renderActions(){
+	renderActions(staticActions){
 		this.$el.find('.ok')[this.ok ? 'show' : 'hide']();
 		this.$el.find('.cancel')[this.close ? 'show' : 'hide']();
 		this.$el.find('.custom')[this.custom ? 'show' : 'hide']();
 		this.$el.find('.actions')[!this.ok && !this.close && !this.custom ? 'hide' : 'show']();
+		if(staticActions){
+			this.$el.find('.actions').addClass('static');
+			this.$el.addClass('static-actions');
+		} else {
+			this.$el.find('.actions').removeClass('static');
+			this.$el.removeClass('static-actions');
+		}
     },
     resize(){
         var $popup = $('popup');
@@ -214,7 +226,7 @@ let PopupView = Backbone.View.extend({
 			this.view.render();
 			this.$el.find('.content').html(this.view.$el);
 		}
-        this.renderActions();
+        this.renderActions(data.staticActions);
 		this.$el.foundation('reveal', 'open');
 		this.delegateEvents();
 	}

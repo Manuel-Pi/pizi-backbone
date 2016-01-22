@@ -19,6 +19,9 @@ popup.reveal-modal{
 	top: 59.5px;
 	display: none;
 }
+popup.reveal-modal.static-actions{
+	padding-bottom: 90px;
+}
 popup.reveal-modal > div{
 	overflow-x: hidden;
     overflow-y: auto;
@@ -37,13 +40,13 @@ popup.reveal-modal .content form{
 popup.reveal-modal .actions{
 	margin-top: 30px;
 	margin-right: 10px;
-	overflow: hidden;
 }
-popup.reveal-modal .actions.{
-	margin-top: 30px;
-	margin-right: 10px;
-	overflow: hidden;
+popup.reveal-modal .actions.static{
+	position: absolute;
+	bottom: 1.875rem;
+	right: 1.875rem;
+	margin-right: 0px;
 }
-popup.reveal-modal .actions button{
+popup.reveal-modal .actions a{
 	margin: 0;
 }
