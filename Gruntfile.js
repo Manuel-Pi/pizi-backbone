@@ -16,6 +16,16 @@ module.exports = function(grunt) {
 			}
 		},
 		copy: {
+            build : {
+                files : [
+                    {
+                        expand: true,
+                        cwd: '<%= srcFile %>',
+                        src: ['*.css'],
+                        dest: '<%= build %>'
+                    }
+                ]
+            },
 			deployDev : {
 					files : [
 						{
@@ -97,7 +107,7 @@ module.exports = function(grunt) {
 		}
 	});
 	
-	grunt.registerTask('build', ['jshint', 'clean:build', 'babel']);
+	grunt.registerTask('build', ['jshint', 'clean:build', 'babel', 'copy:build']);
 	grunt.registerTask('deployDev', ['jshint', 'clean:deployDev', 'copy:deployDev']);
 	grunt.registerTask('deployBuild', ['build', 'clean:deployDev', 'copy:deployDevBabel', 'copy:css', 'bower', 'clean:bower']);
 };

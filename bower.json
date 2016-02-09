@@ -1,7 +1,10 @@
 {
   "name": "pizi-backbone",
   "homepage": "https://github.com/Manuel-Pi/pizi-backbone",
-  "main": "build/pizi-backbone.js",
+  "main": [
+      "build/pizi-backbone.js",
+      "build/pizi-backbone.css"
+  ],
   "dependencies": {
     "backbone": "*"
   },
