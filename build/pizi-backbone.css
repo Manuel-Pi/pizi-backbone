@@ -1,0 +1,56 @@
+notification{
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 1000;
+}
+notification div.alert-box{
+	margin-bottom: 0;
+	padding-top: 5px;
+    padding-bottom: 5px;
+}
+popup.reveal-modal{
+	padding-top: 50px;
+	padding-right: calc(1.875rem - 10px);
+	position: fixed;
+	display: block;
+	opacity: 1;
+	visibility: visible;
+	top: 59.5px;
+	display: none;
+}
+popup.reveal-modal.static-actions{
+	padding-bottom: 90px;
+}
+popup.reveal-modal > div{
+	overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 100%;
+    width: 100%;
+}
+popup.reveal-modal .content{
+	overflow: hidden;
+	padding-right: 10px;
+	word-wrap: break-word;
+	text-align: justify;
+}
+popup.reveal-modal .content form{
+	text-align: left;
+}
+popup.reveal-modal .content form .row:last-child{
+	margin-bottom: 0;
+}
+popup.reveal-modal .actions{
+	margin-top: 10px;
+	margin-right: 10px;
+	text-align: right;
+}
+popup.reveal-modal .actions.static{
+	position: absolute;
+	bottom: 1.875rem;
+	right: 1.875rem;
+	margin-right: 0px;
+}
+popup.reveal-modal .actions a{
+	margin: 0;
+}
