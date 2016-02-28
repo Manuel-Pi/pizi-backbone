@@ -3,6 +3,7 @@ notification{
 	top: 0;
 	width: 100%;
 	z-index: 1000;
+    display: block;
 }
 notification div.alert-box{
 	margin-bottom: 0;

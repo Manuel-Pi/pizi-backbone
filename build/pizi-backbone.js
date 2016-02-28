@@ -2,22 +2,22 @@
 
 (function (global, factory) {
 	if (typeof define === "function" && define.amd) {
-		define(["exports", "Backbone"], factory);
+		define(["exports", "backbone"], factory);
 	} else if (typeof exports !== "undefined") {
-		factory(exports, require("Backbone"));
+		factory(exports, require("backbone"));
 	} else {
 		var mod = {
 			exports: {}
 		};
-		factory(mod.exports, global.Backbone);
+		factory(mod.exports, global.backbone);
 		global.piziBackbone = mod.exports;
 	}
-})(this, function (exports, _Backbone) {
+})(this, function (exports, _backbone) {
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 
-	var _Backbone2 = _interopRequireDefault(_Backbone);
+	var _backbone2 = _interopRequireDefault(_backbone);
 
 	function _interopRequireDefault(obj) {
 		return obj && obj.__esModule ? obj : {
@@ -25,9 +25,10 @@
 		};
 	}
 
-	var FormView = _Backbone2.default.View.extend({
+	var FormView = _backbone2.default.View.extend({
 		tagName: "form",
-		initialize: function initialize(options) {
+		initialize: function initialize() {
+			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 			this.template = options.template;
 			this.validate = options.validate;
 		},
@@ -67,7 +68,7 @@
 		}
 	});
 
-	var NotificationView = _Backbone2.default.View.extend({
+	var NotificationView = _backbone2.default.View.extend({
 		tagName: "notification",
 		className: "container-fluid",
 		template: _.template("<div data-alert class=\"alert-box <%= type %>\">\n            \t\t\t   \t<%= message %><a class=\"close\">&times;</a>\n        \t\t\t\t   </div>"),
@@ -130,9 +131,9 @@
 		}
 	});
 
-	var PopupView = _Backbone2.default.View.extend({
+	var PopupView = _backbone2.default.View.extend({
 		tagName: "popup",
-		className: "reveal-modal container-fluid small",
+		className: "reveal-modal container-fluid",
 		template: _.template("<a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n\t\t\t\t\t\t  <div>\n\t\t\t\t\t\t\t<div class=\"row content\">\n\t\t\t\t\t\t\t\t<% template ? print(template) : print(message) %>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<ul class=\"actions button-group right\">\n\t\t\t\t\t\t\t\t<li class=\"ok\"><a class=\"button\">Ok</a></li>\n\t\t\t\t\t\t\t\t<li class=\"custom\"><a class=\"button\"><%= customName %></a></li>\n\t\t\t\t\t\t\t\t<li class=\"cancel\"><a class=\"button alert\">Cancel</a></li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t  </div>"),
 		initialize: function initialize() {
 			var _this = this;
@@ -174,12 +175,28 @@
 			this.ok = params.ok;
 			this.close = params.close;
 			this.custom = params.custom;
+			this.$el.addClass(params.class);
+			var view = this;
 
 			if (params.template) {
-				this.view = params.template instanceof FormView ? params.template : new FormView({
-					template: params.template,
-					validate: params.validate
-				});
+				if (params.type === "form") {
+					this.view = params.template instanceof FormView ? params.template : new FormView({
+						template: params.template,
+						validate: params.validate
+					});
+				} else if (params.template instanceof _backbone2.default.View) {
+					this.view = params.template;
+				}
+
+				if (this.view.ok) {
+					var ok = params.ok;
+
+					params.ok = function () {
+						view.view.ok(ok);
+					};
+				}
+
+				this.ok = params.ok || this.ok;
 			} else {
 				this.view = null;
 			}
@@ -202,7 +219,7 @@
 		},
 		onOk: function onOk() {
 			if (this.ok) this.ok.apply(this, this.callbackArgs());
-			if (this.type === 'form' && this.view.isValid) this.closePopup();
+			if (this.type !== 'form' || !this.view.isValid) this.closePopup();
 		},
 		onCustom: function onCustom() {
 			if (this.custom) this.custom.apply(this, this.callbackArgs());
@@ -260,6 +277,11 @@
 			if (this.view) {
 				this.view.render();
 				this.$el.find('.content').html(this.view.$el);
+			}
+
+			if (!this.foundationInitilized) {
+				$(document).foundation('reveal', 'reflow');
+				this.foundationInitilized = true;
 			}
 
 			this.renderActions(data.staticActions);

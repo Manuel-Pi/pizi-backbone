@@ -1,8 +1,8 @@
-import Backbone from "Backbone";
+import Backbone from "backbone";
 
 let FormView = Backbone.View.extend({
 	tagName: "form",
-	initialize(options){
+	initialize(options = {}){
 		this.template = options.template;
 		this.validate = options.validate;
 	},
@@ -92,7 +92,7 @@ let NotificationView = Backbone.View.extend({
 
 let PopupView = Backbone.View.extend({
 	tagName: "popup",
-	className: "reveal-modal container-fluid small",
+	className: "reveal-modal container-fluid",
 	template: _.template(`<a class="close-reveal-modal" aria-label="Close">&#215;</a>
 						  <div>
 							<div class="row content">
@@ -141,8 +141,24 @@ let PopupView = Backbone.View.extend({
 		this.ok = params.ok;
 		this.close = params.close;
 		this.custom = params.custom;
+        this.$el.addClass(params.class);
+        var view = this;
 		if(params.template){
-			this.view =  params.template instanceof FormView ? params.template : new FormView({template: params.template, validate: params.validate});
+            if(params.type === "form"){
+                this.view =  params.template instanceof FormView ? params.template : new FormView({
+                    template: params.template,
+                    validate: params.validate
+                });
+            } else if(params.template instanceof Backbone.View){
+                this.view = params.template;
+            }
+            if(this.view.ok){
+                var ok = params.ok;
+                params.ok = function(){
+                    view.view.ok(ok);
+                };
+            }
+            this.ok = params.ok || this.ok;
 		} else {
 			this.view = null;
 		}
@@ -163,7 +179,7 @@ let PopupView = Backbone.View.extend({
 	},
 	onOk(){
 		if(this.ok) this.ok.apply(this, this.callbackArgs());
-		if(this.type === 'form' && this.view.isValid) this.closePopup();
+		if(this.type !== 'form' || !this.view.isValid) this.closePopup();
 	},
     onCustom(){
 		if(this.custom) this.custom.apply(this, this.callbackArgs());
@@ -215,6 +231,10 @@ let PopupView = Backbone.View.extend({
 		if(this.view){
 			this.view.render();
 			this.$el.find('.content').html(this.view.$el);
+		}
+        if(!this.foundationInitilized){
+			$(document).foundation('reveal', 'reflow');
+			this.foundationInitilized = true;
 		}
         this.renderActions(data.staticActions);
 		this.$el.foundation('reveal', 'open');
