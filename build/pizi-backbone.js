@@ -30,7 +30,7 @@
 		initialize: function initialize() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 			this.template = this.template || options.template;
-			this.validate = this.validate || options.validate;
+			this.validate = this.validate || options.validate || [];
 		},
 		inputError: function inputError(name, error) {
 			this.$el.find("input[name=\"" + name + "\"]").addClass('error');

@@ -4,7 +4,7 @@ let FormView = Backbone.View.extend({
 	tagName: "form",
 	initialize(options = {}){
 		this.template = this.template || options.template;
-		this.validate = this.validate || options.validate;
+		this.validate = this.validate || options.validate || [];
 	},
 	inputError(name, error){
 		this.$el.find(`input[name="${name}"]`).addClass('error');
