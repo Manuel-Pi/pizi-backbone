@@ -171,6 +171,8 @@
 			'click .custom': 'onCustom'
 		},
 		setParam: function setParam(params) {
+			var _this2 = this;
+
 			this.type = params.type;
 			this.ok = params.ok;
 			this.close = params.close;
@@ -182,10 +184,17 @@
 				if (params.type === "form") {
 					this.view = params.template instanceof FormView ? params.template : new FormView({
 						template: params.template,
-						validate: params.validate
+						validate: params.validate,
+						resize: function resize() {
+							_this2.resize();
+						}
 					});
 				} else if (params.template instanceof _backbone2.default.View) {
 					this.view = params.template;
+
+					this.view.resize = function () {
+						_this2.resize();
+					};
 				}
 
 				if (this.view.ok) {

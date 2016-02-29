@@ -147,10 +147,12 @@ let PopupView = Backbone.View.extend({
             if(params.type === "form"){
                 this.view =  params.template instanceof FormView ? params.template : new FormView({
                     template: params.template,
-                    validate: params.validate
+                    validate: params.validate,
+                    resize: ()=>{this.resize();}
                 });
             } else if(params.template instanceof Backbone.View){
                 this.view = params.template;
+                this.view.resize = ()=>{this.resize();};
             }
             if(this.view.ok){
                 var ok = params.ok;
