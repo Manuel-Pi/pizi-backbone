@@ -284,6 +284,7 @@
 				this.foundationInitilized = true;
 			}
 
+			this.resize();
 			this.renderActions(data.staticActions);
 			this.$el.foundation('reveal', 'open');
 			this.delegateEvents();

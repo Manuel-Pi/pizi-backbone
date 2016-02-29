@@ -236,6 +236,7 @@ let PopupView = Backbone.View.extend({
 			$(document).foundation('reveal', 'reflow');
 			this.foundationInitilized = true;
 		}
+        this.resize();
         this.renderActions(data.staticActions);
 		this.$el.foundation('reveal', 'open');
 		this.delegateEvents();
