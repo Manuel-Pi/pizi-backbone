@@ -179,7 +179,7 @@ let PopupView = Backbone.View.extend({
 	},
 	onOk(){
 		if(this.ok) this.ok.apply(this, this.callbackArgs());
-		if(this.type !== 'form' || !this.view.isValid) this.closePopup();
+		if(this.type !== 'form' || this.view.isValid) this.closePopup();
 	},
     onCustom(){
 		if(this.custom) this.custom.apply(this, this.callbackArgs());
