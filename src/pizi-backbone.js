@@ -122,12 +122,20 @@ let PopupView = Backbone.View.extend({
 		let view = this;
 		$(document).on('closed.fndtn.reveal', '[data-reveal]',()=>{
             window.removeEventListener('resize', this.resize);
-			$('body').css('overflow', 'auto');
+			$('body').css({
+                overflow: 'auto',
+                position: '',
+                height: ''
+            });
         });
 		$(document).on('opened.fndtn.reveal', '[data-reveal]',()=>{
 			view.resize();
 			window.addEventListener('resize', this.resize, true);
-			$('body').css('overflow', 'hidden');
+			$('body').css({
+                overflow: 'hidden',
+                position: 'absolute',
+                height: '100%'
+            });
         });
 	},
 	events: {
