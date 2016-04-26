@@ -157,18 +157,14 @@
 			$(document).on('closed.fndtn.reveal', '[data-reveal]', function () {
 				window.removeEventListener('resize', _this.resize);
 				$('body').css({
-					overflow: 'auto',
-					position: '',
-					height: ''
+					overflow: 'auto'
 				});
 			});
 			$(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
 				view.resize();
 				window.addEventListener('resize', _this.resize, true);
 				$('body').css({
-					overflow: 'hidden',
-					position: 'absolute',
-					height: '100%'
+					overflow: 'hidden'
 				});
 			});
 		},
