@@ -240,6 +240,7 @@
 			this.closePopup();
 		},
 		closePopup: function closePopup() {
+			if (this.view) this.view.remove();
 			this.$el.foundation('reveal', 'close');
 		},
 		callbackArgs: function callbackArgs() {

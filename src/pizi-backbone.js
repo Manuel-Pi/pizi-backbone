@@ -193,6 +193,7 @@ let PopupView = Backbone.View.extend({
 		this.closePopup();
 	},
 	closePopup(){
+		if(this.view) this.view.remove();
 		this.$el.foundation('reveal', 'close');
 	},
 	callbackArgs(){
