@@ -155,14 +155,14 @@
 			});
 			var view = this;
 			$(document).on('closed.fndtn.reveal', '[data-reveal]', function () {
-				window.removeEventListener('resize', _this.resize);
+				if (!_this.resizeOff) window.removeEventListener('resize', _this.resize);
 				$('body').css({
 					overflow: 'auto'
 				});
 			});
 			$(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
 				view.resize();
-				window.addEventListener('resize', _this.resize, true);
+				if (!_this.resizeOff) window.addEventListener('resize', _this.resize, true);
 				$('body').css({
 					overflow: 'hidden'
 				});
@@ -182,6 +182,7 @@
 			this.close = params.close;
 			this.custom = params.custom;
 			this.$el.addClass(params.class);
+			this.resizeOff = params.resizeOff;
 			var view = this;
 
 			if (params.template) {
@@ -266,7 +267,7 @@
 		resize: function resize() {
 			var $popup = $('popup');
 			$popup.height("");
-			var bodyHeight = $('body').height() - 10;
+			var bodyHeight = $(window).height() - 10;
 			var height = $popup.outerHeight();
 			var top = 5;
 
