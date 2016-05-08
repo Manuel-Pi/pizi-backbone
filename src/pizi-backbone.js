@@ -121,17 +121,17 @@ let PopupView = Backbone.View.extend({
 		});
 		let view = this;
 		$(document).on('closed.fndtn.reveal', '[data-reveal]',()=>{
-            window.removeEventListener('resize', this.resize);
+			if(!this.resizeOff) window.removeEventListener('resize', this.resize);
 			$('body').css({
                 overflow: 'auto'
             });
         });
 		$(document).on('opened.fndtn.reveal', '[data-reveal]',()=>{
 			view.resize();
-			window.addEventListener('resize', this.resize, true);
+			if(!this.resizeOff) window.addEventListener('resize', this.resize, true);
 			$('body').css({
-                overflow: 'hidden'
-            });
+				overflow: 'hidden'
+			});
         });
 	},
 	events: {
@@ -146,6 +146,7 @@ let PopupView = Backbone.View.extend({
 		this.close = params.close;
 		this.custom = params.custom;
         this.$el.addClass(params.class);
+		this.resizeOff = params.resizeOff;
         var view = this;
 		if(params.template){
             if(params.type === "form"){
@@ -217,7 +218,7 @@ let PopupView = Backbone.View.extend({
     resize(){
         var $popup = $('popup');
         $popup.height("");
-        var bodyHeight = $('body').height() - 10;
+        var bodyHeight = $(window).height() - 10;
         var height = $popup.outerHeight();
         var top = 5;
         if(height > bodyHeight){
