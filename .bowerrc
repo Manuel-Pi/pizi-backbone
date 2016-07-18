@@ -1,6 +1,4 @@
 {
   "timeout": 120000,
-  "proxy":"http://air3plfms19.sesame.infotel.com:8080",
-  "https-proxy":"http://air3plfms19.sesame.infotel.com:8080",
   "strict-ssl"  : false
 }

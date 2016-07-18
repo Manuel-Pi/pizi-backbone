@@ -22,6 +22,7 @@
   <!--<script src="//code.jquery.com/qunit/qunit-1.18.0.js"></script>-->
   <script src="underscore/underscore.js"></script>
   <script src="backbone/backbone.js"></script>
+  <script>backbone = Backbone</script>
   <script src="modernizr/modernizr.js"></script>
   <script src="fastclick/lib/fastclick.js"></script>
   <script src="jquery.cookie/jquery.cookie.js"></script>
@@ -58,10 +59,19 @@ Vbi curarum abiectis ponderibus aliis tamquam nodum et codicem difficillimum Cae
     <input type="checkbox" class="permanent"/>Permanent
     <br>
     <button onclick="notify()">Notification</button>
+    <input type="text" class="wait" value="Test!" style="width:50%"/>
+    <button onclick="startWait()">Start Wait</button>
   </div>
   <script>
     notif = new piziBackbone.default.NotificationView();
     popup = new piziBackbone.default.PopupView();
+    wait = new piziBackbone.default.WaitView();
+    function startWait(){
+      wait.startWait($('.wait').val());
+      setTimeout(function(){
+        wait.stopWait();
+      }, 5000);
+    }
     function notify(){
         notif[$('input[name=type]:checked').val()]($('.notif').val(), {permanent: $('input.permanent')[0].checked});
     }

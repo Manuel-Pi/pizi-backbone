@@ -40,7 +40,7 @@
 		},
 		check: function check() {
 			var valid = true;
-			var i = this.validate.length;
+			var i = this.validate ? this.validate.length : 0;
 
 			while (i--) {
 				var rule = this.validate[i];
@@ -189,11 +189,12 @@
 				if (params.type === "form") {
 					this.view = params.template instanceof FormView ? params.template : new FormView({
 						template: params.template,
-						validate: params.validate,
-						resize: function resize() {
-							_this2.resize();
-						}
+						validate: params.validate
 					});
+
+					this.view.resize = function () {
+						_this2.resize();
+					};
 				} else if (params.template instanceof _backbone2.default.View) {
 					this.view = params.template;
 
@@ -220,12 +221,14 @@
 			options.type = 'popup';
 			this.setParam(options);
 			this.render(options);
+			return this;
 		},
 		form: function form() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 			options.type = 'form';
 			this.setParam(options);
 			this.render(options);
+			return this;
 		},
 		onClose: function onClose() {
 			if (this.close) this.close.apply(this, this.callbackArgs());
@@ -306,9 +309,39 @@
 		}
 	});
 
+	var WaitView = _backbone2.default.View.extend({
+		template: _.template("<div style=\"width:100%;height:100%;position:fixed;z-index: 10000;background-color:black;opacity:0.6;\"></div>\n\t\t<div style=\"text-align:center; position: fixed; font-size:3em; width: 100%;z-index: 10000; top:calc(50% - 50px)\"><%= message %></div>"),
+		tagName: "wait",
+		className: "hide",
+		initialize: function initialize() {
+			if ($('wait').length === 0) {
+				this.$el.prependTo('body');
+			} else {
+				this.$el = $($('wait')[0]);
+			}
+		},
+		startWait: function startWait(message) {
+			$('body').css({
+				overflow: 'hidden'
+			});
+			this.$el.html(this.template({
+				message: message
+			}));
+			this.$el.show();
+		},
+		stopWait: function stopWait() {
+			$('body').css({
+				overflow: ''
+			});
+			this.$el.hide();
+			this.$el.html('');
+		}
+	});
+
 	exports.default = {
 		NotificationView: NotificationView,
 		PopupView: PopupView,
-		FormView: FormView
+		FormView: FormView,
+		WaitView: WaitView
 	};
 });

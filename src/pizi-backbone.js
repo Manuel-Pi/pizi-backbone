@@ -14,7 +14,7 @@ let FormView = Backbone.View.extend({
 	},
 	check(){
 		let valid = true;
-		let i = this.validate.length;
+		let i = this.validate ? this.validate.length : 0;
 		while(i--){
 			let rule = this.validate[i];
 			let el = this.$el.find('*[name="' + rule.name + '"]');
@@ -152,9 +152,9 @@ let PopupView = Backbone.View.extend({
             if(params.type === "form"){
                 this.view =  params.template instanceof FormView ? params.template : new FormView({
                     template: params.template,
-                    validate: params.validate,
-                    resize: ()=>{this.resize();}
+                    validate: params.validate
                 });
+				this.view.resize = ()=>{this.resize();};
             } else if(params.template instanceof Backbone.View){
                 this.view = params.template;
                 this.view.resize = ()=>{this.resize();};
@@ -174,11 +174,13 @@ let PopupView = Backbone.View.extend({
 		options.type = 'popup';
 		this.setParam(options);
 		this.render(options);
+		return this;
 	},
 	form(options = {}){
 		options.type = 'form';
 		this.setParam(options);
 		this.render(options);
+		return this;
 	},
 	onClose(){
 		if(this.close) this.close.apply(this, this.callbackArgs());
@@ -251,8 +253,33 @@ let PopupView = Backbone.View.extend({
 	}
 });
 
+var WaitView = Backbone.View.extend({
+	template: _.template(`<div style="width:100%;height:100%;position:fixed;z-index: 10000;background-color:black;opacity:0.6;"></div>
+		<div style="text-align:center; position: fixed; font-size:3em; width: 100%;z-index: 10000; top:calc(50% - 50px)"><%= message %></div>`),
+	tagName: "wait",
+	className: "hide",
+	initialize: function(){
+		if($('wait').length === 0){
+			this.$el.prependTo('body');
+		} else {
+			this.$el = $($('wait')[0]);
+		}	
+	},
+	startWait: function(message){
+		$('body').css({overflow: 'hidden'});
+		this.$el.html(this.template({message: message}));
+		this.$el.show();
+	},
+	stopWait: function(){
+		$('body').css({overflow: ''});
+		this.$el.hide();
+		this.$el.html('');
+	}
+});
+
 export default {
 	NotificationView,
 	PopupView,
-	FormView
+	FormView,
+	WaitView
 };
