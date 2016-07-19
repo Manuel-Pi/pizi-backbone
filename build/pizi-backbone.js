@@ -62,6 +62,19 @@
 			this.isValid = valid;
 			return valid;
 		},
+		submit: function submit() {
+			var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+			$.ajax({
+				type: 'POST',
+				url: params.url,
+				data: new FormData(this.$el[0]),
+				processData: false,
+				contentType: false,
+				cache: false,
+				success: params.success,
+				error: params.error
+			});
+		},
 		render: function render() {
 			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 			if (this.template) this.$el.html(this.template);
