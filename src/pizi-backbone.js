@@ -215,7 +215,7 @@ let PopupView = Backbone.View.extend({
 		let args = [];
 		if(this.type === 'form'){
 			valid = this.view.check();
-			args.push(this.view.getValues());
+			args.push([this.view.getValues()]);
 			args.push(valid);
 		}
 		args.push(this);
