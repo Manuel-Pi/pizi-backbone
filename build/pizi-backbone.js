@@ -244,15 +244,15 @@
 			return this;
 		},
 		onClose: function onClose() {
-			if (this.close) this.close.apply(this, this.callbackArgs());
+			if (this.close) this.close.apply(this, [this.callbackArgs()]);
 			this.closePopup();
 		},
 		onOk: function onOk() {
-			if (this.ok) this.ok.apply(this, this.callbackArgs());
+			if (this.ok) this.ok.apply(this, [this.callbackArgs()]);
 			if (this.type !== 'form' || this.view.isValid) this.closePopup();
 		},
 		onCustom: function onCustom() {
-			if (this.custom) this.custom.apply(this, this.callbackArgs());
+			if (this.custom) this.custom.apply(this, [this.callbackArgs()]);
 			this.closePopup();
 		},
 		closePopup: function closePopup() {
@@ -265,7 +265,7 @@
 
 			if (this.type === 'form') {
 				valid = this.view.check();
-				args.push([this.view.getValues()]);
+				args.push(this.view.getValues());
 				args.push(valid);
 			}
 
