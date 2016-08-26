@@ -2,31 +2,30 @@ import Backbone from "backbone";
 
 let FormView = Backbone.View.extend({
 	tagName: "form",
-	initialize(options = {}){
-		this.template = this.template || options.template;
-		this.validate = this.validate || options.validate || [];
+	initialize(options = {errorClass: 'error', validate: []}){
+		this.template = options.template;
+		this.validate = options.validate;
+		this.errorClass = options.errorClass;
 	},
 	inputError(name, error){
-		this.$el.find(`input[name="${name}"]`).addClass('error');
+		this.$el.find(`input[name="${name}"]`).addClass(this.errorClass);
 	},
 	getValues(){
 		return this.$el.serializeArray();
 	},
 	check(){
 		let valid = true;
-		let i = this.validate ? this.validate.length : 0;
-		while(i--){
-			let rule = this.validate[i];
+		for(const rule in this.validate){
 			let el = this.$el.find('*[name="' + rule.name + '"]');
 			if(el.length && !el.val().match(rule.regex)){
-				if(!el.hasClass('error')){
-					el.addClass('error');
-					el.after('<small class="error">' + rule.message + '</small>');
+				if(!el.hasClass(this.errorClass)){
+					el.addClass(this.errorClass);
+					el.after('<small class="' + this.errorClass + '">' + rule.message + '</small>');
 				}
 				valid = false;
 			} else if(el.length){
-				el.removeClass('error');
-				el.next('small.error').remove();
+				el.removeClass(this.errorClass);
+				el.next('small.' + this.errorClass).remove();
 			}
 		}
 		this.isValid = valid;

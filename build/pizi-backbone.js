@@ -28,34 +28,36 @@
 	var FormView = _backbone2.default.View.extend({
 		tagName: "form",
 		initialize: function initialize() {
-			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-			this.template = this.template || options.template;
-			this.validate = this.validate || options.validate || [];
+			var options = arguments.length <= 0 || arguments[0] === undefined ? {
+				errorClass: 'error',
+				validate: []
+			} : arguments[0];
+			this.template = options.template;
+			this.validate = options.validate;
+			this.errorClass = options.errorClass;
 		},
 		inputError: function inputError(name, error) {
-			this.$el.find("input[name=\"" + name + "\"]").addClass('error');
+			this.$el.find("input[name=\"" + name + "\"]").addClass(this.errorClass);
 		},
 		getValues: function getValues() {
 			return this.$el.serializeArray();
 		},
 		check: function check() {
 			var valid = true;
-			var i = this.validate ? this.validate.length : 0;
 
-			while (i--) {
-				var rule = this.validate[i];
+			for (var rule in this.validate) {
 				var el = this.$el.find('*[name="' + rule.name + '"]');
 
 				if (el.length && !el.val().match(rule.regex)) {
-					if (!el.hasClass('error')) {
-						el.addClass('error');
-						el.after('<small class="error">' + rule.message + '</small>');
+					if (!el.hasClass(this.errorClass)) {
+						el.addClass(this.errorClass);
+						el.after('<small class="' + this.errorClass + '">' + rule.message + '</small>');
 					}
 
 					valid = false;
 				} else if (el.length) {
-					el.removeClass('error');
-					el.next('small.error').remove();
+					el.removeClass(this.errorClass);
+					el.next('small.' + this.errorClass).remove();
 				}
 			}
 
