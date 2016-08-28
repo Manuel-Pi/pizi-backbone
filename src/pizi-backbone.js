@@ -7,12 +7,8 @@ const FormView = Backbone.View.extend({
 		this.validate = options.validate;
 		this.errorClass = options.errorClass;
 	},
-	inputError(name, error){
-		this.$el.find(`input[name="${name}"]`).addClass(this.errorClass);
-	},
-	getValues(){
-		return this.$el.serializeArray();
-	},
+	inputError(name, error){ this.$el.find(`input[name="${name}"]`).addClass(this.errorClass); },
+	getValues(){ return this.$el.serializeArray(); },
 	check(){
 		let valid = true;
 		for(const rule in this.validate){
@@ -43,9 +39,7 @@ const FormView = Backbone.View.extend({
 				error: params.error
 		});
 	},
-	render(options = {}){
-		if(this.template) this.$el.html(this.template);
-	}
+	render(options = {}){ if(this.template) this.$el.html(this.template); }
 });
 
 const NotificationView = Backbone.View.extend({
@@ -55,7 +49,14 @@ const NotificationView = Backbone.View.extend({
 	initialize(options = {}){
 		if($('notification').length === 0) this.$el.prependTo('body'); else this.$el = $($('notification')[0]);
 		this.duration = options.duration || 3000;
-		this.template = options.template || template;
+		this.template = options.template || this.template;
+	},
+	events:{
+		'click .close': 'close'
+	},
+	close(event){
+		const $notif = event.currentTarget ? $(event.currentTarget).parents('.notif') : event;
+		$notif.slideUp({complete(){ $notif.remove(); }});
 	},
 	success(message, options = {}){ this.render({className: "success", message: message}, options); },
 	error(message, options = {}){ this.render({className: "alert",message: message}, options); },
@@ -64,7 +65,7 @@ const NotificationView = Backbone.View.extend({
 	render(notif, options = {}){
 		let $notif = $(this.template({className: notif.className, message: notif.message}));
 		this.$el.append($notif);
-		if(!options.permanent) setTimeout(() => { $notif.slideUp({complete(){ $notif.remove(); }}); }, options.duration || this.duration);
+		if(!options.permanent) setTimeout(() => { this.close($notif); }, options.duration || this.duration);
 	}
 });
 

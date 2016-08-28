@@ -95,7 +95,21 @@
 		initialize(options = {}) {
 			if ($('notification').length === 0) this.$el.prependTo('body');else this.$el = $($('notification')[0]);
 			this.duration = options.duration || 3000;
-			this.template = options.template || template;
+			this.template = options.template || this.template;
+		},
+
+		events: {
+			'click .close': 'close'
+		},
+
+		close(event) {
+			const $notif = event.currentTarget ? $(event.currentTarget).parents('.notif') : event;
+			$notif.slideUp({
+				complete() {
+					$notif.remove();
+				}
+
+			});
 		},
 
 		success(message, options = {}) {
@@ -132,12 +146,7 @@
 			}));
 			this.$el.append($notif);
 			if (!options.permanent) setTimeout(() => {
-				$notif.slideUp({
-					complete() {
-						$notif.remove();
-					}
-
-				});
+				this.close($notif);
 			}, options.duration || this.duration);
 		}
 
