@@ -291,7 +291,7 @@ const WaitView = Backbone.View.extend({
 const useJwt = (options = {header: 'authorization', token(){}, onUnauthorized(){}})=>{
 	const sync = Backbone.sync;
 	Backbone.sync = (method, model, options)=>{
-		const token = token();
+		const token = options.token();
 		if(token) options.beforeSend = (xhr)=>{ xhr.setRequestHeader(options.header, 'Bearer ' + token); };
 		let err = options.error;
 		options.error= (param)=>{
