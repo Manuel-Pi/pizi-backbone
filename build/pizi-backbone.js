@@ -390,7 +390,7 @@
 		const sync = _backbone2.default.sync;
 
 		_backbone2.default.sync = (method, model, options) => {
-			const token = token();
+			const token = options.token();
 			if (token) options.beforeSend = xhr => {
 				xhr.setRequestHeader(options.header, 'Bearer ' + token);
 			};
