@@ -25,7 +25,7 @@
 		};
 	}
 
-	let FormView = _backbone2.default.View.extend({
+	const FormView = _backbone2.default.View.extend({
 		tagName: "form",
 
 		initialize(options = {
@@ -87,7 +87,7 @@
 
 	});
 
-	let NotificationView = _backbone2.default.View.extend({
+	const NotificationView = _backbone2.default.View.extend({
 		tagName: "notification",
 		className: "container-fluid",
 		template: _.template(`<div data-alert class="alert-box <%= type %>">
@@ -153,7 +153,7 @@
 
 	});
 
-	let PopupView = _backbone2.default.View.extend({
+	const PopupView = _backbone2.default.View.extend({
 		tagName: "popup",
 		className: "reveal-modal container-fluid",
 		template: _.template(`<a class="close-reveal-modal" aria-label="Close">&#215;</a>
@@ -348,17 +348,18 @@
 
 	});
 
-	var WaitView = _backbone2.default.View.extend({
+	const WaitView = _backbone2.default.View.extend({
 		template: _.template(`<div style="width:100%;height:100%;position:fixed;z-index: 10000;background-color:black;opacity:0.6;"></div>
 		<div style="text-align:center; position: fixed; font-size:3em; width: 100%;z-index: 10000; top:calc(50% - 50px)"><%= message %></div>`),
 		tagName: "wait",
-		className: "hide",
 		initialize: function () {
 			if ($('wait').length === 0) {
 				this.$el.prependTo('body');
 			} else {
 				this.$el = $('wait').first();
 			}
+
+			this.$el.hide();
 		},
 		start: function (message) {
 			$('body').css({

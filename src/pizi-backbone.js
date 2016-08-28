@@ -1,6 +1,6 @@
 import Backbone from "backbone";
 
-let FormView = Backbone.View.extend({
+const FormView = Backbone.View.extend({
 	tagName: "form",
 	initialize(options = {errorClass: 'error', validate: []}){
 		this.template = options.template;
@@ -48,7 +48,7 @@ let FormView = Backbone.View.extend({
 	}
 });
 
-let NotificationView = Backbone.View.extend({
+const NotificationView = Backbone.View.extend({
 	tagName: "notification",
 	className: "container-fluid",
 	template:  _.template(`<div data-alert class="alert-box <%= type %>">
@@ -101,7 +101,7 @@ let NotificationView = Backbone.View.extend({
 	}
 });
 
-let PopupView = Backbone.View.extend({
+const PopupView = Backbone.View.extend({
 	tagName: "popup",
 	className: "reveal-modal container-fluid",
 	template: _.template(`<a class="close-reveal-modal" aria-label="Close">&#215;</a>
@@ -264,17 +264,17 @@ let PopupView = Backbone.View.extend({
 	}
 });
 
-var WaitView = Backbone.View.extend({
+const WaitView = Backbone.View.extend({
 	template: _.template(`<div style="width:100%;height:100%;position:fixed;z-index: 10000;background-color:black;opacity:0.6;"></div>
 		<div style="text-align:center; position: fixed; font-size:3em; width: 100%;z-index: 10000; top:calc(50% - 50px)"><%= message %></div>`),
 	tagName: "wait",
-	className: "hide",
 	initialize: function(){
 		if($('wait').length === 0){
 			this.$el.prependTo('body');
 		} else {
 			this.$el = $('wait').first();
-		}	
+		}
+		this.$el.hide();
 	},
 	start: function(message){
 		$('body').css({overflow: 'hidden'});
