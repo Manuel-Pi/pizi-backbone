@@ -409,7 +409,8 @@
 		NotificationView,
 		PopupView,
 		FormView,
-		WaitView
+		WaitView,
+		useJwt
 	};
 	module.exports = exports["default"];
 });

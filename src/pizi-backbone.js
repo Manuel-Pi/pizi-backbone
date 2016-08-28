@@ -287,9 +287,8 @@ const WaitView = Backbone.View.extend({
 		this.$el.html('');
 	}
 });
-
+// Add token in REST request
 const useJwt = (options = {header: 'authorization', token(){}, onUnauthorized(){}})=>{
-		// Add token in REST request
 	const sync = Backbone.sync;
 	Backbone.sync = (method, model, options)=>{
 		const token = token();
@@ -307,5 +306,6 @@ export default {
 	NotificationView,
 	PopupView,
 	FormView,
-	WaitView
+	WaitView,
+	useJwt
 };
