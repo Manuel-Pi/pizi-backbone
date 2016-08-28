@@ -389,19 +389,19 @@
 	}) => {
 		const sync = _backbone2.default.sync;
 
-		_backbone2.default.sync = (method, model, options) => {
+		_backbone2.default.sync = (method, model, opts) => {
 			const token = options.token();
-			if (token) options.beforeSend = xhr => {
+			if (token) opts.beforeSend = xhr => {
 				xhr.setRequestHeader(options.header, 'Bearer ' + token);
 			};
-			let err = options.error;
+			let err = opts.error;
 
-			options.error = param => {
+			opts.error = param => {
 				if (param.status && param.status === 401) options.onUnauthorized();
 				err(param);
 			};
 
-			sync(method, model, options);
+			sync(method, model, opts);
 		};
 	};
 
