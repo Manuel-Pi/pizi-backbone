@@ -379,6 +379,32 @@
 		}
 	});
 
+	const useJwt = (options = {
+		header: 'authorization',
+
+		token() {},
+
+		onUnauthorized() {}
+
+	}) => {
+		const sync = _backbone2.default.sync;
+
+		_backbone2.default.sync = (method, model, options) => {
+			const token = token();
+			if (token) options.beforeSend = xhr => {
+				xhr.setRequestHeader(options.header, 'Bearer ' + token);
+			};
+			let err = options.error;
+
+			options.error = param => {
+				if (param.status && param.status === 401) options.onUnauthorized();
+				err(param);
+			};
+
+			sync(method, model, options);
+		};
+	};
+
 	exports.default = {
 		NotificationView,
 		PopupView,
