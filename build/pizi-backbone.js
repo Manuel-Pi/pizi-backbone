@@ -90,37 +90,31 @@
 	const NotificationView = _backbone2.default.View.extend({
 		tagName: "notification",
 		className: "container-fluid",
-		template: _.template(`<div data-alert class="alert-box <%= type %>">
-            			   	<%= message %><a class="close">&times;</a>
-        				   </div>`),
+		template: _.template(`<h3 class="notif <%= className %>"><%= message %><a class="close">&times;</a></h3>`),
 
 		initialize(options = {}) {
+			if ($('notification').length === 0) this.$el.prependTo('body');else this.$el = $($('notification')[0]);
 			this.duration = options.duration || 3000;
-
-			if ($('notification').length === 0) {
-				this.$el.prependTo('body');
-			} else {
-				this.$el = $($('notification')[0]);
-			}
+			this.template = options.template || template;
 		},
 
 		success(message, options = {}) {
 			this.render({
-				type: "success",
+				className: "success",
 				message: message
 			}, options);
 		},
 
 		error(message, options = {}) {
 			this.render({
-				type: "alert",
+				className: "alert",
 				message: message
 			}, options);
 		},
 
 		warn(message, options = {}) {
 			this.render({
-				type: "warning",
+				className: "warning",
 				message: message
 			}, options);
 		},
@@ -131,24 +125,20 @@
 			}, options);
 		},
 
-		render(news, options = {}) {
-			let $news = $(this.template({
-				type: news.type,
-				message: news.message
+		render(notif, options = {}) {
+			let $notif = $(this.template({
+				className: notif.className,
+				message: notif.message
 			}));
-			this.$el.append($news);
+			this.$el.append($notif);
+			if (!options.permanent) setTimeout(() => {
+				$notif.slideUp({
+					complete() {
+						$notif.remove();
+					}
 
-			if (!options.permanent) {
-				setTimeout(() => {
-					$news.slideUp();
-					$news.find("a.close").click();
-				}, options.duration || this.duration);
-			}
-
-			if (!this.foundationInitilized) {
-				$(document).foundation('alert', 'reflow');
-				this.foundationInitilized = true;
-			}
+				});
+			}, options.duration || this.duration);
 		}
 
 	});

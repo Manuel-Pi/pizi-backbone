@@ -5,10 +5,8 @@ notification{
 	z-index: 1000;
     display: block;
 }
-notification div.alert-box{
-	margin-bottom: 0;
-	padding-top: 5px;
-    padding-bottom: 5px;
+notification .close{
+	float: right;
 }
 popup.reveal-modal{
 	padding-top: 50px;
