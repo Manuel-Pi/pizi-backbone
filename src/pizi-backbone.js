@@ -288,6 +288,21 @@ const WaitView = Backbone.View.extend({
 	}
 });
 
+const useJwt = (options = {header: 'authorization', token(){}, onUnauthorized(){}})=>{
+		// Add token in REST request
+	const sync = Backbone.sync;
+	Backbone.sync = (method, model, options)=>{
+		const token = token();
+		if(token) options.beforeSend = (xhr)=>{ xhr.setRequestHeader(options.header, 'Bearer ' + token); };
+		let err = options.error;
+		options.error= (param)=>{
+			if(param.status && param.status === 401) options.onUnauthorized();
+			err(param);
+		};
+		sync(method, model, options);
+	};
+};
+
 export default {
 	NotificationView,
 	PopupView,
