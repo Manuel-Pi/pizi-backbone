@@ -273,15 +273,15 @@ var WaitView = Backbone.View.extend({
 		if($('wait').length === 0){
 			this.$el.prependTo('body');
 		} else {
-			this.$el = $($('wait')[0]);
+			this.$el = $('wait').first();
 		}	
 	},
-	startWait: function(message){
+	start: function(message){
 		$('body').css({overflow: 'hidden'});
 		this.$el.html(this.template({message: message}));
 		this.$el.show();
 	},
-	stopWait: function(){
+	stop: function(){
 		$('body').css({overflow: ''});
 		this.$el.hide();
 		this.$el.html('');

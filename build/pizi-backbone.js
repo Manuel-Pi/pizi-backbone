@@ -360,7 +360,7 @@
 				this.$el = $($('wait')[0]);
 			}
 		},
-		startWait: function (message) {
+		start: function (message) {
 			$('body').css({
 				overflow: 'hidden'
 			});
@@ -369,7 +369,7 @@
 			}));
 			this.$el.show();
 		},
-		stopWait: function () {
+		stop: function () {
 			$('body').css({
 				overflow: ''
 			});
