@@ -2,17 +2,17 @@
 
 (function (global, factory) {
 	if (typeof define === "function" && define.amd) {
-		define(["exports", "backbone"], factory);
+		define(["module", "exports", "backbone"], factory);
 	} else if (typeof exports !== "undefined") {
-		factory(exports, require("backbone"));
+		factory(module, exports, require("backbone"));
 	} else {
 		var mod = {
 			exports: {}
 		};
-		factory(mod.exports, global.backbone);
+		factory(mod, mod.exports, global.backbone);
 		global.piziBackbone = mod.exports;
 	}
-})(this, function (exports, _backbone) {
+})(this, function (module, exports, _backbone) {
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
@@ -25,28 +25,31 @@
 		};
 	}
 
-	var FormView = _backbone2.default.View.extend({
+	let FormView = _backbone2.default.View.extend({
 		tagName: "form",
-		initialize: function initialize() {
-			var options = arguments.length <= 0 || arguments[0] === undefined ? {
-				errorClass: 'error',
-				validate: []
-			} : arguments[0];
+
+		initialize(options = {
+			errorClass: 'error',
+			validate: []
+		}) {
 			this.template = options.template;
 			this.validate = options.validate;
 			this.errorClass = options.errorClass;
 		},
-		inputError: function inputError(name, error) {
-			this.$el.find("input[name=\"" + name + "\"]").addClass(this.errorClass);
+
+		inputError(name, error) {
+			this.$el.find(`input[name="${ name }"]`).addClass(this.errorClass);
 		},
-		getValues: function getValues() {
+
+		getValues() {
 			return this.$el.serializeArray();
 		},
-		check: function check() {
-			var valid = true;
 
-			for (var rule in this.validate) {
-				var el = this.$el.find('*[name="' + rule.name + '"]');
+		check() {
+			let valid = true;
+
+			for (const rule in this.validate) {
+				let el = this.$el.find('*[name="' + rule.name + '"]');
 
 				if (el.length && !el.val().match(rule.regex)) {
 					if (!el.hasClass(this.errorClass)) {
@@ -64,8 +67,8 @@
 			this.isValid = valid;
 			return valid;
 		},
-		submit: function submit() {
-			var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+		submit(params = {}) {
 			$.ajax({
 				type: 'POST',
 				url: params.url,
@@ -77,18 +80,21 @@
 				error: params.error
 			});
 		},
-		render: function render() {
-			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+		render(options = {}) {
 			if (this.template) this.$el.html(this.template);
 		}
+
 	});
 
-	var NotificationView = _backbone2.default.View.extend({
+	let NotificationView = _backbone2.default.View.extend({
 		tagName: "notification",
 		className: "container-fluid",
-		template: _.template("<div data-alert class=\"alert-box <%= type %>\">\n            \t\t\t   \t<%= message %><a class=\"close\">&times;</a>\n        \t\t\t\t   </div>"),
-		initialize: function initialize() {
-			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+		template: _.template(`<div data-alert class="alert-box <%= type %>">
+            			   	<%= message %><a class="close">&times;</a>
+        				   </div>`),
+
+		initialize(options = {}) {
 			this.duration = options.duration || 3000;
 
 			if ($('notification').length === 0) {
@@ -97,43 +103,43 @@
 				this.$el = $($('notification')[0]);
 			}
 		},
-		success: function success(message) {
-			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+		success(message, options = {}) {
 			this.render({
 				type: "success",
 				message: message
 			}, options);
 		},
-		error: function error(message) {
-			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+		error(message, options = {}) {
 			this.render({
 				type: "alert",
 				message: message
 			}, options);
 		},
-		warn: function warn(message) {
-			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+		warn(message, options = {}) {
 			this.render({
 				type: "warning",
 				message: message
 			}, options);
 		},
-		notify: function notify(message) {
-			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+		notify(message, options = {}) {
 			this.render({
 				message: message
 			}, options);
 		},
-		render: function render(news) {
-			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-			var $news = $(this.template({
+
+		render(news, options = {}) {
+			let $news = $(this.template({
 				type: news.type,
 				message: news.message
 			}));
 			this.$el.append($news);
 
 			if (!options.permanent) {
-				setTimeout(function () {
+				setTimeout(() => {
 					$news.slideUp();
 					$news.find("a.close").click();
 				}, options.duration || this.duration);
@@ -144,15 +150,25 @@
 				this.foundationInitilized = true;
 			}
 		}
+
 	});
 
-	var PopupView = _backbone2.default.View.extend({
+	let PopupView = _backbone2.default.View.extend({
 		tagName: "popup",
 		className: "reveal-modal container-fluid",
-		template: _.template("<a class=\"close-reveal-modal\" aria-label=\"Close\">&#215;</a>\n\t\t\t\t\t\t  <div>\n\t\t\t\t\t\t\t<div class=\"row content\">\n\t\t\t\t\t\t\t\t<% template ? print(template) : print(message) %>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<ul class=\"actions button-group right\">\n\t\t\t\t\t\t\t\t<li class=\"ok\"><a class=\"button\">Ok</a></li>\n\t\t\t\t\t\t\t\t<li class=\"custom\"><a class=\"button\"><%= customName %></a></li>\n\t\t\t\t\t\t\t\t<li class=\"cancel\"><a class=\"button alert\">Cancel</a></li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t  </div>"),
-		initialize: function initialize() {
-			var _this = this;
+		template: _.template(`<a class="close-reveal-modal" aria-label="Close">&#215;</a>
+						  <div>
+							<div class="row content">
+								<% template ? print(template) : print(message) %>
+							</div>
+							<ul class="actions button-group right">
+								<li class="ok"><a class="button">Ok</a></li>
+								<li class="custom"><a class="button"><%= customName %></a></li>
+								<li class="cancel"><a class="button alert">Cancel</a></li>
+							</ul>
+						  </div>`),
 
+		initialize() {
 			if ($('popup').length === 0) {
 				this.$el.prependTo('body');
 			} else {
@@ -168,30 +184,30 @@
 					animation: 'none'
 				}
 			});
-			var view = this;
-			$(document).on('closed.fndtn.reveal', '[data-reveal]', function () {
-				if (!_this.resizeOff) window.removeEventListener('resize', _this.resize);
+			let view = this;
+			$(document).on('closed.fndtn.reveal', '[data-reveal]', () => {
+				if (!this.resizeOff) window.removeEventListener('resize', this.resize);
 				$('body').css({
 					overflow: 'auto'
 				});
 			});
-			$(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
+			$(document).on('opened.fndtn.reveal', '[data-reveal]', () => {
 				view.resize();
-				if (!_this.resizeOff) window.addEventListener('resize', _this.resize, true);
+				if (!this.resizeOff) window.addEventListener('resize', this.resize, true);
 				$('body').css({
 					overflow: 'hidden'
 				});
 			});
 		},
+
 		events: {
 			'click .close-reveal-modal': 'onClose',
 			'click .cancel': 'onClose',
 			'click .ok': 'onOk',
 			'click .custom': 'onCustom'
 		},
-		setParam: function setParam(params) {
-			var _this2 = this;
 
+		setParam(params) {
 			this.type = params.type;
 			this.ok = params.ok;
 			this.close = params.close;
@@ -207,14 +223,14 @@
 						validate: params.validate
 					});
 
-					this.view.resize = function () {
-						_this2.resize();
+					this.view.resize = () => {
+						this.resize();
 					};
 				} else if (params.template instanceof _backbone2.default.View) {
 					this.view = params.template;
 
-					this.view.resize = function () {
-						_this2.resize();
+					this.view.resize = () => {
+						this.resize();
 					};
 				}
 
@@ -231,39 +247,44 @@
 				this.view = null;
 			}
 		},
-		basic: function basic() {
-			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+		basic(options = {}) {
 			options.type = 'popup';
 			this.setParam(options);
 			this.render(options);
 			return this;
 		},
-		form: function form() {
-			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+		form(options = {}) {
 			options.type = 'form';
 			this.setParam(options);
 			this.render(options);
 			return this;
 		},
-		onClose: function onClose() {
+
+		onClose() {
 			if (this.close) this.close.apply(this, [this.callbackArgs()]);
 			this.closePopup();
 		},
-		onOk: function onOk() {
+
+		onOk() {
 			if (this.ok) this.ok.apply(this, [this.callbackArgs()]);
 			if (this.type !== 'form' || this.view.isValid) this.closePopup();
 		},
-		onCustom: function onCustom() {
+
+		onCustom() {
 			if (this.custom) this.custom.apply(this, [this.callbackArgs()]);
 			this.closePopup();
 		},
-		closePopup: function closePopup() {
+
+		closePopup() {
 			if (this.view) this.view.remove();
 			this.$el.foundation('reveal', 'close');
 		},
-		callbackArgs: function callbackArgs() {
-			var valid = true;
-			var args = [];
+
+		callbackArgs() {
+			let valid = true;
+			let args = [];
 
 			if (this.type === 'form') {
 				valid = this.view.check();
@@ -274,7 +295,8 @@
 			args.push(this);
 			return args;
 		},
-		renderActions: function renderActions(staticActions) {
+
+		renderActions(staticActions) {
 			this.$el.find('.ok')[this.ok ? 'show' : 'hide']();
 			this.$el.find('.cancel')[this.close ? 'show' : 'hide']();
 			this.$el.find('.custom')[this.custom ? 'show' : 'hide']();
@@ -283,7 +305,8 @@
 			this.$el.find('.actions')[staticActions]('static');
 			this.$el[staticActions]('static-actions');
 		},
-		resize: function resize() {
+
+		resize() {
 			var $popup = $('popup');
 			$popup.height("");
 			var bodyHeight = $(window).height() - 10;
@@ -298,8 +321,8 @@
 
 			$popup.css('top', top > 100 ? 100 : top + 'px');
 		},
-		render: function render() {
-			var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+		render(data = {}) {
 			data = _.extend({
 				message: "",
 				customName: "",
@@ -322,20 +345,22 @@
 			this.$el.foundation('reveal', 'open');
 			this.delegateEvents();
 		}
+
 	});
 
 	var WaitView = _backbone2.default.View.extend({
-		template: _.template("<div style=\"width:100%;height:100%;position:fixed;z-index: 10000;background-color:black;opacity:0.6;\"></div>\n\t\t<div style=\"text-align:center; position: fixed; font-size:3em; width: 100%;z-index: 10000; top:calc(50% - 50px)\"><%= message %></div>"),
+		template: _.template(`<div style="width:100%;height:100%;position:fixed;z-index: 10000;background-color:black;opacity:0.6;"></div>
+		<div style="text-align:center; position: fixed; font-size:3em; width: 100%;z-index: 10000; top:calc(50% - 50px)"><%= message %></div>`),
 		tagName: "wait",
 		className: "hide",
-		initialize: function initialize() {
+		initialize: function () {
 			if ($('wait').length === 0) {
 				this.$el.prependTo('body');
 			} else {
 				this.$el = $($('wait')[0]);
 			}
 		},
-		startWait: function startWait(message) {
+		startWait: function (message) {
 			$('body').css({
 				overflow: 'hidden'
 			});
@@ -344,7 +369,7 @@
 			}));
 			this.$el.show();
 		},
-		stopWait: function stopWait() {
+		stopWait: function () {
 			$('body').css({
 				overflow: ''
 			});
@@ -354,9 +379,10 @@
 	});
 
 	exports.default = {
-		NotificationView: NotificationView,
-		PopupView: PopupView,
-		FormView: FormView,
-		WaitView: WaitView
+		NotificationView,
+		PopupView,
+		FormView,
+		WaitView
 	};
+	module.exports = exports["default"];
 });

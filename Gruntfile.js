@@ -82,8 +82,7 @@ module.exports = function(grunt) {
 		},
 		babel: {
 			options: {
-				sourceMaps: false,
-        		"plugins": ["transform-es2015-modules-umd"]
+        		"plugins": ["add-module-exports", "transform-es2015-modules-umd"]
 			},
 			dist: {
 				files: [{
