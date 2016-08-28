@@ -357,7 +357,7 @@
 			if ($('wait').length === 0) {
 				this.$el.prependTo('body');
 			} else {
-				this.$el = $($('wait')[0]);
+				this.$el = $('wait').first();
 			}
 		},
 		start: function (message) {
