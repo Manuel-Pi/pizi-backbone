@@ -256,11 +256,11 @@ const WaitView = Backbone.View.extend({
 	}
 });
 // Add token in REST request
-const useJwt = (options = {header: 'authorization', token(){}, onUnauthorized(){}})=>{
+const useJwt = (options = {token(){}, onUnauthorized(){}})=>{
 	const sync = Backbone.sync;
 	Backbone.sync = (method, model, opts)=>{
 		const token = options.token();
-		if(token) opts.beforeSend = (xhr)=>{ xhr.setRequestHeader(options.header, 'Bearer ' + token); };
+		if(token) opts.beforeSend = (xhr)=>{ xhr.setRequestHeader(options.header || 'authorization', 'Bearer ' + token); };
 		let err = opts.error;
 		opts.error= (param)=>{
 			if(param.status && param.status === 401) options.onUnauthorized();

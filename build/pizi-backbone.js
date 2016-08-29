@@ -379,8 +379,6 @@
 	});
 
 	const useJwt = (options = {
-		header: 'authorization',
-
 		token() {},
 
 		onUnauthorized() {}
@@ -391,7 +389,7 @@
 		_backbone2.default.sync = (method, model, opts) => {
 			const token = options.token();
 			if (token) opts.beforeSend = xhr => {
-				xhr.setRequestHeader(options.header, 'Bearer ' + token);
+				xhr.setRequestHeader(options.header || 'authorization', 'Bearer ' + token);
 			};
 			let err = opts.error;
 
