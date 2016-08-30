@@ -362,7 +362,7 @@
 				$el.css({
 					overflow: 'hidden'
 				});
-				$el.append(this.$el);
+				$el.append(this.$el.addClass('absolute'));
 			} else {
 				$('body').css({
 					overflow: 'hidden'
@@ -381,7 +381,7 @@
 					$el.css({
 						overflow: ''
 					});
-					this.$el.prependTo('body');
+					this.$el.prependTo('body').removeClass('absolute');
 				} else {
 					$('body').css({
 						overflow: ''

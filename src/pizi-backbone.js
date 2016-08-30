@@ -245,7 +245,7 @@ const WaitView = Backbone.View.extend({
 	start: function(message, $el){
 		if($el){
 			$el.css({overflow: 'hidden'});
-			$el.append(this.$el);
+			$el.append(this.$el.addClass('absolute'));
 		} else {
 			$('body').css({overflow: 'hidden'});
 		}
@@ -257,7 +257,7 @@ const WaitView = Backbone.View.extend({
 		setTimeout(()=> {
 			if($el){
 				$el.css({overflow: ''});
-				this.$el.prependTo('body');
+				this.$el.prependTo('body').removeClass('absolute');
 			} else {
 				$('body').css({overflow: ''});
 			}
