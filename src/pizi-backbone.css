@@ -12,6 +12,11 @@ notification .close{
 }
 wait{
 	display: none;
+	display: block;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 100%;
 }
 wait > .background{
 	width:100%;
@@ -21,7 +26,6 @@ wait > .background{
 	background-color:black;
 	opacity:0.6;
 	transition:opacity 2s ease-out;
-	top: 0;
 }
 wait > .message{
 	width: 100%;
@@ -29,7 +33,7 @@ wait > .message{
 	z-index: 10001;
 	text-align:center;
 	font-size:3em;
-	top:calc(50% - 50px);
+	top:calc(50% - 3em);
 	opacity: 1;
 	transition:opacity 2s ease-out;
   	color: #DDD;
