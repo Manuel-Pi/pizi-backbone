@@ -372,7 +372,7 @@
 			$('body').css({
 				overflow: ''
 			});
-			this.$el.fadeOut(() => {
+			this.$el.fadeOut(1000, () => {
 				this.$el.html('');
 			});
 		}

@@ -250,7 +250,7 @@ const WaitView = Backbone.View.extend({
 	},
 	stop: function(){
 		$('body').css({overflow: ''});
-		this.$el.fadeOut(()=>{
+		this.$el.fadeOut(1000, ()=>{
 			this.$el.html('');
 		});
 	}
