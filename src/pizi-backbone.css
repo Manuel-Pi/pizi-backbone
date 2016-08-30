@@ -34,13 +34,17 @@ wait > .message{
 	z-index: 10001;
 	text-align:center;
 	font-size:3em;
-	top: calc(50% - 80px);
+	top: calc(50% - 39px);
 	opacity: 1;
 	transition:opacity 1s ease-out;
   	color: #DDD;
 }
 wait > .message.pulse{
 	animation: pulse 1.5s infinite;
+}
+.wait-container{
+	position: relative;
+	overflow: hidden;
 }
 .wait-container .wait-container > wait{
 	display: none;

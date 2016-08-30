@@ -257,8 +257,8 @@ const WaitView = Backbone.View.extend({
 		let $wait = $el && $el.find('wait') || this.$el;
 		let $parent = $el || $('body');
 		$wait.find('.background, .message').removeClass('pulse').css('opacity', 0);
-		$parent.removeClass('wait-container');
 		setTimeout(()=> {
+			$parent.removeClass('wait-container');
 			$wait.hide().html('');
 			if($el) $wait.remove();
 		}, 1000);
