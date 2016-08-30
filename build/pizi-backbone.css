@@ -8,7 +8,6 @@ notification{
 notification .close{
 	float: right;
 	cursor: pointer;
-
 }
 wait{
 	display: none;
