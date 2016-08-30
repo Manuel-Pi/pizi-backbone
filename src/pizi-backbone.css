@@ -12,7 +12,6 @@ notification .close{
 }
 wait{
 	display: none;
-	display: block;
     position: absolute;
     top: 0px;
 	left: 0px;
@@ -48,7 +47,6 @@ wait > .message.pulse{
 }
 .wait-container .wait-container > wait{
 	display: none;
-	opacity: 0;
 }	
 .wait-container .wait-container > wait > .message, .wait-container .wait-container > .background{
 	opacity: 0;
