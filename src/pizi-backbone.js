@@ -241,17 +241,26 @@ const WaitView = Backbone.View.extend({
 		} else {
 			this.$el = $('wait').first();
 		}
-		this.$el.hide();
 	},
-	start: function(message){
-		$('body').css({overflow: 'hidden'});
+	start: function(message, $el){
+		if($el){
+			$el.css({overflow: 'hidden'});
+			$el.append(this.$el);
+		} else {
+			$('body').css({overflow: 'hidden'});
+		}
 		this.$el.html(this.template({message: message}));
 		this.$el.show();
 	},
-	stop: function(){
+	stop: function($el){
 		this.$el.find('.background, .message').css('opacity', 0);
 		setTimeout(()=> {
-			$('body').css({overflow: ''});
+			if($el){
+				$el.css({overflow: ''});
+				this.$el.prependTo('body');
+			} else {
+				$('body').css({overflow: ''});
+			}
 			this.$el.hide().html('');
 		}, 2000);
 	}

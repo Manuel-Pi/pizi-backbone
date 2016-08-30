@@ -32,7 +32,7 @@ wait > .message{
 	opacity: 1;
 	transition:opacity 2s ease-out;
   	color: #DDD;
-	animation: pulse 1s infinite;
+	animation: pulse 2s infinite;
 }
 popup.reveal-modal{
 	padding-top: 50px;
@@ -80,10 +80,10 @@ popup.reveal-modal .actions a{
 	margin: 0;
 }
 @keyframes pulse {
-  0% {
+  0%, 100% {
     color: white;
   }
-  100% {
-    color: #555;
+  50% {
+    color: #AAA;
   }
 }
