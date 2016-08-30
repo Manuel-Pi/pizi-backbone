@@ -359,36 +359,37 @@
 		},
 		start: function (message, $el) {
 			if ($el) {
+				let $wait = $('<wait class="absolute"></wait>').prepend(this.template({
+					message: message || 'Loading...'
+				}));
 				$el.css({
 					overflow: 'hidden'
-				});
-				$el.append(this.$el.addClass('absolute'));
+				}).prepend($wait);
 			} else {
 				$('body').css({
 					overflow: 'hidden'
 				});
+				this.$el.html(this.template({
+					message: message
+				})).show();
 			}
-
-			this.$el.html(this.template({
-				message: message
-			}));
-			this.$el.show();
 		},
 		stop: function ($el) {
-			this.$el.find('.background, .message').removeClass('pulse').css('opacity', 0);
+			let $wait = $el.find('wait') || this.$el;
+			$wait.find('.background, .message').removeClass('pulse').css('opacity', 0);
 			setTimeout(() => {
+				$wait.hide().html('');
+
 				if ($el) {
 					$el.css({
 						overflow: ''
 					});
-					this.$el.prependTo('body').removeClass('absolute');
+					$wait.remove();
 				} else {
 					$('body').css({
 						overflow: ''
 					});
 				}
-
-				this.$el.hide().html('');
 			}, 1000);
 		}
 	});
