@@ -364,35 +364,24 @@
 			let $template = this.template({
 				message: message || 'Loading...'
 			});
+			let $parent = $el || $('body');
+			$parent.addClass('wait-container');
 
 			if ($el) {
-				$el.css({
-					overflow: 'hidden'
-				}).prepend($('<wait class="absolute"></wait>').prepend($template));
+				$parent.prepend($('<wait class="absolute"></wait>').prepend($template));
 			} else {
-				$('body').css({
-					overflow: 'hidden'
-				});
 				this.$el.html($template).show();
 			}
 		},
 
 		stop($el) {
 			let $wait = $el && $el.find('wait') || this.$el;
+			let $parent = $el || $('body');
 			$wait.find('.background, .message').removeClass('pulse').css('opacity', 0);
 			setTimeout(() => {
 				$wait.hide().html('');
-
-				if ($el) {
-					$el.css({
-						overflow: ''
-					});
-					$wait.remove();
-				} else {
-					$('body').css({
-						overflow: ''
-					});
-				}
+				$parent.removeClass('wait-container');
+				if ($el) $wait.remove();
 			}, 1000);
 		}
 
