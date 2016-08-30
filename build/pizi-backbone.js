@@ -348,8 +348,7 @@
 	});
 
 	const WaitView = _backbone2.default.View.extend({
-		template: _.template(`<div style="width:100%;height:100%;position:fixed;z-index: 10000;background-color:black;opacity:0.6;"></div>
-		<div style="text-align:center; position: fixed; font-size:3em; width: 100%;z-index: 10000; top:calc(50% - 50px)"><%= message %></div>`),
+		template: _.template(`<div class="background"></div><div class="message"><%= message %></div>`),
 		tagName: "wait",
 		initialize: function () {
 			if ($('wait').length === 0) {
@@ -367,13 +366,13 @@
 			this.$el.html(this.template({
 				message: message
 			}));
-			this.$el.show();
+			this.$el.fadeIn();
 		},
 		stop: function () {
 			$('body').css({
 				overflow: ''
 			});
-			this.$el.hide();
+			this.$el.fadeOut();
 			this.$el.html('');
 		}
 	});
