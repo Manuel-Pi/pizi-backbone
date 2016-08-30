@@ -365,7 +365,7 @@
 				message: message || 'loading...'
 			});
 			let $parent = $el || $('body');
-			$parent.addClass('wait-container');
+			$parent.addClass('wait-container hide-child');
 
 			if ($el) {
 				$parent.prepend($('<wait style="display:block"></wait>').prepend($template));
@@ -382,8 +382,9 @@
 			let $wait = $el && $el.find('wait') || this.$el;
 			let $parent = $el || $('body');
 			$wait.find('.background, .message').removeClass('pulse').css('opacity', 0);
-			$parent.removeClass('wait-container');
+			$parent.removeClass('hide-child');
 			setTimeout(() => {
+				$parent.removeClass('wait-container');
 				$wait.hide().html('');
 				if ($el) $wait.remove();
 			}, 1000);

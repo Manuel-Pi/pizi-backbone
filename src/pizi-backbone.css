@@ -44,10 +44,10 @@ wait > .message.pulse{
 	position: relative;
 	overflow: hidden;
 }
-.wait-container .wait-container > wait{
+.wait-container.hide-child .wait-container > wait{
 	display: none;
 }	
-.wait-container .wait-container > wait > .message, .wait-container .wait-container > .background{
+.wait-container.hide-child .wait-container > wait > .message, .wait-container.hide-child .wait-container > .background{
 	opacity: 0;
 }
 popup.reveal-modal{
