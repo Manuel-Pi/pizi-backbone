@@ -348,7 +348,7 @@
 	});
 
 	const WaitView = _backbone2.default.View.extend({
-		template: _.template(`<div class="background"></div><div class="message pulse"><%= message %></div>`),
+		template: _.template(`<div class="background"></div><div class="message pulse"><%= message %><div class="anim"></div></div>`),
 		tagName: "wait",
 
 		initialize() {
@@ -362,7 +362,7 @@
 			}
 
 			let $template = this.template({
-				message: message || 'Loading...'
+				message: message || 'loading...'
 			});
 			let $parent = $el || $('body');
 			$parent.addClass('wait-container');
@@ -372,6 +372,10 @@
 			} else {
 				this.$el.html($template).show();
 			}
+
+			return {
+				stop: () => this.stop($el)
+			};
 		},
 
 		stop($el) {

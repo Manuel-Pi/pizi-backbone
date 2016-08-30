@@ -233,7 +233,7 @@ const PopupView = Backbone.View.extend({
 });
 
 const WaitView = Backbone.View.extend({
-	template: _.template(`<div class="background"></div><div class="message pulse"><%= message %></div>`),
+	template: _.template(`<div class="background"></div><div class="message pulse"><%= message %><div class="anim"></div></div>`),
 	tagName: "wait",
 	initialize(){ if($('wait').length === 0) this.$el.prependTo('body'); else this.$el = $('wait').first(); },
 	start(message, $el){
@@ -241,7 +241,7 @@ const WaitView = Backbone.View.extend({
 			$el = message;
 			message = null;
 		}
-		let $template = this.template({message: message || 'Loading...'});
+		let $template = this.template({message: message || 'loading...'});
 		let $parent = $el || $('body');
 		$parent.addClass('wait-container');
 		if($el){
@@ -249,6 +249,9 @@ const WaitView = Backbone.View.extend({
 		} else {
 			this.$el.html($template).show();
 		}
+		return {
+			stop: ()=> this.stop($el)
+		};
 	},
 	stop($el){
 		let $wait = $el && $el.find('wait') || this.$el;
