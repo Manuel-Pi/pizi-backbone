@@ -23,8 +23,8 @@ wait > .background{
 	position:absolute;
 	z-index: 10000;
 	background-color:black;
-	opacity:0.8;
-	transition:opacity 1s ease-out;
+	opacity:0.9;
+	transition:opacity 1.5s ease-in;
 }
 wait > .message{
 	width: 100%;
@@ -34,7 +34,7 @@ wait > .message{
 	font-size:3em;
 	top: calc(50% - 39px);
 	opacity: 1;
-	transition:opacity 1s ease-out;
+	transition:opacity 1s ease-in;
   	color: #DDD;
 }
 wait > .message.pulse{

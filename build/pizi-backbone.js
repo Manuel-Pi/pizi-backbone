@@ -374,11 +374,12 @@
 			}
 
 			return {
-				stop: () => this.stop($el)
+				stop: callback => this.stop($el, callback)
 			};
 		},
 
-		stop($el) {
+		stop($el, callback) {
+			callback = _.isFunction($el) ? $el : callback;
 			let $wait = $el && $el.find('wait') || this.$el;
 			let $parent = $el || $('body');
 			$wait.find('.background, .message').removeClass('pulse').css('opacity', 0);
@@ -387,7 +388,8 @@
 				$parent.removeClass('wait-container');
 				$wait.hide().html('');
 				if ($el) $wait.remove();
-			}, 1000);
+				if (callback) callback();
+			}, 1500);
 		}
 
 	});
