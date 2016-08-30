@@ -250,8 +250,9 @@ const WaitView = Backbone.View.extend({
 	},
 	stop: function(){
 		$('body').css({overflow: ''});
-		this.$el.fadeOut();
-		this.$el.html('');
+		this.$el.fadeOut(()=>{
+			this.$el.html('');
+		});
 	}
 });
 // Add token in REST request
