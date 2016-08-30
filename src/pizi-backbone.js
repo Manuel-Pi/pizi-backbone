@@ -237,10 +237,7 @@ const WaitView = Backbone.View.extend({
 	tagName: "wait",
 	initialize(){ if($('wait').length === 0) this.$el.prependTo('body'); else this.$el = $('wait').first(); },
 	start(message, $el){
-		if(message instanceof $){
-			$el = message;
-			message = null;
-		}
+		if(message instanceof $) $el = message, message = null;
 		if($el){
 			let $wait = $('<wait class="absolute"></wait>').prepend(this.template({message: message || 'Loading...'}));
 			$el.css({overflow: 'hidden'}).prepend($wait);
