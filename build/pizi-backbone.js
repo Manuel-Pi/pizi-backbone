@@ -372,8 +372,12 @@
 			$('body').css({
 				overflow: ''
 			});
-			this.$el.fadeOut(2000, () => {
-				this.$el.html('');
+			this.$el.fadeOut({
+				easing: 'linear',
+				duration: 2000,
+				complete: () => {
+					this.$el.html('');
+				}
 			});
 		}
 	});
