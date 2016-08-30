@@ -378,9 +378,9 @@
 			let $wait = $el && $el.find('wait') || this.$el;
 			let $parent = $el || $('body');
 			$wait.find('.background, .message').removeClass('pulse').css('opacity', 0);
+			$parent.removeClass('wait-container');
 			setTimeout(() => {
 				$wait.hide().html('');
-				$parent.removeClass('wait-container');
 				if ($el) $wait.remove();
 			}, 1000);
 		}
