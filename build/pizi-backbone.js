@@ -348,7 +348,7 @@
 	});
 
 	const WaitView = _backbone2.default.View.extend({
-		template: _.template(`<div class="background"></div><div class="message"><%= message %></div>`),
+		template: _.template(`<div class="background"></div><div class="message pulse"><%= message %></div>`),
 		tagName: "wait",
 		initialize: function () {
 			if ($('wait').length === 0) {
@@ -375,7 +375,7 @@
 			this.$el.show();
 		},
 		stop: function ($el) {
-			this.$el.find('.background, .message').css('opacity', 0);
+			this.$el.find('.background, .message').removeClass('pulse').css('opacity', 0);
 			setTimeout(() => {
 				if ($el) {
 					$el.css({

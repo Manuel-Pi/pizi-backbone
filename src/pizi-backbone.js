@@ -233,7 +233,7 @@ const PopupView = Backbone.View.extend({
 });
 
 const WaitView = Backbone.View.extend({
-	template: _.template(`<div class="background"></div><div class="message"><%= message %></div>`),
+	template: _.template(`<div class="background"></div><div class="message pulse"><%= message %></div>`),
 	tagName: "wait",
 	initialize: function(){
 		if($('wait').length === 0){
@@ -253,7 +253,7 @@ const WaitView = Backbone.View.extend({
 		this.$el.show();
 	},
 	stop: function($el){
-		this.$el.find('.background, .message').css('opacity', 0);
+		this.$el.find('.background, .message').removeClass('pulse').css('opacity', 0);
 		setTimeout(()=> {
 			if($el){
 				$el.css({overflow: ''});
