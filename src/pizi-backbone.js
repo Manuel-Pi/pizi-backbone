@@ -249,14 +249,11 @@ const WaitView = Backbone.View.extend({
 		this.$el.show();
 	},
 	stop: function(){
-		this.$el.fadeOut({
-			easing: 'linear',
-			duration: 2000,
-			complete:()=>{
-				$('body').css({overflow: ''});
-				this.$el.html('');
-			}
-		});
+		this.$el.find('.background, .message').css('opacity', 0);
+		setTimeout(()=> {
+			$('body').css({overflow: ''});
+			this.$el.hide().html('');
+		}, 2000);
 	}
 });
 // Add token in REST request
