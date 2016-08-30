@@ -245,7 +245,7 @@ const WaitView = Backbone.View.extend({
 		let $parent = $el || $('body');
 		$parent.addClass('wait-container');
 		if($el){
-			$parent.prepend($('<wait class="absolute"></wait>').prepend($template));
+			$parent.prepend($('<wait class="absolute"></wait>').prepend($template).show());
 		} else {
 			this.$el.html($template).show();
 		}
