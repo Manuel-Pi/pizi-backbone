@@ -262,7 +262,7 @@ const WaitView = Backbone.View.extend({
 				$('body').css({overflow: ''});
 			}
 			this.$el.hide().html('');
-		}, 2000);
+		}, 1000);
 	}
 });
 // Add token in REST request
