@@ -249,11 +249,11 @@ const WaitView = Backbone.View.extend({
 		this.$el.show();
 	},
 	stop: function(){
-		$('body').css({overflow: ''});
 		this.$el.fadeOut({
 			easing: 'linear',
 			duration: 2000,
 			complete:()=>{
+				$('body').css({overflow: ''});
 				this.$el.html('');
 			}
 		});
