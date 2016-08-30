@@ -10,6 +10,9 @@ notification .close{
 	cursor: pointer;
 
 }
+wait{
+	display: none;
+}
 wait > .background{
 	width:100%;
 	height:100%;

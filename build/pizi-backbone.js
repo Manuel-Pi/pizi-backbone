@@ -366,13 +366,13 @@
 			this.$el.html(this.template({
 				message: message
 			}));
-			this.$el.fadeIn();
+			this.$el.show();
 		},
 		stop: function () {
 			$('body').css({
 				overflow: ''
 			});
-			this.$el.fadeOut(1000, () => {
+			this.$el.fadeOut(2000, () => {
 				this.$el.html('');
 			});
 		}
