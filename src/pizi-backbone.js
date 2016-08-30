@@ -235,14 +235,12 @@ const PopupView = Backbone.View.extend({
 const WaitView = Backbone.View.extend({
 	template: _.template(`<div class="background"></div><div class="message pulse"><%= message %></div>`),
 	tagName: "wait",
-	initialize: function(){
-		if($('wait').length === 0){
-			this.$el.prependTo('body');
-		} else {
-			this.$el = $('wait').first();
+	initialize(){ if($('wait').length === 0) this.$el.prependTo('body'); else this.$el = $('wait').first(); },
+	start(message, $el){
+		if(message instanceof $){
+			$el = message;
+			message = null;
 		}
-	},
-	start: function(message, $el){
 		if($el){
 			let $wait = $('<wait class="absolute"></wait>').prepend(this.template({message: message || 'Loading...'}));
 			$el.css({overflow: 'hidden'}).prepend($wait);
@@ -251,8 +249,8 @@ const WaitView = Backbone.View.extend({
 			this.$el.html(this.template({message: message})).show();
 		}
 	},
-	stop: function($el){
-		let $wait = $el.find('wait') || this.$el;
+	stop($el){
+		let $wait = $el && $el.find('wait') || this.$el;
 		$wait.find('.background, .message').removeClass('pulse').css('opacity', 0);
 		setTimeout(()=> {
 			$wait.hide().html('');

@@ -350,14 +350,17 @@
 	const WaitView = _backbone2.default.View.extend({
 		template: _.template(`<div class="background"></div><div class="message pulse"><%= message %></div>`),
 		tagName: "wait",
-		initialize: function () {
-			if ($('wait').length === 0) {
-				this.$el.prependTo('body');
-			} else {
-				this.$el = $('wait').first();
-			}
+
+		initialize() {
+			if ($('wait').length === 0) this.$el.prependTo('body');else this.$el = $('wait').first();
 		},
-		start: function (message, $el) {
+
+		start(message, $el) {
+			if (message instanceof $) {
+				$el = message;
+				message = null;
+			}
+
 			if ($el) {
 				let $wait = $('<wait class="absolute"></wait>').prepend(this.template({
 					message: message || 'Loading...'
@@ -374,8 +377,9 @@
 				})).show();
 			}
 		},
-		stop: function ($el) {
-			let $wait = $el.find('wait') || this.$el;
+
+		stop($el) {
+			let $wait = $el && $el.find('wait') || this.$el;
 			$wait.find('.background, .message').removeClass('pulse').css('opacity', 0);
 			setTimeout(() => {
 				$wait.hide().html('');
@@ -392,6 +396,7 @@
 				}
 			}, 1000);
 		}
+
 	});
 
 	const useJwt = (options = {
