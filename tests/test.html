@@ -2,11 +2,19 @@
 <head>
   <meta charset="utf-8">
   <title>pizi-backbone test</title>
-  <!--<link rel="stylesheet" href="//code.jquery.com/qunit/qunit-1.18.0.css">-->
-  <link rel="stylesheet" href="foundation/css/normalize.css">
-  <link rel="stylesheet" href="foundation/css/foundation.css">
   <link rel="stylesheet" href="pizi-backbone.css">
   <style>
+    body{
+      margin: 0;
+      padding: 0;
+    }
+    hr{
+      margin-bottom: 40px;
+      border: 0;
+    }
+    input,textarea{
+      padding: 5px;
+    }
     body > div input[type="radio"] + input[type="radio"], body > div input[type="checkbox"] + input[type="checkbox"], body > div input[type="radio"] + input[type="checkbox"]{
       margin-left: 10px;
     }
@@ -18,21 +26,16 @@
 <body>
   <!--<div id="qunit"></div>
   <div id="qunit-fixture"></div>-->
-  <script src="jquery/dist/jquery.js"></script>
+  <script src="modules/jquery.js"></script>
   <!--<script src="//code.jquery.com/qunit/qunit-1.18.0.js"></script>-->
-  <script src="underscore/underscore.js"></script>
-  <script src="backbone/backbone.js"></script>
+  <script src="modules/underscore.js"></script>
+  <script src="modules/backbone.js"></script>
   <script>backbone = Backbone</script>
-  <script src="modernizr/modernizr.js"></script>
-  <script src="fastclick/lib/fastclick.js"></script>
-  <script src="jquery.cookie/jquery.cookie.js"></script>
-  <script src="jquery-placeholder/jquery.placeholder.js"></script>
-  <script src="foundation/js/foundation.js"></script>
   <script src="pizi-backbone.js"></script>
   <div style="padding: 10px;padding-top: 30px;">
     <h1>pizi-backbone test</h1>
     <!-- Confirm Popup -->
-    <textarea type="text" class="confirm" style="width:50%;">Iamque lituis cladium concrepantibus internarum non celate ut antea turbidum saeviebat ingenium a veri consideratione detortum et nullo inpositorum vel conpositorum fidem sollemniter inquirente nec discernente a societate noxiorum insontes velut exturbatum e iudiciis fas omne discessit, et causarum legitima silente defensione carnifex rapinarum sequester et obductio capitum et bonorum ubique multatio versabatur per orientales provincias, quas recensere puto nunc oportunum absque Mesopotamia digesta, cum bella Parthica dicerentur, et Aegypto, quam necessario aliud reieci ad tempus.
+    <textarea type="text" class="confirm" style="width:50%;" rows="10">Iamque lituis cladium concrepantibus internarum non celate ut antea turbidum saeviebat ingenium a veri consideratione detortum et nullo inpositorum vel conpositorum fidem sollemniter inquirente nec discernente a societate noxiorum insontes velut exturbatum e iudiciis fas omne discessit, et causarum legitima silente defensione carnifex rapinarum sequester et obductio capitum et bonorum ubique multatio versabatur per orientales provincias, quas recensere puto nunc oportunum absque Mesopotamia digesta, cum bella Parthica dicerentur, et Aegypto, quam necessario aliud reieci ad tempus.
 
 Vide, quantum, inquam, fallare, Torquate. oratio me istius philosophi non offendit; nam et complectitur verbis, quod vult, et dicit plane, quod intellegam; et tamen ego a philosopho, si afferat eloquentiam, non asperner, si non habeat, non admodum flagitem. re mihi non aeque satisfacit, et quidem locis pluribus. sed quot homines, tot sententiae; falli igitur possumus.
 
@@ -41,6 +44,7 @@ Nec sane haec sola pernicies orientem diversis cladibus adfligebat. Namque et Is
 Cognitis enim pilatorum caesorumque funeribus nemo deinde ad has stationes appulit navem, sed ut Scironis praerupta letalia declinantes litoribus Cypriis contigui navigabant, quae Isauriae scopulis sunt controversa.
 
 Vbi curarum abiectis ponderibus aliis tamquam nodum et codicem difficillimum Caesarem convellere nisu valido cogitabat, eique deliberanti cum proximis clandestinis conloquiis et nocturnis qua vi, quibusve commentis id fieret, antequam effundendis rebus pertinacius incumberet confidentia, acciri mollioribus scriptis per simulationem tractatus publici nimis urgentis eundem placuerat Gallum, ut auxilio destitutus sine ullo interiret obstaculo.</textarea>
+    <br>
     <input type="checkbox" class="ok" checked/>Ok
     <input type="checkbox" class="close"/>Close
     <input type="checkbox" class="custom"/>Custom
@@ -50,8 +54,10 @@ Vbi curarum abiectis ponderibus aliis tamquam nodum et codicem difficillimum Cae
     <button onclick="alerte()">Alert Popup</button>
     <!-- Form Popup -->
     <button onclick="formPopup()">Form Popup</button>
+    <hr>
     <!--  Notification -->
-    <input type="text" class="notif" value="Test!" style="width:50%"/>
+    <input type="text" class="notiff" value="Test!" style="width:50%"/>
+    <br>
     <input type="radio" name="type" value="notify" checked/>Notif
     <input type="radio" name="type" value="success"/>Success
     <input type="radio" name="type" value="warn"/>Warning
@@ -59,21 +65,23 @@ Vbi curarum abiectis ponderibus aliis tamquam nodum et codicem difficillimum Cae
     <input type="checkbox" class="permanent"/>Permanent
     <br>
     <button onclick="notify()">Notification</button>
+    <hr>
     <input type="text" class="wait" value="Test!" style="width:50%"/>
+    <br>
     <button onclick="startWait()">Start Wait</button>
   </div>
   <script>
-    notif = new piziBackbone.default.NotificationView();
-    popup = new piziBackbone.default.PopupView();
-    wait = new piziBackbone.default.WaitView();
+    notif = new piziBackbone.NotificationView();
+    popup = new piziBackbone.PopupView();
+    wait = new piziBackbone.WaitView();
     function startWait(){
-      wait.startWait($('.wait').val());
+      wait.start($('.wait').val());
       setTimeout(function(){
-        wait.stopWait();
-      }, 5000);
+        wait.stop();
+      }, 2000);
     }
     function notify(){
-        notif[$('input[name=type]:checked').val()]($('.notif').val(), {permanent: $('input.permanent')[0].checked});
+        notif[$('input[name=type]:checked').val()]($('.notiff').val(), {permanent: $('input.permanent')[0].checked});
     }
     function alerte(){
       popup.basic({
@@ -150,7 +158,6 @@ Vbi curarum abiectis ponderibus aliis tamquam nodum et codicem difficillimum Cae
         ]
       });
     }
-    $(document).foundation();
   </script>
 </body>
 </html>

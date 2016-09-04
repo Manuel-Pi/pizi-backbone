@@ -5,7 +5,12 @@ module.exports = function(grunt) {
 		build: 'build/',
 		testFile: 'tests/',
 		//serverFolder: 'C:/Developppment/Web/Servers/pizi-express-server/Apps/pizi-backbone/',
-        serverFolder: 'C:/wamp/www/pizi-backbone/',
+        serverFolder: '../PiziServer/pizi-backbone/',
+		devDependencies: [
+			'jquery/dist/jquery.js',
+			'backbone/backbone.js',
+			'backbone/node_modules/underscore/underscore.js'
+		],
 		jshint: {
 			all: {
 				options: {
@@ -26,23 +31,7 @@ module.exports = function(grunt) {
                     }
                 ]
             },
-			deployDev : {
-					files : [
-						{
-							expand: true,
-							cwd: '<%= srcFile %>',
-							src: ['**'],
-							dest: '<%= serverFolder %>'
-						},
-						{
-							expand: true,
-							cwd: '<%= testFile %>',
-							src: ['**'],
-							dest: '<%= serverFolder %>'
-						}
-					]
-			},
-			deployDevBabel : {
+			server: {
 				files : [
 					{
 						expand: true,
@@ -56,29 +45,22 @@ module.exports = function(grunt) {
 						src: ['**'],
 						dest: '<%= serverFolder %>'
 					}
-				]
+				],
 			},
-			css: {
-				files: [
-					{
-						expand: true,
-						cwd: 'bower_components/',
-						src: ['foundation/css/foundation.css',
-							'foundation/css/normalize.css'
-						],
-						dest: '<%= serverFolder %>'
-					},
-					{ '<%= serverFolder %>/pizi-backbone.css': 'src/pizi-backbone.css'}
-				]
+			modules: {
+				files: {
+					'<%= serverFolder %>modules/jquery.js': 'node_modules/jquery/dist/jquery.js',
+					'<%= serverFolder %>modules/underscore.js': 'node_modules/backbone/node_modules/underscore/underscore.js',
+					'<%= serverFolder %>modules/backbone.js': 'node_modules/backbone/backbone.js',
+				}
 			}
 		},
 		clean: {
 			options :{
 				force : true
 			},
-			deployDev: '<%= serverFolder %>',
-			build: '<%= build %>',
-			bower: "<%= serverFolder %>/trash",
+			server: '<%= serverFolder %>',
+			build: '<%= build %>'
 		},
 		babel: {
 			options: {
@@ -106,6 +88,5 @@ module.exports = function(grunt) {
 	});
 	
 	grunt.registerTask('build', ['jshint', 'clean:build', 'babel', 'copy:build']);
-	grunt.registerTask('deployDev', ['jshint', 'clean:deployDev', 'copy:deployDev']);
-	grunt.registerTask('deployBuild', ['build', 'clean:deployDev', 'copy:deployDevBabel', 'copy:css', 'bower', 'clean:bower']);
+	grunt.registerTask('deployBuild', ['build', 'clean:server', 'copy:server', 'copy:modules']);
 };

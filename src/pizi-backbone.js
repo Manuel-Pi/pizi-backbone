@@ -71,50 +71,21 @@ const NotificationView = Backbone.View.extend({
 
 const PopupView = Backbone.View.extend({
 	tagName: "popup",
-	className: "reveal-modal container-fluid",
-	template: _.template(`<a class="close-reveal-modal" aria-label="Close">&#215;</a>
-						  <div>
-							<div class="row content">
+	template: _.template(`<div class="background"></div>
+						  <div class="container">
+						  	<a class="close">&#215;</a>
+							<div class="content">
 								<% template ? print(template) : print(message) %>
 							</div>
-							<ul class="actions button-group right">
-								<li class="ok"><a class="button">Ok</a></li>
-								<li class="custom"><a class="button"><%= customName %></a></li>
-								<li class="cancel"><a class="button alert">Cancel</a></li>
+							<ul class="actions">
+								<li class="ok">Ok</li>
+								<li class="custom"><%= customName %></li>
+								<li class="cancel">Cancel</li>
 							</ul>
 						  </div>`),
-	initialize(){
-		if($('popup').length === 0){
-			this.$el.prependTo('body');
-		} else {
-			this.$el = $($('popup')[0]);
-		}
-		this.$el.attr('data-reveal', '');
-		this.$el.foundation({
-			reveal: {
-				close_on_background_click: false,
-				dismiss_modal_class: 'close-modal',
-				close_on_esc: false,
-				animation: 'none'
-			}
-		});
-		let view = this;
-		$(document).on('closed.fndtn.reveal', '[data-reveal]',()=>{
-			if(!this.resizeOff) window.removeEventListener('resize', this.resize);
-			$('body').css({
-                overflow: 'auto'
-            });
-        });
-		$(document).on('opened.fndtn.reveal', '[data-reveal]',()=>{
-			view.resize();
-			if(!this.resizeOff) window.addEventListener('resize', this.resize, true);
-			$('body').css({
-				overflow: 'hidden'
-			});
-        });
-	},
+	initialize(){ if($('popup').length === 0) this.$el.prependTo('body'); else this.$el = $($('popup')[0]); },
 	events: {
-		'click .close-reveal-modal': 'onClose',
+		'click .close': 'onClose',
         'click .cancel': 'onClose',
 		'click .ok': 'onOk',
         'click .custom': 'onCustom'
@@ -175,7 +146,7 @@ const PopupView = Backbone.View.extend({
 	},
 	closePopup(){
 		if(this.view) this.view.remove();
-		this.$el.foundation('reveal', 'close');
+		this.$el.css('display', 'none').html();
 	},
 	callbackArgs(){
 		let valid = true;
@@ -197,37 +168,18 @@ const PopupView = Backbone.View.extend({
 		this.$el.find('.actions')[staticActions]('static');
 		this.$el[staticActions]('static-actions');
     },
-    resize(){
-        var $popup = $('popup');
-        $popup.height("");
-        var bodyHeight = $(window).height() - 10;
-        var height = $popup.outerHeight();
-        var top = 5;
-        if(height > bodyHeight){
-            $popup.outerHeight(bodyHeight);
-        } else {
-            top = (bodyHeight + 10 - height) / 2;
-        }
-        $popup.css('top', top > 100 ? 100 : top + 'px');
-    },
 	render(data = {}){
 		data = _.extend({
 			message: "",
 			customName: "",
 			template: ""
 		}, _.pick(data, ['message', 'customName', 'template', 'staticActions']));
-		this.$el.html(this.template(data));
+		this.$el.html(this.template(data)).css('display', 'flex');
 		if(this.view){
 			this.view.render();
 			this.$el.find('.content').html(this.view.$el);
 		}
-        if(!this.foundationInitilized){
-			$(document).foundation('reveal', 'reflow');
-			this.foundationInitilized = true;
-		}
-        this.resize();
         this.renderActions(data.staticActions);
-		this.$el.foundation('reveal', 'open');
 		this.delegateEvents();
 	}
 });
