@@ -93,9 +93,12 @@ popup .container{
 }
 popup .close{
 	position: absolute;
-	top: 5px;
+	top: -20px;
 	right: 5px;
 	cursor: pointer;
+	font-size: 2em;
+    font-weight: bold;
+    line-height: 2em;
 }
 popup .actions{
 	list-style: none;
