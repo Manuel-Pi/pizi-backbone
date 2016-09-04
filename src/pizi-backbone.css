@@ -89,6 +89,7 @@ popup .container{
 	text-align: justify;
 	overflow-y: auto;
 	min-width: 200px;
+	color: black;
 }
 popup .close{
 	position: absolute;
