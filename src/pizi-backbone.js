@@ -100,20 +100,15 @@ const PopupView = Backbone.View.extend({
         var view = this;
 		if(params.template){
             if(params.type === "form"){
-                this.view =  params.template instanceof FormView ? params.template : new FormView({
-                    template: params.template,
-                    validate: params.validate
-                });
-				this.view.resize = ()=>{this.resize();};
+				this.view = new FormView(params);
+				this.view.resize = () => this.resize();
             } else if(params.template instanceof Backbone.View){
                 this.view = params.template;
-                this.view.resize = ()=>{this.resize();};
+                this.view.resize = () => this.resize();
             }
             if(this.view.ok){
                 var ok = params.ok;
-                params.ok = function(){
-                    view.view.ok(ok);
-                };
+                params.ok = () => view.view.ok(ok);
             }
             this.ok = params.ok || this.ok;
 		} else {
