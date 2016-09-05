@@ -32,8 +32,8 @@
 			this.validate = options.validate;
 			this.errorClass = options.errorClass;
 			this.url = options.url;
-			this.success = options.success();
-			this.success = options.error();
+			this.success = options.success;
+			this.success = options.error;
 		},
 		events: {
 			'click .class': 'submit'
