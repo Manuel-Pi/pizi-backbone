@@ -147,12 +147,12 @@
 			var view = this;
 			if (params.template) {
 				if (params.isform) {
-					this.view = new FormView(params);
-					const submit = this.view.submit;
-					this.view.submit = () => {
-						submit.apply(this, arguments);
-						this.closePopup();
-					};
+					this.view = new FormView.extend({
+						submit() {
+							submit.apply(this, arguments);
+							this.closePopup();
+						}
+					})(params);
 				} else if (params.template instanceof _backbone2.default.View) {
 					this.view = params.template;
 				}
