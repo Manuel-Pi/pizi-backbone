@@ -103,10 +103,13 @@ const PopupView = Backbone.View.extend({
 		if(params.template){
             if(params.isform){
 				this.view = new FormView(params);
-				this.view.resize = () => this.resize();
+				const submit = this.view.submit;
+				this.view.submit = ()=>{
+					submit.apply(this, arguments);
+					this.closePopup();
+				};
             } else if(params.template instanceof Backbone.View){
                 this.view = params.template;
-                this.view.resize = () => this.resize();
             }
             if(this.view.ok){
                 var ok = params.ok;
