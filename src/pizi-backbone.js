@@ -3,12 +3,12 @@ import Backbone from "backbone";
 const FormView = Backbone.View.extend({
 	tagName: "form",
 	initialize(options = {errorClass: 'error', validate: []}){
-		this.template = options.template;
-		this.validate = options.validate;
-		this.errorClass = options.errorClass;
-		this.url = options.url;
-		this.success = options.success;
-		this.success = options.error;
+		this.params = _.extend({
+			type: 'POST',
+			processData: false,
+			contentType: false,
+			cache: false
+		}, options);
 	},
 	events:{
 		'click .submit': 'submit'
@@ -34,16 +34,9 @@ const FormView = Backbone.View.extend({
 		return valid;
 	},
 	submit(params = {}){
-		$.ajax({
-				type: 'POST',
-				url: params.url | this.url,
-				data: new FormData(this.$el[0]),
-				processData: false,
-				contentType: false,
-				cache: false, 
-				success: params.success | this.success,
-				error: params.error | this.error
-		});
+		params = _.extend(this.params, params);
+		params.data = new FormData(this.$el[0]);
+		$.ajax(params);
 	},
 	render(options = {}){ if(this.template) this.$el.html(this.template); }
 });
