@@ -36,7 +36,7 @@
 			this.success = options.error;
 		},
 		events: {
-			'click .class': 'submit'
+			'click .submit': 'submit'
 		},
 		inputError(name, error) {
 			this.$el.find(`input[name="${ name }"]`).addClass(this.errorClass);
