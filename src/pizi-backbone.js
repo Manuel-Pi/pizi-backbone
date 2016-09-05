@@ -9,6 +9,9 @@ const FormView = Backbone.View.extend({
 			contentType: false,
 			cache: false
 		}, options);
+		this.template = options.template;
+		this.validate = options.validate;
+		this.errorClass = options.errorClass;
 	},
 	events:{
 		'click .submit': 'submit'
