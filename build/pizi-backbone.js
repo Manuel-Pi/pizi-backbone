@@ -67,7 +67,7 @@
 		},
 		submit(params = {}) {
 			params = _.extend(this.params, params);
-			if (params.type.upperCase() !== 'GET') params.data = new FormData(this.$el[0]);
+			if (params.type.toUpperCase() !== 'GET') params.data = new FormData(this.$el[0]);
 			$.ajax(params);
 		},
 		render(options = {}) {
