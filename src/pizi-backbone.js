@@ -8,7 +8,7 @@ const FormView = Backbone.View.extend({
 			processData: false,
 			contentType: false,
 			cache: false
-		}, options);
+		}, _.omit(options, ['template', 'validate', 'errorClass']));
 		this.template = options.template;
 		this.validate = options.validate;
 		this.errorClass = options.errorClass;
@@ -37,7 +37,7 @@ const FormView = Backbone.View.extend({
 		return valid;
 	},
 	submit(params = {}){
-		params = _.extend(this.params, params);
+		params = !params.currentTarget ? _.extend(this.params, params) : this.params;
 		if(params.type.toUpperCase() !== 'GET') params.data = new FormData(this.$el[0]);
 		$.ajax(params);
 	},
