@@ -149,7 +149,7 @@
 				if (params.isform) {
 					this.view = new FormView.extend({
 						submit() {
-							submit.apply(this, arguments);
+							this.submit.apply(this, arguments);
 							this.closePopup();
 						}
 					})(params);
