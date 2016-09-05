@@ -6,6 +6,12 @@ const FormView = Backbone.View.extend({
 		this.template = options.template;
 		this.validate = options.validate;
 		this.errorClass = options.errorClass;
+		this.url = options.url;
+		this.success = options.success();
+		this.success = options.error();
+	},
+	events:{
+		'click .class': 'submit'
 	},
 	inputError(name, error){ this.$el.find(`input[name="${name}"]`).addClass(this.errorClass); },
 	getValues(){ return this.$el.serializeArray(); },
@@ -30,13 +36,13 @@ const FormView = Backbone.View.extend({
 	submit(params = {}){
 		$.ajax({
 				type: 'POST',
-				url: params.url,
+				url: params.url | this.url,
 				data: new FormData(this.$el[0]),
 				processData: false,
 				contentType: false,
 				cache: false, 
-				success: params.success,
-				error: params.error
+				success: params.success | this.success,
+				error: params.error | this.error
 		});
 	},
 	render(options = {}){ if(this.template) this.$el.html(this.template); }
