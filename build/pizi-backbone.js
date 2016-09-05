@@ -146,7 +146,7 @@
 			this.resizeOff = params.resizeOff;
 			var view = this;
 			if (params.template) {
-				if (params.type === "form") {
+				if (params.isform) {
 					this.view = new FormView(params);
 					this.view.resize = () => this.resize();
 				} else if (params.template instanceof _backbone2.default.View) {
@@ -163,13 +163,12 @@
 			}
 		},
 		basic(options = {}) {
-			options.type = 'popup';
 			this.setParam(options);
 			this.render(options);
 			return this;
 		},
 		form(options = {}) {
-			options.type = 'form';
+			options.isform = true;
 			this.setParam(options);
 			this.render(options);
 			return this;
