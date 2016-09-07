@@ -102,13 +102,14 @@ const PopupView = Backbone.View.extend({
         var view = this;
 		if(params.template){
             if(params.isform){
+				const view = this;
 				const PopupFormView = FormView.extend({
 					initialize(){
 						FormView.prototype.initialize.apply(this, arguments);          
 					},
 					submit(params = {}){
 						FormView.prototype.submit.apply(this, arguments);
-						this.closePopup();
+						view.closePopup();
 					}
 				});
 				this.view = new PopupFormView(params);
