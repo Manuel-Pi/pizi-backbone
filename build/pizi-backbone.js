@@ -147,7 +147,7 @@
 			var view = this;
 			if (params.template) {
 				if (params.isform) {
-					this.view = new FormView.extend({
+					const PopupFormView = FormView.extend({
 						initialize() {
 							FormView.prototype.initialize.apply(this, arguments);
 						},
@@ -155,7 +155,8 @@
 							FormView.prototype.submit.apply(this, arguments);
 							this.closePopup();
 						}
-					})(params);
+					});
+					this.view = new PopupFormView(params);
 				} else if (params.template instanceof _backbone2.default.View) {
 					this.view = params.template;
 				}
