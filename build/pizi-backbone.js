@@ -148,7 +148,10 @@
 			if (params.template) {
 				if (params.isform) {
 					this.view = new FormView.extend({
-						submit() {
+						initialize() {
+							FormView.prototype.initialize.apply(this, arguments);
+						},
+						submit(params = {}) {
 							FormView.prototype.submit.apply(this, arguments);
 							this.closePopup();
 						}
