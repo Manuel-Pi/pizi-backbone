@@ -44,8 +44,11 @@
 		inputError(name, error) {
 			this.$el.find(`input[name="${ name }"]`).addClass(this.errorClass);
 		},
-		getValues() {
-			return this.$el.serializeArray();
+		getValues: undefined.$el.serializeArray,
+		getObject() {
+			let object = {};
+			_.each(this.getValues(), attribute => object[attribute.name] = attribute.value);
+			return object;
 		},
 		check() {
 			let valid = true;

@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 		build: 'build/',
 		testFile: 'tests/',
 		//serverFolder: 'C:/Developppment/Web/Servers/pizi-express-server/Apps/pizi-backbone/',
-        serverFolder: '../PiziServer/pizi-backbone/',
+        serverFolder: '../../Servers/PiziServer/pizi-backbone/',
 		devDependencies: [
 			'jquery/dist/jquery.js',
 			'backbone/backbone.js',

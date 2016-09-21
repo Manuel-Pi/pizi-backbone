@@ -17,7 +17,12 @@ const FormView = Backbone.View.extend({
 		'click .submit': 'submit'
 	},
 	inputError(name, error){ this.$el.find(`input[name="${name}"]`).addClass(this.errorClass); },
-	getValues(){ return this.$el.serializeArray(); },
+	getValues: this.$el.serializeArray,
+	getObject(){
+		let object = {};
+		_.each(this.getValues(), (attribute)=> object[attribute.name] = attribute.value);
+		return object;
+	},
 	check(){
 		let valid = true;
 		for(const rule in this.validate){
