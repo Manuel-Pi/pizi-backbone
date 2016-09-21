@@ -44,7 +44,9 @@
 		inputError(name, error) {
 			this.$el.find(`input[name="${ name }"]`).addClass(this.errorClass);
 		},
-		getValues: undefined.$el.serializeArray,
+		getValues() {
+			return this.$el.serializeArray();
+		},
 		getObject() {
 			let object = {};
 			_.each(this.getValues(), attribute => object[attribute.name] = attribute.value);
