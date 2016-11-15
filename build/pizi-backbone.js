@@ -166,7 +166,7 @@
 				} else if (params.template instanceof _backbone2.default.View) {
 					this.view = params.template;
 				}
-				if (this.view.ok) {
+				if (this.view && this.view.ok) {
 					var ok = params.ok;
 					params.ok = () => view.view.ok(ok);
 				}
@@ -229,11 +229,11 @@
 				template: ""
 			}, _.pick(data, ['message', 'customName', 'template', 'staticActions']));
 			this.$el.html(this.template(data)).css('display', 'flex');
+			this.renderActions(data.staticActions);
 			if (this.view) {
 				this.view.render();
 				this.$el.find('.content').html(this.view.$el);
 			}
-			this.renderActions(data.staticActions);
 			this.delegateEvents();
 		}
 	});

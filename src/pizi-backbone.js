@@ -121,7 +121,7 @@ const PopupView = Backbone.View.extend({
             } else if(params.template instanceof Backbone.View){
                 this.view = params.template;
             }
-            if(this.view.ok){
+            if(this.view && this.view.ok){
                 var ok = params.ok;
                 params.ok = () => view.view.ok(ok);
             }
@@ -184,11 +184,11 @@ const PopupView = Backbone.View.extend({
 			template: ""
 		}, _.pick(data, ['message', 'customName', 'template', 'staticActions']));
 		this.$el.html(this.template(data)).css('display', 'flex');
+		this.renderActions(data.staticActions);
 		if(this.view){
 			this.view.render();
 			this.$el.find('.content').html(this.view.$el);
 		}
-        this.renderActions(data.staticActions);
 		this.delegateEvents();
 	}
 });
