@@ -25,9 +25,11 @@
 		};
 	}
 
-	const FormView = _backbone2.default.View.extend({
+	var FormView = _backbone2.default.View.extend({
 		tagName: "form",
-		initialize(options = { errorClass: 'error', validate: [] }) {
+		initialize: function initialize() {
+			var options = arguments.length <= 0 || arguments[0] === undefined ? { errorClass: 'error', validate: [] } : arguments[0];
+
 			this.params = _.extend({
 				type: 'POST',
 				processData: false,
@@ -38,24 +40,27 @@
 			this.validate = options.validate;
 			this.errorClass = options.errorClass;
 		},
+
 		events: {
 			'click .submit': 'submit'
 		},
-		inputError(name, error) {
-			this.$el.find(`input[name="${ name }"]`).addClass(this.errorClass);
+		inputError: function inputError(name, error) {
+			this.$el.find("input[name=\"" + name + "\"]").addClass(this.errorClass);
 		},
-		getValues() {
+		getValues: function getValues() {
 			return this.$el.serializeArray();
 		},
-		getObject() {
-			let object = {};
-			_.each(this.getValues(), attribute => object[attribute.name] = attribute.value);
+		getObject: function getObject() {
+			var object = {};
+			_.each(this.getValues(), function (attribute) {
+				return object[attribute.name] = attribute.value;
+			});
 			return object;
 		},
-		check() {
-			let valid = true;
-			for (const rule in this.validate) {
-				let el = this.$el.find('*[name="' + rule.name + '"]');
+		check: function check() {
+			var valid = true;
+			for (var rule in this.validate) {
+				var el = this.$el.find('*[name="' + rule.name + '"]');
 				if (el.length && !el.val().match(rule.regex)) {
 					if (!el.hasClass(this.errorClass)) {
 						el.addClass(this.errorClass);
@@ -70,79 +75,87 @@
 			this.isValid = valid;
 			return valid;
 		},
-		submit(params = {}) {
+		submit: function submit() {
+			var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
 			params = !params.currentTarget ? _.extend(this.params, params) : this.params;
 			if (params.type.toUpperCase() !== 'GET') params.data = new FormData(this.$el[0]);
 			$.ajax(params);
 		},
-		render(options = {}) {
+		render: function render() {
+			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 			if (this.template) this.$el.html(this.template);
 		}
 	});
 
-	const NotificationView = _backbone2.default.View.extend({
+	var NotificationView = _backbone2.default.View.extend({
 		tagName: "notification",
 		className: "container-fluid",
-		template: _.template(`<h3 class="notif <%= className %>"><%= message %><a class="close">&times;</a></h3>`),
-		initialize(options = {}) {
+		template: _.template("<h3 class=\"notif <%= className %>\"><%= message %><a class=\"close\">&times;</a></h3>"),
+		initialize: function initialize() {
+			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
 			if ($('notification').length === 0) this.$el.prependTo('body');else this.$el = $($('notification')[0]);
 			this.duration = options.duration || 3000;
 			this.template = options.template || this.template;
 		},
+
 		events: {
 			'click .close': 'close'
 		},
-		close(event) {
-			const $notif = event.currentTarget ? $(event.currentTarget).parents('.notif') : event;
-			$notif.slideUp({ complete() {
+		close: function close(event) {
+			var $notif = event.currentTarget ? $(event.currentTarget).parents('.notif') : event;
+			$notif.slideUp({
+				complete: function complete() {
 					$notif.remove();
-				} });
+				}
+			});
 		},
-		success(message, options = {}) {
+		success: function success(message) {
+			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 			this.render({ className: "success", message: message }, options);
 		},
-		error(message, options = {}) {
+		error: function error(message) {
+			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 			this.render({ className: "alert", message: message }, options);
 		},
-		warn(message, options = {}) {
+		warn: function warn(message) {
+			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 			this.render({ className: "warning", message: message }, options);
 		},
-		notify(message, options = {}) {
+		notify: function notify(message) {
+			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 			this.render({ message: message }, options);
 		},
-		render(notif, options = {}) {
-			let $notif = $(this.template({ className: notif.className, message: notif.message }));
+		render: function render(notif) {
+			var _this = this;
+
+			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+			var $notif = $(this.template({ className: notif.className, message: notif.message }));
 			this.$el.append($notif);
-			if (!options.permanent) setTimeout(() => {
-				this.close($notif);
+			if (!options.permanent) setTimeout(function () {
+				_this.close($notif);
 			}, options.duration || this.duration);
 		}
 	});
 
-	const PopupView = _backbone2.default.View.extend({
+	var PopupView = _backbone2.default.View.extend({
 		tagName: "popup",
-		template: _.template(`<div class="background"></div>
-						  <div class="container">
-						  	<a class="close">&#215;</a>
-							<div class="content">
-								<% template ? print(template) : print(message) %>
-							</div>
-							<ul class="actions">
-								<li class="ok">Ok</li>
-								<li class="custom"><%= customName %></li>
-								<li class="cancel">Cancel</li>
-							</ul>
-						  </div>`),
-		initialize() {
+		template: _.template("<div class=\"background\"></div>\n\t\t\t\t\t\t  <div class=\"container\">\n\t\t\t\t\t\t  \t<a class=\"close\">&#215;</a>\n\t\t\t\t\t\t\t<div class=\"content\">\n\t\t\t\t\t\t\t\t<% template ? print(template) : print(message) %>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<ul class=\"actions\">\n\t\t\t\t\t\t\t\t<li class=\"ok\">Ok</li>\n\t\t\t\t\t\t\t\t<li class=\"custom\"><%= customName %></li>\n\t\t\t\t\t\t\t\t<li class=\"cancel\">Cancel</li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t  </div>"),
+		initialize: function initialize() {
 			if ($('popup').length === 0) this.$el.prependTo('body');else this.$el = $($('popup')[0]);
 		},
+
 		events: {
 			'click .close': 'onClose',
 			'click .cancel': 'onClose',
 			'click .ok': 'onOk',
 			'click .custom': 'onCustom'
 		},
-		setParam(params) {
+		setParam: function setParam(params) {
+			var _this2 = this;
+
 			this.type = params.type;
 			this.ok = params.ok;
 			this.close = params.close;
@@ -152,59 +165,69 @@
 			var view = this;
 			if (params.template) {
 				if (params.isform) {
-					const view = this;
-					const PopupFormView = FormView.extend({
-						initialize() {
-							FormView.prototype.initialize.apply(this, arguments);
-						},
-						submit(params = {}) {
-							FormView.prototype.submit.apply(this, arguments);
-							view.closePopup();
-						}
-					});
-					this.view = new PopupFormView(params);
+					(function () {
+						var view = _this2;
+						var PopupFormView = FormView.extend({
+							initialize: function initialize() {
+								FormView.prototype.initialize.apply(this, arguments);
+							},
+							submit: function submit() {
+								var params = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+								FormView.prototype.submit.apply(this, arguments);
+								view.closePopup();
+							}
+						});
+						_this2.view = new PopupFormView(params);
+					})();
 				} else if (params.template instanceof _backbone2.default.View) {
 					this.view = params.template;
 				}
 				if (this.view && this.view.ok) {
 					var ok = params.ok;
-					params.ok = () => view.view.ok(ok);
+					params.ok = function () {
+						return view.view.ok(ok);
+					};
 				}
 				this.ok = params.ok || this.ok;
 			} else {
 				this.view = null;
 			}
 		},
-		basic(options = {}) {
+		basic: function basic() {
+			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
 			this.setParam(options);
 			this.render(options);
 			return this;
 		},
-		form(options = {}) {
+		form: function form() {
+			var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
 			options.isform = true;
 			this.setParam(options);
 			this.render(options);
 			return this;
 		},
-		onClose() {
+		onClose: function onClose() {
 			if (this.close) this.close.apply(this, [this.callbackArgs()]);
 			this.closePopup();
 		},
-		onOk() {
+		onOk: function onOk() {
 			if (this.ok) this.ok.apply(this, [this.callbackArgs()]);
 			if (this.type !== 'form' || this.view.isValid) this.closePopup();
 		},
-		onCustom() {
+		onCustom: function onCustom() {
 			if (this.custom) this.custom.apply(this, [this.callbackArgs()]);
 			this.closePopup();
 		},
-		closePopup() {
+		closePopup: function closePopup() {
 			if (this.view) this.view.remove();
 			this.$el.css('display', 'none').html();
 		},
-		callbackArgs() {
-			let valid = true;
-			let args = [];
+		callbackArgs: function callbackArgs() {
+			var valid = true;
+			var args = [];
 			if (this.type === 'form') {
 				valid = this.view.check();
 				args.push(this.view.getValues());
@@ -213,7 +236,7 @@
 			args.push(this);
 			return args;
 		},
-		renderActions(staticActions) {
+		renderActions: function renderActions(staticActions) {
 			this.$el.find('.ok')[this.ok ? 'show' : 'hide']();
 			this.$el.find('.cancel')[this.close ? 'show' : 'hide']();
 			this.$el.find('.custom')[this.custom ? 'show' : 'hide']();
@@ -222,7 +245,9 @@
 			this.$el.find('.actions')[staticActions]('static');
 			this.$el[staticActions]('static-actions');
 		},
-		render(data = {}) {
+		render: function render() {
+			var data = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
 			data = _.extend({
 				message: "",
 				customName: "",
@@ -238,19 +263,21 @@
 		}
 	});
 
-	const WaitView = _backbone2.default.View.extend({
-		template: _.template(`<div class="background"></div><div class="message pulse"><%= message %><div class="anim"></div></div>`),
+	var WaitView = _backbone2.default.View.extend({
+		template: _.template("<div class=\"background\"></div><div class=\"message pulse\"><%= message %><div class=\"anim\"></div></div>"),
 		tagName: "wait",
-		initialize() {
+		initialize: function initialize() {
 			if ($('wait').length === 0) this.$el.prependTo('body');else this.$el = $('wait').first();
 		},
-		start(message, $el) {
+		start: function start(message, $el) {
+			var _this3 = this;
+
 			if (message instanceof $) {
 				$el = message;
 				message = null;
 			}
-			let $template = this.template({ message: message || 'loading...' });
-			let $parent = $el || $('body');
+			var $template = this.template({ message: message || 'loading...' });
+			var $parent = $el || $('body');
 			$parent.addClass('wait-container hide-child');
 			if ($el) {
 				$parent.prepend($('<wait style="display:block"></wait>').prepend($template));
@@ -258,16 +285,18 @@
 				this.$el.html($template).show();
 			}
 			return {
-				stop: callback => this.stop($el, callback)
+				stop: function stop(callback) {
+					return _this3.stop($el, callback);
+				}
 			};
 		},
-		stop($el, callback) {
+		stop: function stop($el, callback) {
 			callback = _.isFunction($el) ? $el : callback;
-			let $wait = $el && $el.find('wait') || this.$el;
-			let $parent = $el || $('body');
+			var $wait = $el && $el.find('wait') || this.$el;
+			var $parent = $el || $('body');
 			$wait.find('.background, .message').removeClass('pulse').css('opacity', 0);
 			$parent.removeClass('hide-child');
-			setTimeout(() => {
+			setTimeout(function () {
 				$parent.removeClass('wait-container');
 				$wait.hide().html('');
 				if ($el) $wait.remove();
@@ -276,15 +305,20 @@
 		}
 	});
 	// Add token in REST request
-	const useJwt = (options = { token() {}, onUnauthorized() {} }) => {
-		const sync = _backbone2.default.sync;
-		_backbone2.default.sync = (method, model, opts) => {
-			const token = options.token();
-			if (token) opts.beforeSend = xhr => {
+	var useJwt = function useJwt() {
+		var options = arguments.length <= 0 || arguments[0] === undefined ? {
+			token: function token() {},
+			onUnauthorized: function onUnauthorized() {}
+		} : arguments[0];
+
+		var sync = _backbone2.default.sync;
+		_backbone2.default.sync = function (method, model, opts) {
+			var token = options.token();
+			if (token) opts.beforeSend = function (xhr) {
 				xhr.setRequestHeader(options.header || 'authorization', 'Bearer ' + token);
 			};
-			let err = opts.error;
-			opts.error = param => {
+			var err = opts.error;
+			opts.error = function (param) {
 				if (param.status && param.status === 401) options.onUnauthorized();
 				err(param);
 			};
@@ -293,11 +327,11 @@
 	};
 
 	exports.default = {
-		NotificationView,
-		PopupView,
-		FormView,
-		WaitView,
-		useJwt
+		NotificationView: NotificationView,
+		PopupView: PopupView,
+		FormView: FormView,
+		WaitView: WaitView,
+		useJwt: useJwt
 	};
 	module.exports = exports["default"];
 });
