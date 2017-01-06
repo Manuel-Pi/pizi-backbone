@@ -141,7 +141,7 @@ const NotificationView = Backbone.View.extend({
     className: "container-fluid",
     template: _.template(`<h3 class="notif <%= className %>"><%= message %><a class="close">&times;</a></h3>`),
     initialize(options = {}) {
-        if ($('notification').length === 0) this.$el.prependTo('body');else this.$el = $($('notification')[0]);
+        if (document.body.getElementsByTagName('content').length === 0) document.body.appendChild(this.el);else this.el = document.createElement('notification');
         this.duration = options.duration || 3000;
         this.template = options.template || this.template;
     },
@@ -149,7 +149,7 @@ const NotificationView = Backbone.View.extend({
         'click .close': 'close'
     },
     close(event) {
-        const $notif = event.currentTarget ? $(event.currentTarget).parents('.notif') : event;
+        const $notif = event.currentTarget ? event.currentTarget.parentNode() : event;
         $notif.slideUp({ complete() {
                 $notif.remove();
             } });
@@ -167,8 +167,8 @@ const NotificationView = Backbone.View.extend({
         this.render({ message: message }, options);
     },
     render(notif, options = {}) {
-        let $notif = $(this.template({ className: notif.className, message: notif.message }));
-        this.$el.append($notif);
+        let $notif = this.template({ className: notif.className, message: notif.message });
+        this.el.appendChild($notif);
         if (!options.permanent) setTimeout(() => {
             this.close($notif);
         }, options.duration || this.duration);
