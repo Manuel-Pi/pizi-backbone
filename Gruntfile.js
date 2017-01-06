@@ -61,9 +61,9 @@ module.exports = function(grunt) {
         },
         babel: {
             options: {
-                "plugins": ["add-module-exports", "transform-es2015-modules-umd"],
+                "plugins": ["add-module-exports"],
                 "presets": [
-                    "es2015"
+                    ["es2015", { "modules": "umd" }]
                 ]
             },
             dist: {
