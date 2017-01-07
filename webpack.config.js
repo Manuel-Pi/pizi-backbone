@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const path = require('path');
+const nodeExternals = require('webpack-node-externals');
 
 // multiple extract instances
 const extractSass = new ExtractTextPlugin('pizi-backbone.css');
@@ -49,9 +50,9 @@ module.exports = {
         extractHtml,
         new webpack.optimize.CommonsChunkPlugin({ name: ['pizi-backbone'], minChunks: Infinity }),
     ],
+    externals: [nodeExternals()],
     resolve: {
         alias: {
-            underscore: modules + "backbone/node_modules/underscore/underscore",
             html: sources + "html",
             views: sources + "js/views",
             models: sources + "js/models",
