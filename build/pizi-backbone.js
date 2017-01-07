@@ -153,7 +153,7 @@ const NotificationView = Backbone.View.extend({
         let styles = getComputedStyle($notif);
         const duration = styles && styles.animationDuration ? parseFloat(styles.animationDuration) : 0;
         setTimeout(() => {
-            $notif.parent.removeChild($notif);
+            $notif.parentNode.removeChild($notif);
         }, duration);
     },
     success(message, options = {}) {

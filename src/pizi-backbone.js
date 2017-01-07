@@ -67,7 +67,7 @@ const NotificationView = Backbone.View.extend({
         const $notif = event.target ? event.target.parentNode : event;
         let styles = getComputedStyle($notif);
         const duration = styles && styles.animationDuration ? parseFloat(styles.animationDuration) : 0;
-        setTimeout(() => { $notif.parent.removeChild($notif); }, duration);
+        setTimeout(() => { $notif.parentNode.removeChild($notif); }, duration);
     },
     success(message, options = {}) { this.render({ className: "success", message: message }, options); },
     error(message, options = {}) { this.render({ className: "alert", message: message }, options); },
