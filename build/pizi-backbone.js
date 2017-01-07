@@ -8,9 +8,66 @@ var _backbone = require('backbone');
 
 var _backbone2 = _interopRequireDefault(_backbone);
 
+var _WaitView = require('views/WaitView');
+
+var _WaitView2 = _interopRequireDefault(_WaitView);
+
+var _PopupView = require('views/PopupView');
+
+var _PopupView2 = _interopRequireDefault(_PopupView);
+
+var _NotificationView = require('views/NotificationView');
+
+var _NotificationView2 = _interopRequireDefault(_NotificationView);
+
+var _FormView = require('views/FormView');
+
+var _FormView2 = _interopRequireDefault(_FormView);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var FormView = _backbone2.default.View.extend({
+// Add token in REST request
+var useJwt = function useJwt() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        token: function token() {},
+        onUnauthorized: function onUnauthorized() {}
+    };
+
+    var sync = _backbone2.default.sync;
+    _backbone2.default.sync = function (method, model, opts) {
+        var token = options.token();
+        if (token) opts.beforeSend = function (xhr) {
+            xhr.setRequestHeader(options.header || 'authorization', 'Bearer ' + token);
+        };
+        var err = opts.error;
+        opts.error = function (param) {
+            if (param.status && param.status === 401) options.onUnauthorized();
+            err(param);
+        };
+        sync(method, model, opts);
+    };
+};
+
+exports.default = {
+    NotificationView: _NotificationView2.default,
+    PopupView: _PopupView2.default,
+    FormView: _FormView2.default,
+    WaitView: _WaitView2.default,
+    useJwt: useJwt
+};
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _backbone = require('backbone');
+
+var _backbone2 = _interopRequireDefault(_backbone);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _backbone2.default.View.extend({
     tagName: "form",
     initialize: function initialize() {
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { errorClass: 'error', validate: [] };
@@ -77,11 +134,22 @@ var FormView = _backbone2.default.View.extend({
         if (this.template) this.$el.html(this.template);
     }
 });
+"use strict";
 
-var NotificationView = _backbone2.default.View.extend({
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _backbone = require("backbone");
+
+var _backbone2 = _interopRequireDefault(_backbone);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _backbone2.default.View.extend({
     tagName: "notification",
     className: "container-fluid",
-    template: _.template('<h3 class="notif <%= className %>"><%= message %><a class="close">&times;</a></h3>'),
+    template: _.template("<h3 class=\"notif <%= className %>\"><%= message %><a class=\"close\">&times;</a></h3>"),
     initialize: function initialize() {
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -139,10 +207,21 @@ var NotificationView = _backbone2.default.View.extend({
         }, options.duration || this.duration);
     }
 });
+"use strict";
 
-var PopupView = _backbone2.default.View.extend({
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _backbone = require("backbone");
+
+var _backbone2 = _interopRequireDefault(_backbone);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _backbone2.default.View.extend({
     tagName: "popup",
-    template: _.template('<div class="background"></div>\n\t\t\t\t\t\t  <div class="container">\n\t\t\t\t\t\t  \t<a class="close">&#215;</a>\n\t\t\t\t\t\t\t<div class="content">\n\t\t\t\t\t\t\t\t<% template ? print(template) : print(message) %>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<ul class="actions">\n\t\t\t\t\t\t\t\t<li class="ok">Ok</li>\n\t\t\t\t\t\t\t\t<li class="custom"><%= customName %></li>\n\t\t\t\t\t\t\t\t<li class="cancel">Cancel</li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t  </div>'),
+    template: _.template("<div class=\"background\"></div>\n\t\t\t\t\t\t  <div class=\"container\">\n\t\t\t\t\t\t  \t<a class=\"close\">&#215;</a>\n\t\t\t\t\t\t\t<div class=\"content\">\n\t\t\t\t\t\t\t\t<% template ? print(template) : print(message) %>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<ul class=\"actions\">\n\t\t\t\t\t\t\t\t<li class=\"ok\">Ok</li>\n\t\t\t\t\t\t\t\t<li class=\"custom\"><%= customName %></li>\n\t\t\t\t\t\t\t\t<li class=\"cancel\">Cancel</li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t  </div>"),
     initialize: function initialize() {
         var $popup = document.body.querySelector("popup");
         if (!$popup) document.body.appendChild(this.el);else this.el = $popup;
@@ -155,7 +234,7 @@ var PopupView = _backbone2.default.View.extend({
         'click .custom': 'onCustom'
     },
     setParam: function setParam(params) {
-        var _this2 = this;
+        var _this = this;
 
         this.type = params.type;
         this.ok = params.ok;
@@ -167,7 +246,7 @@ var PopupView = _backbone2.default.View.extend({
         if (params.template) {
             if (params.isform) {
                 (function () {
-                    var view = _this2;
+                    var view = _this;
                     var PopupFormView = FormView.extend({
                         initialize: function initialize() {
                             FormView.prototype.initialize.apply(this, arguments);
@@ -179,7 +258,7 @@ var PopupView = _backbone2.default.View.extend({
                             view.closePopup();
                         }
                     });
-                    _this2.view = new PopupFormView(params);
+                    _this.view = new PopupFormView(params);
                 })();
             } else if (params.template instanceof _backbone2.default.View) {
                 this.view = params.template;
@@ -263,8 +342,19 @@ var PopupView = _backbone2.default.View.extend({
         this.delegateEvents();
     }
 });
+'use strict';
 
-var WaitView = _backbone2.default.View.extend({
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _backbone = require('backbone');
+
+var _backbone2 = _interopRequireDefault(_backbone);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = _backbone2.default.View.extend({
     template: _.template('<div class="background" style="display:block"></div><div class="message pulse"><%= message %><div class="anim"></div></div>'),
     tagName: "wait",
     initialize: function initialize() {
@@ -272,7 +362,7 @@ var WaitView = _backbone2.default.View.extend({
         if ($body.querySelectorAll('wait').length === 0) $body.appendChild(this.el);else this.el = $body.querySelector('wait');
     },
     start: function start(message, $el) {
-        var _this3 = this;
+        var _this = this;
 
         if (message instanceof Element) {
             $el = message;
@@ -293,7 +383,7 @@ var WaitView = _backbone2.default.View.extend({
         }
         return {
             stop: function stop(callback) {
-                return _this3.stop($el, callback);
+                return _this.stop($el, callback);
             }
         };
     },
@@ -316,32 +406,3 @@ var WaitView = _backbone2.default.View.extend({
         }, 1500);
     }
 });
-// Add token in REST request
-var useJwt = function useJwt() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-        token: function token() {},
-        onUnauthorized: function onUnauthorized() {}
-    };
-
-    var sync = _backbone2.default.sync;
-    _backbone2.default.sync = function (method, model, opts) {
-        var token = options.token();
-        if (token) opts.beforeSend = function (xhr) {
-            xhr.setRequestHeader(options.header || 'authorization', 'Bearer ' + token);
-        };
-        var err = opts.error;
-        opts.error = function (param) {
-            if (param.status && param.status === 401) options.onUnauthorized();
-            err(param);
-        };
-        sync(method, model, opts);
-    };
-};
-
-exports.default = {
-    NotificationView: NotificationView,
-    PopupView: PopupView,
-    FormView: FormView,
-    WaitView: WaitView,
-    useJwt: useJwt
-};
