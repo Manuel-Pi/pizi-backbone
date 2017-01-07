@@ -1,16 +1,171 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['module', 'exports', 'backbone', './views/WaitView', './views/PopupView', './views/NotificationView', './views/FormView'], factory);
+        define(["module", "exports", "backbone"], factory);
     } else if (typeof exports !== "undefined") {
-        factory(module, exports, require('backbone'), require('./views/WaitView'), require('./views/PopupView'), require('./views/NotificationView'), require('./views/FormView'));
+        factory(module, exports, require("backbone"));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod, mod.exports, global.backbone, global.WaitView, global.PopupView, global.NotificationView, global.FormView);
+        factory(mod, mod.exports, global.backbone);
+        global.Entity = mod.exports;
+    }
+})(this, function (module, exports, _backbone) {
+    "use strict";
+
+    Object.defineProperty(exports, "__esModule", {
+        value: true
+    });
+
+    var _backbone2 = _interopRequireDefault(_backbone);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    const Model = _backbone2.default.Model.extend({
+        dates: [],
+        validate(attrs, options) {
+            var dates = _.pick(attrs, this.dates.concat(['date']));
+            for (var date in dates) {
+                if (dates[date] && !(dates[date] instanceof Date)) {
+                    return date;
+                }
+            }
+        },
+        save(attrs, options = { parse: false }) {
+            if (options.all) {
+                var success = options.success;
+                options.success = (model, resp, opts) => {
+                    _.each(this.relations, (relation, key) => {
+                        if (relation.collection && model.get(key) instanceof relation.collection) {
+                            _.each(model.get(key).models, model => {
+                                model.save(null, { all: options.all });
+                            });
+                        }
+                    });
+                    if (success) success.call(this, model, resp, options);
+                };
+            }
+            // Proxy the call to the original save function
+            _backbone2.default.Model.prototype.save.call(this, attrs, options);
+        },
+        fetch(options = {}) {
+            if (options.all) {
+                var success = options.success;
+                options.success = (model, resp, opts) => {
+                    _.each(this.relations, (relation, key) => {
+                        if (relation.collection && model.get(key) instanceof relation.collection) {
+                            _.each(model.get(key).models, model => {
+                                model.fetch({ all: options.all });
+                            });
+                        }
+                    });
+                    if (success) success.call(this, model, resp, options);
+                };
+            }
+            _backbone2.default.Model.prototype.fetch.call(this, options);
+        },
+        toJSON(options = {}) {
+            var attributes = _.clone(this.attributes);
+            for (var attribute in attributes) {
+                if (attributes.hasOwnProperty(attribute)) {
+                    if (attributes[attribute] instanceof _backbone2.default.Model) {
+                        attributes[attribute] = options.all ? _.pick(attributes[attribute], "id") : attributes[attribute].toJSON(options);
+                    } else if (attributes[attribute] instanceof _backbone2.default.Collection) {
+                        var converted = [];
+                        attributes[attribute].forEach(attr => converted.push(options.all ? _.pick(attr, 'id') : attr.toJSON(options)));
+                        attributes[attribute] = converted;
+                    }
+                }
+            }
+            return attributes;
+        },
+        set: function (key, val, options) {
+            if (key === null) return this;
+            var attributes;
+            if (typeof key === 'object') {
+                attributes = key;
+                options = val;
+            } else {
+                (attributes = {})[key] = val;
+            }
+            var opts = _.extend({ validate: true }, options);
+            var relations = _.keys(this.relations);
+            _.each(attributes, (value, key) => {
+                if (_.contains(relations, key)) {
+                    var definition = this.relations[key];
+                    if (definition.model && value instanceof Object) {
+                        this.set(key, new definition.model(value, opts), opts);
+                        delete attributes[key];
+                    } else if (definition.collection && value instanceof Array) {
+                        // Check if array is a real array (key = number), if it is it must be id's array
+                        this.get(key).set(new definition.collection(value, opts));
+                        delete attributes[key];
+                    } else if (definition.model && !(value instanceof definition.model) || definition.collection && !(value instanceof definition.collection)) {
+                        console.log('Bad model definition: ' + this.get('className'));
+                        delete attributes[key];
+                    }
+                }
+            }, this);
+            return _backbone2.default.Model.prototype.set.apply(this, [attributes, options]);
+        }
+    });
+
+    /**
+     * Extend the Backbone.Model.extend method, to add some treatement on instance creation
+     * @param  {Object} modelDefinition
+     * @return {function} the model constructor
+     */
+    /*jshint loopfunc: true */
+
+    Model.extend = function (modelDefinition) {
+        // Set defaults collections for relations
+        var defaultRelations = {};
+        _.each(modelDefinition.relations, (definition, key) => {
+            if (definition.collection && modelDefinition.defaults[key] instanceof Array) {
+                defaultRelations[key] = new definition.collection(modelDefinition.defaults[key]);
+            } else if (definition.collection && !(modelDefinition.defaults[key] instanceof Array)) {
+                console.log("Bad default value for " + key);
+            }
+        });
+        _.extend(modelDefinition.defaults, defaultRelations);
+        return _backbone2.default.Model.extend.call(this, modelDefinition);
+    };
+
+    /**
+     * The Collection
+     * @type {Backbone.Collection}
+     */
+    const Collection = _backbone2.default.Collection.extend({
+        /* Used to instanciate a new Model from Json (need to override if subtypes)*/
+        model: Model
+    });
+
+    /**
+     * Exporting the Model and the Collection
+     */
+    exports.default = {
+        Model,
+        Collection
+    };
+    module.exports = exports["default"];
+});
+(function (global, factory) {
+    if (typeof define === "function" && define.amd) {
+        define(['module', 'exports', 'backbone', './views/WaitView', './views/PopupView', './views/NotificationView', './views/FormView', './models/Entity'], factory);
+    } else if (typeof exports !== "undefined") {
+        factory(module, exports, require('backbone'), require('./views/WaitView'), require('./views/PopupView'), require('./views/NotificationView'), require('./views/FormView'), require('./models/Entity'));
+    } else {
+        var mod = {
+            exports: {}
+        };
+        factory(mod, mod.exports, global.backbone, global.WaitView, global.PopupView, global.NotificationView, global.FormView, global.Entity);
         global.piziBackbone = mod.exports;
     }
-})(this, function (module, exports, _backbone, _WaitView, _PopupView, _NotificationView, _FormView) {
+})(this, function (module, exports, _backbone, _WaitView, _PopupView, _NotificationView, _FormView, _Entity) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -26,6 +181,8 @@
     var _NotificationView2 = _interopRequireDefault(_NotificationView);
 
     var _FormView2 = _interopRequireDefault(_FormView);
+
+    var _Entity2 = _interopRequireDefault(_Entity);
 
     function _interopRequireDefault(obj) {
         return obj && obj.__esModule ? obj : {
@@ -55,6 +212,7 @@
         PopupView: _PopupView2.default,
         FormView: _FormView2.default,
         WaitView: _WaitView2.default,
+        Entity: _Entity2.default,
         useJwt
     };
     module.exports = exports['default'];

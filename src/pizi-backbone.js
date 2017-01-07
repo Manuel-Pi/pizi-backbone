@@ -3,6 +3,7 @@ import WaitView from './views/WaitView';
 import PopupView from './views/PopupView';
 import NotificationView from './views/NotificationView';
 import FormView from './views/FormView';
+import Entity from './models/Entity';
 
 // Add token in REST request
 const useJwt = (options = { token() {}, onUnauthorized() {} }) => {
@@ -24,5 +25,6 @@ export default {
     PopupView,
     FormView,
     WaitView,
+    Entity,
     useJwt
 };
