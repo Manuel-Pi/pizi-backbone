@@ -1,4 +1,5 @@
-import "./pizi-backbone.scss";
+import Backbone from 'backbone';
+
 const FormView = Backbone.View.extend({
     tagName: "form",
     initialize(options = { errorClass: 'error', validate: [] }) {
@@ -16,9 +17,11 @@ const FormView = Backbone.View.extend({
         'click .submit': 'submit'
     },
     inputError(name, error) {
-        this.$el.find(`input[name="${name}"]`).addClass(this.errorClass);
+        this.el.querySelectorAll(`input[name="${name}"]`).className += (this.errorClass);
     },
-    getValues() { return this.$el.serializeArray(); },
+    getValues() {
+        return this.$el.serializeArray();
+    },
     getObject() {
         let object = {};
         _.each(this.getValues(), (attribute) => object[attribute.name] = attribute.value);
@@ -27,16 +30,17 @@ const FormView = Backbone.View.extend({
     check() {
         let valid = true;
         for (const rule in this.validate) {
-            let el = this.$el.find('*[name="' + rule.name + '"]');
-            if (el.length && !el.val().match(rule.regex)) {
-                if (!el.hasClass(this.errorClass)) {
-                    el.addClass(this.errorClass);
-                    el.after('<small class="' + this.errorClass + '">' + rule.message + '</small>');
+            let el = this.el.querySelectorAll('*[name="' + rule.name + '"]');
+            if (el.length && !el[0].value.match(rule.regex)) {
+                if (!el.classList.contains(this.errorClass)) {
+                    el.classList.push(this.errorClass);
+                    el.insertAdjacentHTML('afterend', '<small class="' + this.errorClass + '">' + rule.message + '</small>');
                 }
                 valid = false;
             } else if (el.length) {
-                el.removeClass(this.errorClass);
-                el.next('small.' + this.errorClass).remove();
+                el.classList.remove(this.errorClass);
+                let $next = el.nextElementSibling;
+                if ($next.tagName === "small") $next.parentNode.removeChild($next);
             }
         }
         this.isValid = valid;
@@ -44,8 +48,12 @@ const FormView = Backbone.View.extend({
     },
     submit(params = {}) {
         params = !params.currentTarget ? _.extend(this.params, params) : this.params;
-        if (params.type.toUpperCase() !== 'GET') params.data = new FormData(this.$el[0]);
+        if (params.type.toUpperCase() !== 'GET') params.data = new FormData(this.el);
         $.ajax(params);
+        var request = new XMLHttpRequest();
+        request.open(params.type, params.url, true);
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        request.send(params.data);
     },
     render(options = {}) { if (this.template) this.$el.html(this.template); }
 });
@@ -55,8 +63,9 @@ const NotificationView = Backbone.View.extend({
     className: "container-fluid",
     template: _.template(`<h3 class="notif <%= className %>"><%= message %><a class="close">&times;</a></h3>`),
     initialize(options = {}) {
-        if (document.body.getElementsByTagName('content').length === 0) document.body.appendChild(this.el);
-        else this.el = document.createElement('notification');
+        let $notif = document.body.getElementsByTagName('notification')[0];
+        if (!$notif) document.body.appendChild(this.el);
+        else this.el = $notif;
         this.duration = options.duration || 3000;
         this.template = options.template || this.template;
     },
@@ -65,17 +74,28 @@ const NotificationView = Backbone.View.extend({
     },
     close(event, childEvent) {
         const $notif = event.target ? event.target.parentNode : event;
+        $notif.style.height = 0;
+        $notif.style.marginTop = 0;
+        $notif.style.marginBottom = 0;
+        $notif.style.paddingTop = 0;
+        $notif.style.paddingBottom = 0;
         let styles = getComputedStyle($notif);
-        const duration = styles && styles.animationDuration ? parseFloat(styles.animationDuration) : 0;
-        setTimeout(() => { $notif.parentNode.removeChild($notif); }, duration);
+        const duration = styles && styles.transitionDuration ? parseFloat(styles.transitionDuration) : 0;
+
+        setTimeout(() => {
+            if ($notif && $notif.parentNode) $notif.parentNode.removeChild($notif);
+        }, duration * 1000);
     },
     success(message, options = {}) { this.render({ className: "success", message: message }, options); },
     error(message, options = {}) { this.render({ className: "alert", message: message }, options); },
     warn(message, options = {}) { this.render({ className: "warning", message: message }, options); },
     notify(message, options = {}) { this.render({ message: message }, options); },
     render(notif, options = {}) {
-        this.el.innerHTML += this.template({ className: notif.className, message: notif.message });
-        const $notif = this.el.lastChild;
+
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = this.template({ className: notif.className, message: notif.message });
+        const $notif = wrapper.lastChild;
+        this.el.appendChild($notif);
         if (!options.permanent) setTimeout(() => { this.close($notif); }, options.duration || this.duration);
     }
 });
@@ -95,8 +115,9 @@ const PopupView = Backbone.View.extend({
 							</ul>
 						  </div>`),
     initialize() {
-        if ($('popup').length === 0) this.$el.prependTo('body');
-        else this.$el = $($('popup')[0]);
+        let $popup = document.body.querySelector("popup");
+        if (!$popup) document.body.appendChild(this.el);
+        else this.el = $popup;
     },
     events: {
         'click .close': 'onClose',
@@ -109,7 +130,7 @@ const PopupView = Backbone.View.extend({
         this.ok = params.ok;
         this.close = params.close;
         this.custom = params.custom;
-        this.$el.addClass(params.class);
+        this.el.classList.add(params.class);
         this.resizeOff = params.resizeOff;
         var view = this;
         if (params.template) {
@@ -201,24 +222,30 @@ const PopupView = Backbone.View.extend({
 });
 
 const WaitView = Backbone.View.extend({
-    template: _.template(`<div class="background"></div><div class="message pulse"><%= message %><div class="anim"></div></div>`),
+    template: _.template(`<div class="background" style="display:block"></div><div class="message pulse"><%= message %><div class="anim"></div></div>`),
     tagName: "wait",
     initialize() {
-        if ($('wait').length === 0) this.$el.prependTo('body');
-        else this.$el = $('wait').first();
+        let $body = document.body;
+        if ($body.querySelectorAll('wait').length === 0) $body.appendChild(this.el);
+        else this.el = $body.querySelector('wait');
     },
     start(message, $el) {
-        if (message instanceof $) {
+        if (message instanceof Element) {
             $el = message;
             message = null;
         }
         let $template = this.template({ message: message || 'loading...' });
-        let $parent = $el || $('body');
-        $parent.addClass('wait-container hide-child');
+        let $parent = $el || document.body;
+        $parent.classList.add('wait-container');
+        $parent.classList.add('hide-child');
         if ($el) {
-            $parent.prepend($('<wait style="display:block"></wait>').prepend($template));
+            let $wait = new Element("wait");
+            $wait.style.display = "block";
+            $wait.insertBefore($template, $wait.firstChild);
+            $parent.insertBefore($wait, parent.firstChild);
         } else {
-            this.$el.html($template).show();
+            this.el.innerHTML = $template;
+            this.el.style.display = "block";
         }
         return {
             stop: (callback) => this.stop($el, callback)
@@ -226,14 +253,19 @@ const WaitView = Backbone.View.extend({
     },
     stop($el, callback) {
         callback = _.isFunction($el) ? $el : callback;
-        let $wait = $el && $el.find('wait') || this.$el;
-        let $parent = $el || $('body');
-        $wait.find('.background, .message').removeClass('pulse').css('opacity', 0);
-        $parent.removeClass('hide-child');
+        let $wait = $el && $el.querySelector('wait') || this.el;
+        let $parent = $el || document.body;
+        let elements = $wait.querySelectorAll('.background, .message');
+        for (let i = 0; i < elements.length; i++) {
+            elements[i].classList.remove('pulse');
+            elements[i].style.opacity = 0;
+        }
+        $parent.classList.remove('hide-child');
         setTimeout(() => {
-            $parent.removeClass('wait-container');
-            $wait.hide().html('');
-            if ($el) $wait.remove();
+            $parent.classList.remove('wait-container');
+            $wait.style.display = "none";
+            $wait.innerHTML = "";
+            if ($el) $wait.parentNode.removeChild($wait);
             if (callback) callback();
         }, 1500);
     }

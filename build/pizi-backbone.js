@@ -1,89 +1,20 @@
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
+'use strict';
 
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
-/******/ 			return installedModules[moduleId].exports;
+var _backbone = require('backbone');
 
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
+var _backbone2 = _interopRequireDefault(_backbone);
 
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-
-
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
-/******/ 		}
-/******/ 	};
-
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ },
-/* 1 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__pizi_backbone_scss__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__pizi_backbone_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__pizi_backbone_scss__);
-
-const FormView = Backbone.View.extend({
+var FormView = _backbone2.default.View.extend({
     tagName: "form",
-    initialize(options = { errorClass: 'error', validate: [] }) {
+    initialize: function initialize() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { errorClass: 'error', validate: [] };
+
         this.params = _.extend({
             type: 'POST',
             processData: false,
@@ -94,175 +25,210 @@ const FormView = Backbone.View.extend({
         this.validate = options.validate;
         this.errorClass = options.errorClass;
     },
+
     events: {
         'click .submit': 'submit'
     },
-    inputError(name, error) {
-        this.$el.find(`input[name="${ name }"]`).addClass(this.errorClass);
+    inputError: function inputError(name, error) {
+        this.el.querySelectorAll('input[name="' + name + '"]').className += this.errorClass;
     },
-    getValues() {
+    getValues: function getValues() {
         return this.$el.serializeArray();
     },
-    getObject() {
-        let object = {};
-        _.each(this.getValues(), attribute => object[attribute.name] = attribute.value);
+    getObject: function getObject() {
+        var object = {};
+        _.each(this.getValues(), function (attribute) {
+            return object[attribute.name] = attribute.value;
+        });
         return object;
     },
-    check() {
-        let valid = true;
-        for (const rule in this.validate) {
-            let el = this.$el.find('*[name="' + rule.name + '"]');
-            if (el.length && !el.val().match(rule.regex)) {
-                if (!el.hasClass(this.errorClass)) {
-                    el.addClass(this.errorClass);
-                    el.after('<small class="' + this.errorClass + '">' + rule.message + '</small>');
+    check: function check() {
+        var valid = true;
+        for (var rule in this.validate) {
+            var el = this.el.querySelectorAll('*[name="' + rule.name + '"]');
+            if (el.length && !el[0].value.match(rule.regex)) {
+                if (!el.classList.contains(this.errorClass)) {
+                    el.classList.push(this.errorClass);
+                    el.insertAdjacentHTML('afterend', '<small class="' + this.errorClass + '">' + rule.message + '</small>');
                 }
                 valid = false;
             } else if (el.length) {
-                el.removeClass(this.errorClass);
-                el.next('small.' + this.errorClass).remove();
+                el.classList.remove(this.errorClass);
+                var $next = el.nextElementSibling;
+                if ($next.tagName === "small") $next.parentNode.removeChild($next);
             }
         }
         this.isValid = valid;
         return valid;
     },
-    submit(params = {}) {
+    submit: function submit() {
+        var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
         params = !params.currentTarget ? _.extend(this.params, params) : this.params;
-        if (params.type.toUpperCase() !== 'GET') params.data = new FormData(this.$el[0]);
+        if (params.type.toUpperCase() !== 'GET') params.data = new FormData(this.el);
         $.ajax(params);
+        var request = new XMLHttpRequest();
+        request.open(params.type, params.url, true);
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+        request.send(params.data);
     },
-    render(options = {}) {
+    render: function render() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
         if (this.template) this.$el.html(this.template);
     }
 });
 
-const NotificationView = Backbone.View.extend({
+var NotificationView = _backbone2.default.View.extend({
     tagName: "notification",
     className: "container-fluid",
-    template: _.template(`<h3 class="notif <%= className %>"><%= message %><a class="close">&times;</a></h3>`),
-    initialize(options = {}) {
-        if (document.body.getElementsByTagName('content').length === 0) document.body.appendChild(this.el);else this.el = document.createElement('notification');
+    template: _.template('<h3 class="notif <%= className %>"><%= message %><a class="close">&times;</a></h3>'),
+    initialize: function initialize() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+        var $notif = document.body.getElementsByTagName('notification')[0];
+        if (!$notif) document.body.appendChild(this.el);else this.el = $notif;
         this.duration = options.duration || 3000;
         this.template = options.template || this.template;
     },
+
     events: {
         'click .close': 'close'
     },
-    close(event, childEvent) {
-        const $notif = event.target ? event.target.parentNode : event;
-        let styles = getComputedStyle($notif);
-        const duration = styles && styles.animationDuration ? parseFloat(styles.animationDuration) : 0;
-        setTimeout(() => {
-            $notif.parentNode.removeChild($notif);
-        }, duration);
+    close: function close(event, childEvent) {
+        var $notif = event.target ? event.target.parentNode : event;
+        $notif.style.height = 0;
+        $notif.style.marginTop = 0;
+        $notif.style.marginBottom = 0;
+        $notif.style.paddingTop = 0;
+        $notif.style.paddingBottom = 0;
+        var styles = getComputedStyle($notif);
+        var duration = styles && styles.transitionDuration ? parseFloat(styles.transitionDuration) : 0;
+
+        setTimeout(function () {
+            if ($notif && $notif.parentNode) $notif.parentNode.removeChild($notif);
+        }, duration * 1000);
     },
-    success(message, options = {}) {
+    success: function success(message) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
         this.render({ className: "success", message: message }, options);
     },
-    error(message, options = {}) {
+    error: function error(message) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
         this.render({ className: "alert", message: message }, options);
     },
-    warn(message, options = {}) {
+    warn: function warn(message) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
         this.render({ className: "warning", message: message }, options);
     },
-    notify(message, options = {}) {
+    notify: function notify(message) {
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
         this.render({ message: message }, options);
     },
-    render(notif, options = {}) {
-        this.el.innerHTML += this.template({ className: notif.className, message: notif.message });
-        const $notif = this.el.lastChild;
-        if (!options.permanent) setTimeout(() => {
-            this.close($notif);
+    render: function render(notif) {
+        var _this = this;
+
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+        var wrapper = document.createElement("div");
+        wrapper.innerHTML = this.template({ className: notif.className, message: notif.message });
+        var $notif = wrapper.lastChild;
+        this.el.appendChild($notif);
+        if (!options.permanent) setTimeout(function () {
+            _this.close($notif);
         }, options.duration || this.duration);
     }
 });
 
-const PopupView = Backbone.View.extend({
+var PopupView = _backbone2.default.View.extend({
     tagName: "popup",
-    template: _.template(`<div class="background"></div>
-						  <div class="container">
-						  	<a class="close">&#215;</a>
-							<div class="content">
-								<% template ? print(template) : print(message) %>
-							</div>
-							<ul class="actions">
-								<li class="ok">Ok</li>
-								<li class="custom"><%= customName %></li>
-								<li class="cancel">Cancel</li>
-							</ul>
-						  </div>`),
-    initialize() {
-        if ($('popup').length === 0) this.$el.prependTo('body');else this.$el = $($('popup')[0]);
+    template: _.template('<div class="background"></div>\n\t\t\t\t\t\t  <div class="container">\n\t\t\t\t\t\t  \t<a class="close">&#215;</a>\n\t\t\t\t\t\t\t<div class="content">\n\t\t\t\t\t\t\t\t<% template ? print(template) : print(message) %>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<ul class="actions">\n\t\t\t\t\t\t\t\t<li class="ok">Ok</li>\n\t\t\t\t\t\t\t\t<li class="custom"><%= customName %></li>\n\t\t\t\t\t\t\t\t<li class="cancel">Cancel</li>\n\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t  </div>'),
+    initialize: function initialize() {
+        var $popup = document.body.querySelector("popup");
+        if (!$popup) document.body.appendChild(this.el);else this.el = $popup;
     },
+
     events: {
         'click .close': 'onClose',
         'click .cancel': 'onClose',
         'click .ok': 'onOk',
         'click .custom': 'onCustom'
     },
-    setParam(params) {
+    setParam: function setParam(params) {
+        var _this2 = this;
+
         this.type = params.type;
         this.ok = params.ok;
         this.close = params.close;
         this.custom = params.custom;
-        this.$el.addClass(params.class);
+        this.el.classList.add(params.class);
         this.resizeOff = params.resizeOff;
         var view = this;
         if (params.template) {
             if (params.isform) {
-                const view = this;
-                const PopupFormView = FormView.extend({
-                    initialize() {
-                        FormView.prototype.initialize.apply(this, arguments);
-                    },
-                    submit(params = {}) {
-                        FormView.prototype.submit.apply(this, arguments);
-                        view.closePopup();
-                    }
-                });
-                this.view = new PopupFormView(params);
-            } else if (params.template instanceof Backbone.View) {
+                (function () {
+                    var view = _this2;
+                    var PopupFormView = FormView.extend({
+                        initialize: function initialize() {
+                            FormView.prototype.initialize.apply(this, arguments);
+                        },
+                        submit: function submit() {
+                            var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+                            FormView.prototype.submit.apply(this, arguments);
+                            view.closePopup();
+                        }
+                    });
+                    _this2.view = new PopupFormView(params);
+                })();
+            } else if (params.template instanceof _backbone2.default.View) {
                 this.view = params.template;
             }
             if (this.view && this.view.ok) {
                 var ok = params.ok;
-                params.ok = () => view.view.ok(ok);
+                params.ok = function () {
+                    return view.view.ok(ok);
+                };
             }
             this.ok = params.ok || this.ok;
         } else {
             this.view = null;
         }
     },
-    basic(options = {}) {
+    basic: function basic() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
         this.setParam(options);
         this.render(options);
         return this;
     },
-    form(options = {}) {
+    form: function form() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
         options.isform = true;
         this.setParam(options);
         this.render(options);
         return this;
     },
-    onClose() {
+    onClose: function onClose() {
         if (this.close) this.close.apply(this, [this.callbackArgs()]);
         this.closePopup();
     },
-    onOk() {
+    onOk: function onOk() {
         if (this.ok) this.ok.apply(this, [this.callbackArgs()]);
         if (this.type !== 'form' || this.view.isValid) this.closePopup();
     },
-    onCustom() {
+    onCustom: function onCustom() {
         if (this.custom) this.custom.apply(this, [this.callbackArgs()]);
         this.closePopup();
     },
-    closePopup() {
+    closePopup: function closePopup() {
         if (this.view) this.view.remove();
         this.$el.css('display', 'none').html();
     },
-    callbackArgs() {
-        let valid = true;
-        let args = [];
+    callbackArgs: function callbackArgs() {
+        var valid = true;
+        var args = [];
         if (this.type === 'form') {
             valid = this.view.check();
             args.push(this.view.getValues());
@@ -271,7 +237,7 @@ const PopupView = Backbone.View.extend({
         args.push(this);
         return args;
     },
-    renderActions(staticActions) {
+    renderActions: function renderActions(staticActions) {
         this.$el.find('.ok')[this.ok ? 'show' : 'hide']();
         this.$el.find('.cancel')[this.close ? 'show' : 'hide']();
         this.$el.find('.custom')[this.custom ? 'show' : 'hide']();
@@ -280,7 +246,9 @@ const PopupView = Backbone.View.extend({
         this.$el.find('.actions')[staticActions]('static');
         this.$el[staticActions]('static-actions');
     },
-    render(data = {}) {
+    render: function render() {
+        var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
         data = _.extend({
             message: "",
             customName: "",
@@ -296,53 +264,73 @@ const PopupView = Backbone.View.extend({
     }
 });
 
-const WaitView = Backbone.View.extend({
-    template: _.template(`<div class="background"></div><div class="message pulse"><%= message %><div class="anim"></div></div>`),
+var WaitView = _backbone2.default.View.extend({
+    template: _.template('<div class="background" style="display:block"></div><div class="message pulse"><%= message %><div class="anim"></div></div>'),
     tagName: "wait",
-    initialize() {
-        if ($('wait').length === 0) this.$el.prependTo('body');else this.$el = $('wait').first();
+    initialize: function initialize() {
+        var $body = document.body;
+        if ($body.querySelectorAll('wait').length === 0) $body.appendChild(this.el);else this.el = $body.querySelector('wait');
     },
-    start(message, $el) {
-        if (message instanceof $) {
+    start: function start(message, $el) {
+        var _this3 = this;
+
+        if (message instanceof Element) {
             $el = message;
             message = null;
         }
-        let $template = this.template({ message: message || 'loading...' });
-        let $parent = $el || $('body');
-        $parent.addClass('wait-container hide-child');
+        var $template = this.template({ message: message || 'loading...' });
+        var $parent = $el || document.body;
+        $parent.classList.add('wait-container');
+        $parent.classList.add('hide-child');
         if ($el) {
-            $parent.prepend($('<wait style="display:block"></wait>').prepend($template));
+            var $wait = new Element("wait");
+            $wait.style.display = "block";
+            $wait.insertBefore($template, $wait.firstChild);
+            $parent.insertBefore($wait, parent.firstChild);
         } else {
-            this.$el.html($template).show();
+            this.el.innerHTML = $template;
+            this.el.style.display = "block";
         }
         return {
-            stop: callback => this.stop($el, callback)
+            stop: function stop(callback) {
+                return _this3.stop($el, callback);
+            }
         };
     },
-    stop($el, callback) {
+    stop: function stop($el, callback) {
         callback = _.isFunction($el) ? $el : callback;
-        let $wait = $el && $el.find('wait') || this.$el;
-        let $parent = $el || $('body');
-        $wait.find('.background, .message').removeClass('pulse').css('opacity', 0);
-        $parent.removeClass('hide-child');
-        setTimeout(() => {
-            $parent.removeClass('wait-container');
-            $wait.hide().html('');
-            if ($el) $wait.remove();
+        var $wait = $el && $el.querySelector('wait') || this.el;
+        var $parent = $el || document.body;
+        var elements = $wait.querySelectorAll('.background, .message');
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].classList.remove('pulse');
+            elements[i].style.opacity = 0;
+        }
+        $parent.classList.remove('hide-child');
+        setTimeout(function () {
+            $parent.classList.remove('wait-container');
+            $wait.style.display = "none";
+            $wait.innerHTML = "";
+            if ($el) $wait.parentNode.removeChild($wait);
             if (callback) callback();
         }, 1500);
     }
 });
 // Add token in REST request
-const useJwt = (options = { token() {}, onUnauthorized() {} }) => {
-    const sync = Backbone.sync;
-    Backbone.sync = (method, model, opts) => {
-        const token = options.token();
-        if (token) opts.beforeSend = xhr => {
+var useJwt = function useJwt() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        token: function token() {},
+        onUnauthorized: function onUnauthorized() {}
+    };
+
+    var sync = _backbone2.default.sync;
+    _backbone2.default.sync = function (method, model, opts) {
+        var token = options.token();
+        if (token) opts.beforeSend = function (xhr) {
             xhr.setRequestHeader(options.header || 'authorization', 'Bearer ' + token);
         };
-        let err = opts.error;
-        opts.error = param => {
+        var err = opts.error;
+        opts.error = function (param) {
             if (param.status && param.status === 401) options.onUnauthorized();
             err(param);
         };
@@ -350,13 +338,10 @@ const useJwt = (options = { token() {}, onUnauthorized() {} }) => {
     };
 };
 
-/* harmony default export */ exports["default"] = {
-    NotificationView,
-    PopupView,
-    FormView,
-    WaitView,
-    useJwt
+exports.default = {
+    NotificationView: NotificationView,
+    PopupView: PopupView,
+    FormView: FormView,
+    WaitView: WaitView,
+    useJwt: useJwt
 };
-
-/***/ }
-/******/ ]);

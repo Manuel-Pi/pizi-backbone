@@ -3,9 +3,11 @@
     "homepage": "https://github.com/Manuel-Pi/pizi-backbone",
     "main": "build/pizi-backbone.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "webpack",
-        "deploy": "cpx \"dist/**/*\" \"../../Servers/PiziServer/pizi-backbone\" --watch"
+        "test": "npm run build && webpack",
+        "buildJs": "./node_modules/.bin/babel --presets es2015 -d build/ src/",
+        "buildCss": "./node_modules/.bin/node-sass src/pizi-backbone.scss -o build",
+        "build": "npm run buildJs && npm run buildCss",
+        "deploy": "cpx \"build/**/*\" \"../../Servers/PiziServer/pizi-backbone\" --watch"
     },
     "dependencies": {
         "backbone": "*"

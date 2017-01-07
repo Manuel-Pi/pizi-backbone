@@ -1,41 +1,46 @@
 <html>
+
 <head>
-  <meta charset="utf-8">
-  <title>pizi-backbone test</title>
-  <link rel="stylesheet" href="pizi-backbone.css">
-  <style>
-    body{
-      margin: 0;
-      padding: 0;
-    }
-    hr{
-      margin-bottom: 40px;
-      border: 0;
-    }
-    input,textarea{
-      padding: 5px;
-    }
-    body > div input[type="radio"] + input[type="radio"], body > div input[type="checkbox"] + input[type="checkbox"], body > div input[type="radio"] + input[type="checkbox"]{
-      margin-left: 10px;
-    }
-    body > div  input[type="radio"], body > div input[type="checkbox"]{
-      margin-right: 5px;
-    }
-  </style>
+    <meta charset="utf-8">
+    <title>pizi-backbone test</title>
+    <link rel="stylesheet" href="pizi-backbone.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        hr {
+            margin-bottom: 40px;
+            border: 0;
+        }
+        
+        input,
+        textarea {
+            padding: 5px;
+        }
+        
+        body>div input[type="radio"]+input[type="radio"],
+        body>div input[type="checkbox"]+input[type="checkbox"],
+        body>div input[type="radio"]+input[type="checkbox"] {
+            margin-left: 10px;
+        }
+        
+        body>div input[type="radio"],
+        body>div input[type="checkbox"] {
+            margin-right: 5px;
+        }
+    </style>
 </head>
+
 <body>
-  <!--<div id="qunit"></div>
+    <!--<div id="qunit"></div>
   <div id="qunit-fixture"></div>-->
-  <script src="modules/jquery.js"></script>
-  <!--<script src="//code.jquery.com/qunit/qunit-1.18.0.js"></script>-->
-  <script src="modules/underscore.js"></script>
-  <script src="modules/backbone.js"></script>
-  <script>backbone = Backbone</script>
-  <script src="pizi-backbone.js"></script>
-  <div style="padding: 10px;padding-top: 30px;">
-    <h1>pizi-backbone test</h1>
-    <!-- Confirm Popup -->
-    <textarea type="text" class="confirm" style="width:50%;" rows="10">Iamque lituis cladium concrepantibus internarum non celate ut antea turbidum saeviebat ingenium a veri consideratione detortum et nullo inpositorum vel conpositorum fidem sollemniter inquirente nec discernente a societate noxiorum insontes velut exturbatum e iudiciis fas omne discessit, et causarum legitima silente defensione carnifex rapinarum sequester et obductio capitum et bonorum ubique multatio versabatur per orientales provincias, quas recensere puto nunc oportunum absque Mesopotamia digesta, cum bella Parthica dicerentur, et Aegypto, quam necessario aliud reieci ad tempus.
+    <script src="pizi-backbone.js"></script>
+    <div style="padding: 10px;padding-top: 30px;">
+        <h1>pizi-backbone test</h1>
+        <!-- Confirm Popup -->
+        <textarea type="text" class="confirm" style="width:50%;" rows="10">Iamque lituis cladium concrepantibus internarum non celate ut antea turbidum saeviebat ingenium a veri consideratione detortum et nullo inpositorum vel conpositorum fidem sollemniter inquirente nec discernente a societate noxiorum insontes velut exturbatum e iudiciis fas omne discessit, et causarum legitima silente defensione carnifex rapinarum sequester et obductio capitum et bonorum ubique multatio versabatur per orientales provincias, quas recensere puto nunc oportunum absque Mesopotamia digesta, cum bella Parthica dicerentur, et Aegypto, quam necessario aliud reieci ad tempus.
 
 Vide, quantum, inquam, fallare, Torquate. oratio me istius philosophi non offendit; nam et complectitur verbis, quod vult, et dicit plane, quod intellegam; et tamen ego a philosopho, si afferat eloquentiam, non asperner, si non habeat, non admodum flagitem. re mihi non aeque satisfacit, et quidem locis pluribus. sed quot homines, tot sententiae; falli igitur possumus.
 
@@ -44,120 +49,124 @@ Nec sane haec sola pernicies orientem diversis cladibus adfligebat. Namque et Is
 Cognitis enim pilatorum caesorumque funeribus nemo deinde ad has stationes appulit navem, sed ut Scironis praerupta letalia declinantes litoribus Cypriis contigui navigabant, quae Isauriae scopulis sunt controversa.
 
 Vbi curarum abiectis ponderibus aliis tamquam nodum et codicem difficillimum Caesarem convellere nisu valido cogitabat, eique deliberanti cum proximis clandestinis conloquiis et nocturnis qua vi, quibusve commentis id fieret, antequam effundendis rebus pertinacius incumberet confidentia, acciri mollioribus scriptis per simulationem tractatus publici nimis urgentis eundem placuerat Gallum, ut auxilio destitutus sine ullo interiret obstaculo.</textarea>
-    <br>
-    <input type="checkbox" class="ok" checked/>Ok
-    <input type="checkbox" class="close"/>Close
-    <input type="checkbox" class="custom"/>Custom
-    <br>
-    <button onclick="confirm()">Confirm Popup</button>
-    <!-- Alert Popup -->
-    <button onclick="alerte()">Alert Popup</button>
-    <!-- Form Popup -->
-    <button onclick="formPopup()">Form Popup</button>
-    <hr>
-    <!--  Notification -->
-    <input type="text" class="notiff" value="Test!" style="width:50%"/>
-    <br>
-    <input type="radio" name="type" value="notify" checked/>Notif
-    <input type="radio" name="type" value="success"/>Success
-    <input type="radio" name="type" value="warn"/>Warning
-    <input type="radio" name="type" value="error"/>Error
-    <input type="checkbox" class="permanent"/>Permanent
-    <br>
-    <button onclick="notify()">Notification</button>
-    <hr>
-    <input type="text" class="wait" value="Test!" style="width:50%"/>
-    <br>
-    <button onclick="startWait()">Start Wait</button>
-  </div>
-  <script>
-    notif = new piziBackbone.NotificationView();
-    popup = new piziBackbone.PopupView();
-    wait = new piziBackbone.WaitView();
-    function startWait(){
-      wait.start($('.wait').val());
-      setTimeout(function(){
-        wait.stop();
-      }, 2000);
-    }
-    function notify(){
-        notif[$('input[name=type]:checked').val()]($('.notiff').val(), {permanent: $('input.permanent')[0].checked});
-    }
-    function alerte(){
-      popup.basic({
-        message: $('.confirm').val(),
-        ok: !$('.ok:checked').length ? null : function(popup){
-            alert('Ok');
-        },
-        customName: 'Pizi',
-        staticActions: true
-      });
-    }
-    function confirm(){
-        popup.basic({
-            message: $('.confirm').val(),
-            custom: !$('.custom:checked').length ? null : function(popup){
-                alert('Custom');
-            },
-            ok: !$('.ok:checked').length ? null : function(popup){
-                alert('Ok');
-            },
-            close: !$('.close:checked').length ? null : function(popup){
-                alert('Close');
-            },
-            customName: 'Pizi'
-        });
-        
-    }
-    function viewPopup(){
-      popup.display(Backbone.View.extend({
-        render: function(){
-          
+        <br>
+        <input type="checkbox" class="ok" checked/>Ok
+        <input type="checkbox" class="close" />Close
+        <input type="checkbox" class="custom" />Custom
+        <br>
+        <button onclick="confirm()">Confirm Popup</button>
+        <!-- Alert Popup -->
+        <button onclick="alerte()">Alert Popup</button>
+        <!-- Form Popup -->
+        <button onclick="formPopup()">Form Popup</button>
+        <hr>
+        <!--  Notification -->
+        <input type="text" class="notiff" value="Test!" style="width:50%" />
+        <br>
+        <input type="radio" name="type" value="notify" checked/>Notif
+        <input type="radio" name="type" value="success" />Success
+        <input type="radio" name="type" value="warn" />Warning
+        <input type="radio" name="type" value="error" />Error
+        <input type="checkbox" class="permanent" />Permanent
+        <br>
+        <button onclick="notify()">Notification</button>
+        <hr>
+        <input type="text" class="wait" value="Test!" style="width:50%" />
+        <br>
+        <button onclick="startWait()">Start Wait</button>
+    </div>
+    <script>
+        notif = new piziBackbone.NotificationView();
+        popup = new piziBackbone.PopupView();
+        wait = new piziBackbone.WaitView();
+
+        function startWait() {
+            wait.start($('.wait').val());
+            setTimeout(function() {
+                wait.stop();
+            }, 2000);
         }
-      }));
-    }
-    function formPopup(){
-      popup.form({
-        template: '<form> <div class="row"> <div class="large-12 columns"> <label>Input Label <input name="input1" type="text" placeholder="large-12.columns" /> </label> </div> </div> <div class="row"> <div class="large-4 columns"> <label>Input Label <input type="text" name="input2" placeholder="large-4.columns" /> </label> </div> <div class="large-4 columns"> <label>Input Label <input name="input3" type="text" placeholder="large-4.columns" /> </label> </div> <div class="large-4 columns"> <div class="row collapse"> <label>Input Label</label> <div class="small-9 columns"> <input type="text" name="input4" placeholder="small-9.columns" /> </div> <div class="small-3 columns"> <span class="postfix">.com</span> </div> </div> </div> </div> <div class="row"> <div class="large-12 columns"> <label>Select Box <select name="select"> <option value="husker">Husker</option> <option value="starbuck">Starbuck</option> <option value="hotdog">Hot Dog</option> <option value="apollo">Apollo</option> </select> </label> </div> </div> <div class="row"> <div class="large-6 columns"> <label>Choose Your Favorite</label> <input type="radio" name="pokemon" value="Red" id="pokemonRed"><label for="pokemonRed">Red</label> <input type="radio" name="pokemon" value="Blue" id="pokemonBlue"><label for="pokemonBlue">Blue</label> </div> <div class="large-6 columns"> <label>Check these out</label> <input id="checkbox1" type="checkbox" name="check1"><label for="checkbox1">Checkbox 1</label> <input id="checkbox2" name="check2" type="checkbox"><label for="checkbox2">Checkbox 2</label> </div> </div> <div class="row"> <div class="large-12 columns"> <label>Textarea Label <textarea name="textarea" placeholder="small-12.columns"></textarea> </label> </div> </div> </form>',
-        custom: !$('.custom:checked').length ? null : function(popup){
-            alert('Custom');
-        },
-        ok: !$('.ok:checked').length ? null : function(data, valid, popup){
-            alert('Ok');
-            console.log(data);
-        },
-        close: !$('.close:checked').length ? null : function(popup){
-            alert('Close');
-        },
-        customName: 'Pizi',
-        validate: [
-          {
-            name: 'input1',
-            regex: /\w+/,
-            message: 'Il faut saisir un truc quand même!'
-          },
-          {
-            name: 'input2',
-            regex: /\w+/,
-            message: 'Il faut saisir un truc quand même!'
-          },
-          {
-            name: 'input3',
-            regex: /\w+/,
-            message: 'Il faut saisir un truc quand même!'
-          },{
-            name: 'input4',
-            regex: /\w+/,
-            message: 'Il faut saisir un truc quand même!'
-          },
-          {
-            name: 'textarea',
-            regex: /\w+/,
-            message: 'Il faut saisir un truc quand même!'
-          }
-        ]
-      });
-    }
-  </script>
+
+        function notify() {
+            notif[$('input[name=type]:checked').val()]($('.notiff').val(), {
+                permanent: $('input.permanent')[0].checked
+            });
+        }
+
+        function alerte() {
+            popup.basic({
+                message: $('.confirm').val(),
+                ok: !$('.ok:checked').length ? null : function(popup) {
+                    alert('Ok');
+                },
+                customName: 'Pizi',
+                staticActions: true
+            });
+        }
+
+        function confirm() {
+            popup.basic({
+                message: $('.confirm').val(),
+                custom: !$('.custom:checked').length ? null : function(popup) {
+                    alert('Custom');
+                },
+                ok: !$('.ok:checked').length ? null : function(popup) {
+                    alert('Ok');
+                },
+                close: !$('.close:checked').length ? null : function(popup) {
+                    alert('Close');
+                },
+                customName: 'Pizi'
+            });
+
+        }
+
+        function viewPopup() {
+            popup.display(Backbone.View.extend({
+                render: function() {
+
+                }
+            }));
+        }
+
+        function formPopup() {
+            popup.form({
+                template: '<form> <div class="row"> <div class="large-12 columns"> <label>Input Label <input name="input1" type="text" placeholder="large-12.columns" /> </label> </div> </div> <div class="row"> <div class="large-4 columns"> <label>Input Label <input type="text" name="input2" placeholder="large-4.columns" /> </label> </div> <div class="large-4 columns"> <label>Input Label <input name="input3" type="text" placeholder="large-4.columns" /> </label> </div> <div class="large-4 columns"> <div class="row collapse"> <label>Input Label</label> <div class="small-9 columns"> <input type="text" name="input4" placeholder="small-9.columns" /> </div> <div class="small-3 columns"> <span class="postfix">.com</span> </div> </div> </div> </div> <div class="row"> <div class="large-12 columns"> <label>Select Box <select name="select"> <option value="husker">Husker</option> <option value="starbuck">Starbuck</option> <option value="hotdog">Hot Dog</option> <option value="apollo">Apollo</option> </select> </label> </div> </div> <div class="row"> <div class="large-6 columns"> <label>Choose Your Favorite</label> <input type="radio" name="pokemon" value="Red" id="pokemonRed"><label for="pokemonRed">Red</label> <input type="radio" name="pokemon" value="Blue" id="pokemonBlue"><label for="pokemonBlue">Blue</label> </div> <div class="large-6 columns"> <label>Check these out</label> <input id="checkbox1" type="checkbox" name="check1"><label for="checkbox1">Checkbox 1</label> <input id="checkbox2" name="check2" type="checkbox"><label for="checkbox2">Checkbox 2</label> </div> </div> <div class="row"> <div class="large-12 columns"> <label>Textarea Label <textarea name="textarea" placeholder="small-12.columns"></textarea> </label> </div> </div> </form>',
+                custom: !$('.custom:checked').length ? null : function(popup) {
+                    alert('Custom');
+                },
+                ok: !$('.ok:checked').length ? null : function(data, valid, popup) {
+                    alert('Ok');
+                    console.log(data);
+                },
+                close: !$('.close:checked').length ? null : function(popup) {
+                    alert('Close');
+                },
+                customName: 'Pizi',
+                validate: [{
+                    name: 'input1',
+                    regex: /\w+/,
+                    message: 'Il faut saisir un truc quand même!'
+                }, {
+                    name: 'input2',
+                    regex: /\w+/,
+                    message: 'Il faut saisir un truc quand même!'
+                }, {
+                    name: 'input3',
+                    regex: /\w+/,
+                    message: 'Il faut saisir un truc quand même!'
+                }, {
+                    name: 'input4',
+                    regex: /\w+/,
+                    message: 'Il faut saisir un truc quand même!'
+                }, {
+                    name: 'textarea',
+                    regex: /\w+/,
+                    message: 'Il faut saisir un truc quand même!'
+                }]
+            });
+        }
+    </script>
 </body>
+
 </html>
