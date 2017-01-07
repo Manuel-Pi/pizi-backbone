@@ -63,17 +63,19 @@ const NotificationView = Backbone.View.extend({
     events: {
         'click .close': 'close'
     },
-    close(event) {
-        const $notif = event.currentTarget ? event.currentTarget.parentNode() : event;
-        $notif.slideUp({ complete() { $notif.remove(); } });
+    close(event, childEvent) {
+        const $notif = event.target ? event.target.parentNode : event;
+        let styles = getComputedStyle($notif);
+        const duration = styles && styles.animationDuration ? parseFloat(styles.animationDuration) : 0;
+        setTimeout(() => { $notif.parent.removeChild($notif); }, duration);
     },
     success(message, options = {}) { this.render({ className: "success", message: message }, options); },
     error(message, options = {}) { this.render({ className: "alert", message: message }, options); },
     warn(message, options = {}) { this.render({ className: "warning", message: message }, options); },
     notify(message, options = {}) { this.render({ message: message }, options); },
     render(notif, options = {}) {
-        let $notif = this.template({ className: notif.className, message: notif.message });
-        this.el.appendChild($notif);
+        this.el.innerHTML += this.template({ className: notif.className, message: notif.message });
+        const $notif = this.el.lastChild;
         if (!options.permanent) setTimeout(() => { this.close($notif); }, options.duration || this.duration);
     }
 });
