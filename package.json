@@ -4,7 +4,7 @@
     "main": "build/pizi-backbone.js",
     "scripts": {
         "test": "npm run build && webpack",
-        "buildJs": "./node_modules/.bin/babel --plugins transform-es2015-modules-umd --out-file build/pizi-backbone.js src/",
+        "buildJs": "./node_modules/.bin/babel --plugins add-module-exports,transform-es2015-modules-umd --out-file build/pizi-backbone.js src/",
         "buildCss": "./node_modules/.bin/node-sass src/pizi-backbone.scss -o build",
         "build": "npm run buildJs && npm run buildCss",
         "deploy": "cpx \"build/**/*\" \"../../Servers/PiziServer/pizi-backbone\" --watch"

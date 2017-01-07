@@ -1,16 +1,16 @@
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', 'backbone', 'views/WaitView', 'views/PopupView', 'views/NotificationView', 'views/FormView'], factory);
+        define(['module', 'exports', 'backbone', './views/WaitView', './views/PopupView', './views/NotificationView', './views/FormView'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('backbone'), require('views/WaitView'), require('views/PopupView'), require('views/NotificationView'), require('views/FormView'));
+        factory(module, exports, require('backbone'), require('./views/WaitView'), require('./views/PopupView'), require('./views/NotificationView'), require('./views/FormView'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.backbone, global.WaitView, global.PopupView, global.NotificationView, global.FormView);
+        factory(mod, mod.exports, global.backbone, global.WaitView, global.PopupView, global.NotificationView, global.FormView);
         global.piziBackbone = mod.exports;
     }
-})(this, function (exports, _backbone, _WaitView, _PopupView, _NotificationView, _FormView) {
+})(this, function (module, exports, _backbone, _WaitView, _PopupView, _NotificationView, _FormView) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -57,20 +57,21 @@
         WaitView: _WaitView2.default,
         useJwt
     };
+    module.exports = exports['default'];
 });
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', 'backbone'], factory);
+        define(['module', 'exports', 'backbone'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('backbone'));
+        factory(module, exports, require('backbone'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.backbone);
+        factory(mod, mod.exports, global.backbone);
         global.FormView = mod.exports;
     }
-})(this, function (exports, _backbone) {
+})(this, function (module, exports, _backbone) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -144,20 +145,21 @@
             if (this.template) this.$el.html(this.template);
         }
     });
+    module.exports = exports['default'];
 });
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(["exports", "backbone"], factory);
+        define(["module", "exports", "backbone"], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require("backbone"));
+        factory(module, exports, require("backbone"));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.backbone);
+        factory(mod, mod.exports, global.backbone);
         global.NotificationView = mod.exports;
     }
-})(this, function (exports, _backbone) {
+})(this, function (module, exports, _backbone) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -222,20 +224,21 @@
             }, options.duration || this.duration);
         }
     });
+    module.exports = exports["default"];
 });
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(["exports", "backbone"], factory);
+        define(["module", "exports", "backbone"], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require("backbone"));
+        factory(module, exports, require("backbone"));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.backbone);
+        factory(mod, mod.exports, global.backbone);
         global.PopupView = mod.exports;
     }
-})(this, function (exports, _backbone) {
+})(this, function (module, exports, _backbone) {
     "use strict";
 
     Object.defineProperty(exports, "__esModule", {
@@ -369,20 +372,21 @@
             this.delegateEvents();
         }
     });
+    module.exports = exports["default"];
 });
 (function (global, factory) {
     if (typeof define === "function" && define.amd) {
-        define(['exports', 'backbone'], factory);
+        define(['module', 'exports', 'backbone'], factory);
     } else if (typeof exports !== "undefined") {
-        factory(exports, require('backbone'));
+        factory(module, exports, require('backbone'));
     } else {
         var mod = {
             exports: {}
         };
-        factory(mod.exports, global.backbone);
+        factory(mod, mod.exports, global.backbone);
         global.WaitView = mod.exports;
     }
-})(this, function (exports, _backbone) {
+})(this, function (module, exports, _backbone) {
     'use strict';
 
     Object.defineProperty(exports, "__esModule", {
@@ -445,4 +449,5 @@
             }, 1500);
         }
     });
+    module.exports = exports['default'];
 });

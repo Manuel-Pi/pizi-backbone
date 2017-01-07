@@ -9,14 +9,21 @@ const extractHtml = new ExtractTextPlugin('index.html');
 const modules = __dirname + "/node_modules/";
 const sources = __dirname + "/src/";
 const test = __dirname + "/tests/";
+const libraryName = 'pizi-backbone';
 
 module.exports = {
     entry: {
-        'pizi-backbone': test + "test.js"
+        //'pizi-backbone': test + "test.js"
+        'pizi-backbone': sources + "pizi-backbone.js"
     },
     output: {
-        filename: '[name].js',
-        path: '../../Servers/PiziServer/pizi-backbone',
+        // filename: '[name].js',
+        // path: '../../Servers/PiziServer/pizi-backbone',
+        path: __dirname + '/lib',
+        filename: libraryName + '.js',
+        library: libraryName,
+        libraryTarget: 'umd',
+        umdNamedDefine: true,
         sourceMapFilename: 'js/map/[name].map',
     },
     module: {
