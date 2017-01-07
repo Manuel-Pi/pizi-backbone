@@ -25,6 +25,7 @@ notification .notif {
     position: relative;
     color: white;
     transition: height 0.4s linear, margin 0.4s linear, padding 0.4s linear;
+    overflow: hidden;
 }
 
 notification .notif+.notif {
