@@ -87,7 +87,7 @@ const Model = Backbone.Model.extend({
                 }
             }
         }, this);
-        return Backbone.Model.prototype.set.apply(this, [attributes, options]);
+        return Backbone.Model.prototype.set.apply(this, [attributes, opts]);
     }
 });
 

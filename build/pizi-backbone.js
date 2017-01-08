@@ -201,7 +201,7 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
                 }
             }
         }, this);
-        return __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.prototype.set.apply(this, [attributes, options]);
+        return __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.prototype.set.apply(this, [attributes, opts]);
     }
 });
 
