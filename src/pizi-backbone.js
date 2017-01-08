@@ -20,11 +20,35 @@ const useJwt = (options = { token() {}, onUnauthorized() {} }) => {
     };
 };
 
+const viewUtils = {
+    table(options = { className: "", columns: [], data: [] }) {
+        return _.template(`<table class="{{ className }}">
+                                <thead>
+                                    <tr>
+                                        <% columns.forEach(function(column){ %>
+                                            <th class="{{ column.class }}">{{ column.header || column.property }}</th>
+                                            <% }) %>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% data.forEach(function(entry){ %>
+                                        <tr>
+                                            <% columns.forEach(function(column){ %>
+                                                <td>{{ column.transform ? column.transform(entry[column.property]) : entry[column.property] }}</td>
+                                                <% }) %>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>`)(options);
+    }
+};
+
 export default {
     NotificationView,
     PopupView,
     FormView,
     WaitView,
+    viewUtils,
     Entity,
     useJwt
 };
