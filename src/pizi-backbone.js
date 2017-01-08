@@ -21,7 +21,7 @@ const useJwt = (options = { token() {}, onUnauthorized() {} }) => {
 };
 
 const viewUtils = {
-    table(options = { className: "", columns: [], data: [] }) {
+    table(options) {
         return _.template(`<table class="{{ className }}">
                                 <thead>
                                     <tr>
@@ -39,7 +39,7 @@ const viewUtils = {
                                         </tr>
                                         <% }) %>
                                 </tbody>
-                            </table>`)(options);
+                            </table>`)(_.extend({ className: "", data: [], columns: {} }, options));
     }
 };
 
