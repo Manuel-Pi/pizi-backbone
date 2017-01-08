@@ -4,7 +4,7 @@ const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 
 // multiple extract instances
-const extractSass = new ExtractTextPlugin('pizi-backbone.css');
+const extractSass = new ExtractTextPlugin('pizi-backbone-style.css');
 const extractHtml = new ExtractTextPlugin('index.html');
 
 const modules = __dirname + "/node_modules/";
@@ -14,13 +14,12 @@ const libraryName = 'pizi-backbone';
 
 module.exports = {
     entry: {
-        //'pizi-backbone': test + "test.js"
         'pizi-backbone': sources + "pizi-backbone.js"
     },
     output: {
         // filename: '[name].js',
         // path: '../../Servers/PiziServer/pizi-backbone',
-        path: __dirname + '/lib',
+        path: __dirname + '/build',
         filename: libraryName + '.js',
         library: libraryName,
         libraryTarget: 'umd',
@@ -29,10 +28,19 @@ module.exports = {
     },
     module: {
         loaders: [{
-            test: /\.css$/,
+            test: /\.js$/,
+            loader: 'babel-loader',
+            exclude: /node_modules/,
+            options: {
+                "presets": [
+                    ["es2015", { "modules": false }]
+                ]
+            }
+        }, {
+            test: /\.scss$/,
             loader: extractSass.extract({
                 notExtractLoader: "style-loader",
-                loader: "css-loader?sourceMap"
+                loader: "css-loader?sourceMap!sass-loader?sourceMap"
             })
         }, {
             test: /\.html$/,
