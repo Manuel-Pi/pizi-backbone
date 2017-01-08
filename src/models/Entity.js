@@ -86,8 +86,11 @@ const Model = Backbone.Model.extend({
                     delete attributes[key];
                 }
             }
+            if (this.dates.concat(['date']).contains(key) && !(value instanceof Date)) {
+                attributes[key] = new Date(value);
+            }
         }, this);
-        return Backbone.Model.prototype.set.apply(this, [attributes, opts]);
+        return Backbone.Model.prototype.set.apply(this, [attributes, options]);
     }
 });
 
