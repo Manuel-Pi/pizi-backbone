@@ -3,10 +3,10 @@
     "homepage": "https://github.com/Manuel-Pi/pizi-backbone",
     "main": "build/pizi-backbone.js",
     "scripts": {
+        "test": "npm run build && webpack --config webpack.config.test.js",
         "buildJs": "webpack",
         "buildCss": "./node_modules/.bin/node-sass src/pizi-backbone.scss -o build",
-        "build": "npm run buildJs && npm run buildCss",
-        "deploy": "cpx \"build/**/*\" \"../../Servers/PiziServer/pizi-backbone\" --watch"
+        "build": "npm run buildJs && npm run buildCss"
     },
     "dependencies": {
         "backbone": "*"

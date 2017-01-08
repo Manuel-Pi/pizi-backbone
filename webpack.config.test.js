@@ -14,34 +14,20 @@ const libraryName = 'pizi-backbone';
 
 module.exports = {
     entry: {
-        'pizi-backbone': sources + "pizi-backbone.js"
+        'pizi-backbone': test + "test.js"
     },
     output: {
-        // filename: '[name].js',
-        // path: '../../Servers/PiziServer/pizi-backbone',
-        path: __dirname + '/build',
-        filename: libraryName + '.js',
-        library: libraryName,
-        libraryTarget: 'umd',
-        umdNamedDefine: true,
+        filename: '[name].js',
+        path: '../../Servers/PiziServer/pizi-backbone',
         sourceMapFilename: 'js/map/[name].map',
     },
     devtool: 'inline-source-map',
     module: {
         loaders: [{
-            test: /\.js$/,
-            loader: 'babel-loader',
-            exclude: /node_modules/,
-            options: {
-                "presets": [
-                    ["es2015", { "modules": false }]
-                ]
-            }
-        }, {
-            test: /\.scss$/,
+            test: /\.css$/,
             loader: extractSass.extract({
                 notExtractLoader: "style-loader",
-                loader: "css-loader?sourceMap!sass-loader?sourceMap"
+                loader: "css-loader?sourceMap"
             })
         }, {
             test: /\.html$/,
@@ -59,7 +45,6 @@ module.exports = {
         extractHtml,
         new webpack.optimize.CommonsChunkPlugin({ name: ['pizi-backbone'], minChunks: Infinity }),
     ],
-    externals: [nodeExternals()],
     resolve: {
         alias: {
             html: sources + "html",
