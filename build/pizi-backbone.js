@@ -200,7 +200,7 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
                     delete attributes[key];
                 }
             }
-            if (_this3.dates.concat(['date']).contains(key) && !(value instanceof Date)) {
+            if (_this3.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
                 attributes[key] = new Date(value);
             }
         }, this);

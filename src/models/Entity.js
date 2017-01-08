@@ -86,7 +86,7 @@ const Model = Backbone.Model.extend({
                     delete attributes[key];
                 }
             }
-            if (this.dates.concat(['date']).contains(key) && !(value instanceof Date)) {
+            if (this.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
                 attributes[key] = new Date(value);
             }
         }, this);
