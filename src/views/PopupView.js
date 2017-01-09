@@ -99,14 +99,14 @@ export default Backbone.View.extend({
     },
     renderActions(staticActions) {
         this.el.getElementsByClassName('ok')[0].style.display = this.ok ? '' : 'none';
-        this.el.getElementsByClassName('.cancel')[0].style.display = this.close ? '' : 'none';
-        this.el.getElementsByClassName('.custom')[0].style.display = this.custom ? '' : 'none';
-        this.el.getElementsByClassName('.actions')[0].style.display = !this.ok && !this.close && !this.custom ? '' : 'none';
+        this.el.getElementsByClassName('cancel')[0].style.display = this.close ? '' : 'none';
+        this.el.getElementsByClassName('custom')[0].style.display = this.custom ? '' : 'none';
+        this.el.getElementsByClassName('actions')[0].style.display = !this.ok && !this.close && !this.custom ? '' : 'none';
         if (staticActions) {
-            this.el.getElementsByClassName('.actions').classList.add("static");
+            this.el.getElementsByClassName('actions').classList.add("static");
             this.el.classList.add("static-actions");
         } else {
-            this.el.getElementsByClassName('.actions').classList.remove("static");
+            this.el.getElementsByClassName('actions').classList.remove("static");
             this.el.classList.remove("static-actions");
         }
     },
@@ -121,7 +121,7 @@ export default Backbone.View.extend({
         this.renderActions(data.staticActions);
         if (this.view) {
             this.view.render();
-            this.el.getElementsByClassName('.content')[0].innerHTML = this.view.$el;
+            this.el.getElementsByClassName('content')[0].innerHTML = this.view.$el;
         }
         this.delegateEvents();
     }
