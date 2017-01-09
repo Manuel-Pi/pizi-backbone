@@ -84,7 +84,8 @@ export default Backbone.View.extend({
     },
     closePopup() {
         if (this.view) this.view.remove();
-        this.remove();
+        this.el.style.display = 'none';
+        this.el.innerHTML = "";
     },
     callbackArgs() {
         let valid = true;
