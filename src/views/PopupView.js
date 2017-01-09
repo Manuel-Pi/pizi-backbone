@@ -116,11 +116,12 @@ export default Backbone.View.extend({
             customName: "",
             template: ""
         }, _.pick(data, ['message', 'customName', 'template', 'staticActions']));
-        this.$el.html(this.template(data)).css('display', 'flex');
+        this.el.style.display = 'flex';
+        this.el.innerHTML = this.template(data);
         this.renderActions(data.staticActions);
         if (this.view) {
             this.view.render();
-            this.$el.find('.content').html(this.view.$el);
+            this.el.getElementsByClassName('.content')[0].innerHTML = this.view.$el;
         }
         this.delegateEvents();
     }
