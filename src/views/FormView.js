@@ -55,5 +55,5 @@ export default Backbone.View.extend({
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
         request.send(params.data);
     },
-    render(options = {}) { if (this.template) this.$el.html(this.template); }
+    render(options = {}) { if (this.template) this.el.innerHTML = this.template; }
 });
