@@ -122,7 +122,7 @@ export default Backbone.View.extend({
         this.renderActions(data.staticActions);
         if (this.view) {
             this.view.render();
-            this.el.getElementsByClassName('content')[0].innerHTML = this.view.el;
+            this.el.getElementsByClassName('content')[0].appendChild(this.view.el);
         }
         this.delegateEvents();
     }
