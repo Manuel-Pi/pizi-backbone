@@ -39,7 +39,7 @@ const viewUtils = {
                                         </tr>
                                         <% }) %>
                                 </tbody>
-                            </table>`)(_.extend({ className: "", data: [], columns: {} }, options));
+                            </table>`)(_.default(options, { className: "", data: [], columns: {} }));
     }
 };
 

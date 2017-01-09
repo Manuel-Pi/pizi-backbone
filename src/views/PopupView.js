@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import FormView from './FormView';
 
 export default Backbone.View.extend({
     tagName: "popup",
