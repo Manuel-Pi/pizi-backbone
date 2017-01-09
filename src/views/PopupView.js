@@ -67,6 +67,7 @@ export default Backbone.View.extend({
     form(options = {}) {
         options.isform = true;
         this.setParam(options);
+        delete options.template;
         this.render(options);
         return this;
     },
