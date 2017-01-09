@@ -84,7 +84,7 @@ export default Backbone.View.extend({
     },
     closePopup() {
         if (this.view) this.view.remove();
-        this.$el.css('display', 'none').html();
+        this.remove();
     },
     callbackArgs() {
         let valid = true;
@@ -98,13 +98,17 @@ export default Backbone.View.extend({
         return args;
     },
     renderActions(staticActions) {
-        this.$el.find('.ok')[this.ok ? 'show' : 'hide']();
-        this.$el.find('.cancel')[this.close ? 'show' : 'hide']();
-        this.$el.find('.custom')[this.custom ? 'show' : 'hide']();
-        this.$el.find('.actions')[!this.ok && !this.close && !this.custom ? 'hide' : 'show']();
-        staticActions = staticActions ? 'addClass' : 'removeClass';
-        this.$el.find('.actions')[staticActions]('static');
-        this.$el[staticActions]('static-actions');
+        this.el.getElementsByClassName('ok')[0].style.display = this.ok ? '' : 'none';
+        this.el.getElementsByClassName('.cancel')[0].style.display = this.close ? '' : 'none';
+        this.el.getElementsByClassName('.custom')[0].style.display = this.custom ? '' : 'none';
+        this.el.getElementsByClassName('.actions')[0].style.display = !this.ok && !this.close && !this.custom ? '' : 'none';
+        if (staticActions) {
+            this.el.getElementsByClassName('.actions').classList.add("static");
+            this.el.classList.add("static-actions");
+        } else {
+            this.el.getElementsByClassName('.actions').classList.remove("static");
+            this.el.classList.remove("static-actions");
+        }
     },
     render(data = {}) {
         data = _.extend({
