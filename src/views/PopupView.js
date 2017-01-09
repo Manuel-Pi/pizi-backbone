@@ -103,10 +103,10 @@ export default Backbone.View.extend({
         this.el.getElementsByClassName('custom')[0].style.display = this.custom ? '' : 'none';
         this.el.getElementsByClassName('actions')[0].style.display = !this.ok && !this.close && !this.custom ? '' : 'none';
         if (staticActions) {
-            this.el.getElementsByClassName('actions').classList.add("static");
+            this.el.getElementsByClassName('actions')[0].classList.add("static");
             this.el.classList.add("static-actions");
         } else {
-            this.el.getElementsByClassName('actions').classList.remove("static");
+            this.el.getElementsByClassName('actions')[0].classList.remove("static");
             this.el.classList.remove("static-actions");
         }
     },
