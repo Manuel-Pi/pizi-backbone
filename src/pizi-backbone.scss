@@ -141,6 +141,7 @@ table.tableView {
         position: relative;
         .order {
             display: none;
+            border-color: #333;
             border-left: 10px solid transparent;
             border-right: 10px solid transparent;
             width: 0;
@@ -151,7 +152,8 @@ table.tableView {
             position: absolute;
             right: 10px;
             &:hover {
-                border-color: black;
+                border-bottom-color: black;
+                border-top-color: black;
                 cursor: pointer;
             }
         }
