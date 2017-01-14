@@ -37,14 +37,7 @@ export default Backbone.View.extend({
         const oldProperty = this.order.property;
         this.order.property = property || this.order.property;
         this.order.direction = direction || this.order.direction;
-
-        if (oldProperty) {
-            let oldOrder = this.el.querySelector('th[data-property="' + oldProperty + '"] .order');
-            oldOrder.classList.remove('asc');
-            oldOrder.classList.remove('desc');
-        }
         this.order.direction = (this.order.property === oldProperty && this.order.direction === 'asc') ? 'desc' : 'asc';
-        this.el.querySelector('th[data-property="' + this.order.property + '"] .order').classList.add(this.order.direction);
 
         this.collection.comparator = (modelA, modelB) => {
             let result = 0;
