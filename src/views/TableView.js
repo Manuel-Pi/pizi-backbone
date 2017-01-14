@@ -13,7 +13,7 @@ export default Backbone.View.extend({
                                 <% data.forEach(function(entry){ %>
                                     <tr id="<%= entry.id %>" >
                                         <% columns.forEach(function(column){ %>
-                                            <td>{<%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>
+                                            <td><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>
                                             <% }) %>
                                     </tr>
                                     <% }) %>
