@@ -579,6 +579,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
             this.order.direction = this.order.direction === 'asc' ? 'desc' : 'asc';
         } else {
             this.order.property = el.dataset.property;
+            this.order.direction = 'asc';
         }
 
         el.getElementsByClassName('order')[0].classList.add(this.order.direction);
