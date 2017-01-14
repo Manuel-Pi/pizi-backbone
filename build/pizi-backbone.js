@@ -555,12 +555,12 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
 /* harmony default export */ exports["a"] = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.View.extend({
     tagName: "table",
     className: "tableView",
-    template: _.template(" <thead>\n                                <tr>\n                                    <% columns.forEach(function(column){ %>\n                                        <th class=\"<%= column.class %>\" property=\"<%= column.property %>\"><%= column.header || column.property %><div class=\"order <%= column.order.property && colum.order.direction %>\"></div> </th>\n                                        <% }) %>\n                                </tr>\n                            </thead>\n                            <tbody>\n                                <% data.forEach(function(entry, index){ %>\n                                    <tr id=\"<%= index %>\" >\n                                        <% columns.forEach(function(column){ %>\n                                            <td><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>\n                                            <% }) %>\n                                    </tr>\n                                    <% }) %>\n                            </tbody>"),
+    template: _.template(" <thead>\n                                <tr>\n                                    <% columns.forEach(function(column){ %>\n                                        <th class=\"<%= column.class %>\" property=\"<%= column.property %>\"><%= column.header || column.property %><div class=\"order <%= order.property && order.direction %>\"></div> </th>\n                                        <% }) %>\n                                </tr>\n                            </thead>\n                            <tbody>\n                                <% data.forEach(function(entry, index){ %>\n                                    <tr id=\"<%= index %>\" >\n                                        <% columns.forEach(function(column){ %>\n                                            <td><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>\n                                            <% }) %>\n                                    </tr>\n                                    <% }) %>\n                            </tbody>"),
     initialize: function initialize() {
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
         this.columns = options.columns || [];
-        this.order = {
+        this.order = options.order || {
             direction: 'asc',
             property: ""
         };
@@ -582,7 +582,8 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
 
         this.el.innerHTML = this.template({
             columns: this.columns,
-            data: this.collection.toJSON()
+            data: this.collection.toJSON(),
+            order: this.order
         });
         this.delegateEvents();
     }
