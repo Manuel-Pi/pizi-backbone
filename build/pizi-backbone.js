@@ -583,7 +583,23 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
         }
 
         el.getElementsByClassName('order')[0].classList.add(this.order.direction);
-        this.collection.comparator = this.order.property;
+        this.collection.comparator = function (modelA, modelB) {
+            var comparator = void 0;
+            var a = modelA.get(this.order.property);
+            var b = modelB.get(this.order.property);
+
+            if (typeof a === 'number') {
+                result = a - b;
+                result = result / Math.abs(result);
+            } else if (a instanceof Date) {
+                result = a.getDate() - b.getDate();
+                result = result / Math.abs(result);
+            } else if (typeof a === 'string') {
+                result = a.localeCompare(b);
+                result = result / Math.abs(result);
+            }
+            return this.order.direction === 'desc' ? -1 * result : result;
+        };
         this.collection.sort();
         this.render();
     },
