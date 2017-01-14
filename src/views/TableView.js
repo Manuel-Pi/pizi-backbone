@@ -36,7 +36,7 @@ export default Backbone.View.extend({
             oldOrder.classList.remove('desc');
         }
         if (this.order.property === el.dataset.property) {
-            this.order.direction = this.order.direction === 'asc' ? 'asc' : 'desc';
+            this.order.direction = this.order.direction === 'asc' ? 'desc' : 'asc';
         } else {
             this.order.property = el.dataset.property;
         }

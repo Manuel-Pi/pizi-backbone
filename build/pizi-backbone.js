@@ -576,7 +576,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
             oldOrder.classList.remove('desc');
         }
         if (this.order.property === el.dataset.property) {
-            this.order.direction = this.order.direction === 'asc' ? 'asc' : 'desc';
+            this.order.direction = this.order.direction === 'asc' ? 'desc' : 'asc';
         } else {
             this.order.property = el.dataset.property;
         }
