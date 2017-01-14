@@ -586,7 +586,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
 
         el.getElementsByClassName('order')[0].classList.add(this.order.direction);
         this.collection.comparator = function (modelA, modelB) {
-            var comparator = void 0;
+            var result = 0;
             var a = modelA.get(_this.order.property);
             var b = modelB.get(_this.order.property);
 
@@ -594,7 +594,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
                 result = a - b;
                 result = result / Math.abs(result);
             } else if (a instanceof Date) {
-                result = a.getDate() - b.getDate();
+                result = a.getTime() - b.getTime();
                 result = result / Math.abs(result);
             } else if (typeof a === 'string') {
                 result = a.localeCompare(b);

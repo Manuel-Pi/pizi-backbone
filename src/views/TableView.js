@@ -44,7 +44,7 @@ export default Backbone.View.extend({
 
         el.getElementsByClassName('order')[0].classList.add(this.order.direction);
         this.collection.comparator = (modelA, modelB) => {
-            let comparator;
+            let result = 0;
             let a = modelA.get(this.order.property);
             let b = modelB.get(this.order.property);
 
@@ -52,7 +52,7 @@ export default Backbone.View.extend({
                 result = a - b;
                 result = result / Math.abs(result);
             } else if (a instanceof Date) {
-                result = a.getDate() - b.getDate();
+                result = a.getTime() - b.getTime();
                 result = result / Math.abs(result);
             } else if (typeof a === 'string') {
                 result = a.localeCompare(b);
