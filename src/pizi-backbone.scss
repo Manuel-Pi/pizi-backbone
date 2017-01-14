@@ -137,22 +137,25 @@ popup {
 }
 
 table.tableView {
-    .arrow-up {
-        border-bottom: 10px solid black;
-    }
-    .arrow-down {
-        border-top: 10px solid black;
-    }
-    .order {
-        border-left: 10px solid transparent;
-        border-right: 10px solid transparent;
-        width: 0;
-        height: 0;
-        display: inline-block;
-        vertical-align: middle;
-        top: calc(50% - 5px);
-        position: absolute;
-        right: 10px;
+    th {
+        position: relative;
+        .arrow-up {
+            border-bottom: 10px solid black;
+        }
+        .arrow-down {
+            border-top: 10px solid black;
+        }
+        .order {
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            width: 0;
+            height: 0;
+            display: inline-block;
+            vertical-align: middle;
+            top: calc(50% - 5px);
+            position: absolute;
+            right: 10px;
+        }
     }
 }
 
