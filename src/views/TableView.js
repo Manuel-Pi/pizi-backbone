@@ -2,10 +2,11 @@ import Backbone from 'backbone';
 
 export default Backbone.View.extend({
     tagName: "table",
+    className: "tableView",
     template: _.template(` <thead>
                                 <tr>
                                     <% columns.forEach(function(column){ %>
-                                        <th class="<%= column.class %>"><%= column.header || column.property %></th>
+                                        <th class="<%= column.class %>"><%= column.header || column.property %><div class="arrow-up"></div><div class="arrow-down"></div></th>
                                         <% }) %>
                                 </tr>
                             </thead>
