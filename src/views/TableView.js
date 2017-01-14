@@ -31,14 +31,15 @@ export default Backbone.View.extend({
     },
     orderBy(event, el) {
         if (this.order.property) {
-            this.el.querySelector('th[data-property="' + this.order.property + '"]').classList.remove('asc');
-            this.el.querySelector('th[data-property="' + this.order.property + '"]').classList.remove('desc');
+            let oldOrder = this.el.querySelector('th[data-property="' + this.order.property + '"] .order');
+            oldOrder.classList.remove('asc');
+            oldOrder.classList.remove('desc');
         }
         this.order = {
             direction: this.order.direction === 'asc' ? 'desc' : 'asc',
             property: el.dataset.property
         };
-        el.classList.add(this.order.direction);
+        el.classList.getElementsByClassName('order')[0].add(this.order.direction);
         this.collection.comparator = this.order.property;
         this.collection.sort();
     },
