@@ -555,7 +555,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
 /* harmony default export */ exports["a"] = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.View.extend({
     tagName: "table",
     className: "tableView",
-    template: _.template(" <thead>\n                                <tr>\n                                    <% columns.forEach(function(column){ %>\n                                        <th class=\"<%= column.class %>\" data-property=\"<%= column.property %>\"><%= column.header || column.property %><div class=\"order <%= order.property === column.property && order.direction %>\"></div> </th>\n                                        <% }) %>\n                                </tr>\n                            </thead>\n                            <tbody>\n                                <% data.forEach(function(entry, index){ %>\n                                    <tr id=\"<%= index %>\" >\n                                        <% columns.forEach(function(column){ %>\n                                            <td><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>\n                                            <% }) %>\n                                    </tr>\n                                    <% }) %>\n                            </tbody>"),
+    template: _.template(" <thead>\n                                <tr>\n                                    <% columns.forEach(function(column){ %>\n                                        <th class=\"<%= column.class %>\" data-property=\"<%= column.property %>\"><%= column.header || column.property %><div class=\"order <%= order.property === column.property ? order.direction : '' %>\"></div> </th>\n                                        <% }) %>\n                                </tr>\n                            </thead>\n                            <tbody>\n                                <% data.forEach(function(entry, index){ %>\n                                    <tr id=\"<%= index %>\" >\n                                        <% columns.forEach(function(column){ %>\n                                            <td><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>\n                                            <% }) %>\n                                    </tr>\n                                    <% }) %>\n                            </tbody>"),
     initialize: function initialize() {
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -564,6 +564,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
             direction: 'asc',
             property: ""
         };
+        this.orderBy();
     },
 
     events: {
@@ -585,7 +586,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
             oldOrder.classList.remove('desc');
         }
         this.order.direction = this.order.property === oldProperty && this.order.direction === 'asc' ? 'desc' : 'asc';
-        this.el.querySelector('th[data-property="' + this.order.property + '"] .order')[0].classList.add(this.order.direction);
+        this.el.querySelector('th[data-property="' + this.order.property + '"] .order').classList.add(this.order.direction);
 
         this.collection.comparator = function (modelA, modelB) {
             var result = 0;

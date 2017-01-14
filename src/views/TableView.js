@@ -6,7 +6,7 @@ export default Backbone.View.extend({
     template: _.template(` <thead>
                                 <tr>
                                     <% columns.forEach(function(column){ %>
-                                        <th class="<%= column.class %>" data-property="<%= column.property %>"><%= column.header || column.property %><div class="order <%= order.property === column.property && order.direction %>"></div> </th>
+                                        <th class="<%= column.class %>" data-property="<%= column.property %>"><%= column.header || column.property %><div class="order <%= order.property === column.property ? order.direction : '' %>"></div> </th>
                                         <% }) %>
                                 </tr>
                             </thead>
@@ -24,7 +24,8 @@ export default Backbone.View.extend({
         this.order = options.order || {
             direction: 'asc',
             property: ""
-        }
+        };
+        this.orderBy();
     },
     events: {
         'click th': 'sort'
@@ -43,7 +44,7 @@ export default Backbone.View.extend({
             oldOrder.classList.remove('desc');
         }
         this.order.direction = (this.order.property === oldProperty && this.order.direction === 'asc') ? 'desc' : 'asc';
-        this.el.querySelector('th[data-property="' + this.order.property + '"] .order')[0].classList.add(this.order.direction);
+        this.el.querySelector('th[data-property="' + this.order.property + '"] .order').classList.add(this.order.direction);
 
         this.collection.comparator = (modelA, modelB) => {
             let result = 0;
