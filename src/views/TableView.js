@@ -27,7 +27,7 @@ export default Backbone.View.extend({
         }
     },
     events: {
-        'click tr': 'orderBy'
+        'click th': 'orderBy'
     },
     orderBy(event, el) {
         this.order = {

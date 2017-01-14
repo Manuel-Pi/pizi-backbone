@@ -567,7 +567,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
     },
 
     events: {
-        'click tr': 'orderBy'
+        'click th': 'orderBy'
     },
     orderBy: function orderBy(event, el) {
         this.order = {
