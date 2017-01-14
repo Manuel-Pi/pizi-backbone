@@ -6,7 +6,7 @@ export default Backbone.View.extend({
     template: _.template(` <thead>
                                 <tr>
                                     <% columns.forEach(function(column){ %>
-                                        <th class="<%= column.class %>" property="<%= column.property %>"><%= column.header || column.property %><div class="order <%= order.property === column.property && order.direction %>"></div> </th>
+                                        <th class="<%= column.class %>" data-property="<%= column.property %>"><%= column.header || column.property %><div class="order <%= order.property === column.property && order.direction %>"></div> </th>
                                         <% }) %>
                                 </tr>
                             </thead>
@@ -32,7 +32,7 @@ export default Backbone.View.extend({
     orderBy(event, el) {
         this.order = {
             direction: this.order.direction === 'asc' ? 'desc' : 'asc',
-            property: el.property
+            property: el.dataset.property
         }
         this.collection.comparator = this.order.property;
         this.collection.sort();
