@@ -39,7 +39,7 @@ export default Backbone.View.extend({
             direction: this.order.direction === 'asc' ? 'desc' : 'asc',
             property: el.dataset.property
         };
-        el.classList.getElementsByClassName('order')[0].add(this.order.direction);
+        el.getElementsByClassName('order')[0].classList.add(this.order.direction);
         this.collection.comparator = this.order.property;
         this.collection.sort();
     },
