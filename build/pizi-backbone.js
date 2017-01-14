@@ -607,7 +607,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
         $parent.classList.add('wait-container');
         $parent.classList.add('hide-child');
         if ($el) {
-            var $wait = new document.createElement("wait");
+            var $wait = document.createElement("wait");
             $wait.style.display = "block";
             $wait.insertBefore($template, $wait.firstChild);
             $parent.insertBefore($wait, parent.firstChild);
