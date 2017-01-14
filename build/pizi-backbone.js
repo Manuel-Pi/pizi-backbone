@@ -555,18 +555,27 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
 /* harmony default export */ exports["a"] = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.View.extend({
     tagName: "table",
     className: "tableView",
-    template: _.template(" <thead>\n                                <tr>\n                                    <% columns.forEach(function(column){ %>\n                                        <th class=\"<%= column.class %>\"><%= column.header || column.property %><div class=\"order <%= column.order || \"\" %>\"></div> </th>\n                                        <% }) %>\n                                </tr>\n                            </thead>\n                            <tbody>\n                                <% data.forEach(function(entry, index){ %>\n                                    <tr id=\"<%= index %>\" >\n                                        <% columns.forEach(function(column){ %>\n                                            <td><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>\n                                            <% }) %>\n                                    </tr>\n                                    <% }) %>\n                            </tbody>"),
+    template: _.template(" <thead>\n                                <tr>\n                                    <% columns.forEach(function(column){ %>\n                                        <th class=\"<%= column.class %>\" property=\"<%= column.property %>\"><%= column.header || column.property %><div class=\"order <%= column.order.property && colum.order.direction %>\"></div> </th>\n                                        <% }) %>\n                                </tr>\n                            </thead>\n                            <tbody>\n                                <% data.forEach(function(entry, index){ %>\n                                    <tr id=\"<%= index %>\" >\n                                        <% columns.forEach(function(column){ %>\n                                            <td><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>\n                                            <% }) %>\n                                    </tr>\n                                    <% }) %>\n                            </tbody>"),
     initialize: function initialize() {
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
         this.columns = options.columns || [];
+        this.order = {
+            direction: 'asc',
+            property: ""
+        };
     },
 
     events: {
-        'click .close': 'onClose',
-        'click .cancel': 'onClose',
-        'click .ok': 'onOk',
-        'click .custom': 'onCustom'
+        'click tr': 'orderBy'
+    },
+    orderBy: function orderBy(event, el) {
+        this.order = {
+            direction: this.order.direction === 'asc' ? 'desc' : 'asc',
+            property: el.property
+        };
+        this.collection.comparator = this.order.property;
+        this.collection.sort();
     },
     render: function render() {
         var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
