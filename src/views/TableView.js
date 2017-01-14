@@ -6,7 +6,7 @@ export default Backbone.View.extend({
     template: _.template(` <thead>
                                 <tr>
                                     <% columns.forEach(function(column){ %>
-                                        <th class="<%= column.class %>" property="<%= column.property %>"><%= column.header || column.property %><div class="order <%= order.property && order.direction %>"></div> </th>
+                                        <th class="<%= column.class %>" property="<%= column.property %>"><%= column.header || column.property %><div class="order <%= order.property === column.property && order.direction %>"></div> </th>
                                         <% }) %>
                                 </tr>
                             </thead>
