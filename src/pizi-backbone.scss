@@ -139,13 +139,8 @@ popup {
 table.tableView {
     th {
         position: relative;
-        .arrow-up {
-            border-bottom: 10px solid black;
-        }
-        .arrow-down {
-            border-top: 10px solid black;
-        }
         .order {
+            display: none;
             border-left: 10px solid transparent;
             border-right: 10px solid transparent;
             width: 0;
@@ -155,6 +150,18 @@ table.tableView {
             top: calc(50% - 5px);
             position: absolute;
             right: 10px;
+            &:hover {
+                border-color: black;
+                cursor: pointer;
+            }
+        }
+        .asc {
+            border-bottom: 10px solid #333;
+            display: block;
+        }
+        .desc {
+            border-top: 10px solid #333;
+            display: block;
         }
     }
 }
