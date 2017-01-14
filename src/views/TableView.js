@@ -18,8 +18,8 @@ export default Backbone.View.extend({
                                     </tr>
                                     <% }) %>
                             </tbody>`),
-    initialize() {
-
+    initialize(options = {}) {
+        this.columns = options.columns || [];
     },
     events: {
         'click .close': 'onClose',

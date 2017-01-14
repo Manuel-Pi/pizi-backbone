@@ -555,7 +555,11 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
 /* harmony default export */ exports["a"] = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.View.extend({
     tagName: "table",
     template: _.template(' <thead>\n                                <tr>\n                                    <% columns.forEach(function(column){ %>\n                                        <th class="{{ column.class }}">{{ column.header || column.property }}</th>\n                                        <% }) %>\n                                </tr>\n                            </thead>\n                            <tbody>\n                                <% data.forEach(function(entry){ %>\n                                    <tr id="{{entry.id }}" >\n                                        <% columns.forEach(function(column){ %>\n                                            <td>{{ column.transform ? column.transform(entry[column.property]) : entry[column.property] }}</td>\n                                            <% }) %>\n                                    </tr>\n                                    <% }) %>\n                            </tbody>'),
-    initialize: function initialize() {},
+    initialize: function initialize() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+        this.columns = options.columns || [];
+    },
 
     events: {
         'click .close': 'onClose',
