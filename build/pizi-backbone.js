@@ -609,7 +609,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
         if ($el) {
             var $wait = document.createElement("wait");
             $wait.style.display = "block";
-            $wait.insertBefore($template, $wait.firstChild);
+            $wait.innerHTML = $template;
             $parent.insertBefore($wait, parent.firstChild);
         } else {
             this.el.innerHTML = $template;

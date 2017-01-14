@@ -20,7 +20,7 @@ export default Backbone.View.extend({
         if ($el) {
             let $wait = document.createElement("wait");
             $wait.style.display = "block";
-            $wait.insertBefore($template, $wait.firstChild);
+            $wait.innerHTML = $template;
             $parent.insertBefore($wait, parent.firstChild);
         } else {
             this.el.innerHTML = $template;
