@@ -578,7 +578,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
             direction: this.order.direction === 'asc' ? 'desc' : 'asc',
             property: el.dataset.property
         };
-        el.classList.add(this.order.property);
+        el.classList.add(this.order.direction);
         this.collection.comparator = this.order.property;
         this.collection.sort();
     },
