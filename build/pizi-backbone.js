@@ -571,13 +571,14 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
     },
     orderBy: function orderBy(event, el) {
         if (this.order.property) {
-            this.el.querySelector('*[data-property="' + this.order.property + '"]').classList.remove('asc');
-            this.el.querySelector('*[data-property="' + this.order.property + '"]').classList.remove('desc');
+            this.el.querySelector('th[data-property="' + this.order.property + '"]').classList.remove('asc');
+            this.el.querySelector('th[data-property="' + this.order.property + '"]').classList.remove('desc');
         }
         this.order = {
             direction: this.order.direction === 'asc' ? 'desc' : 'asc',
             property: el.dataset.property
         };
+        el.classList.add(this.order.property);
         this.collection.comparator = this.order.property;
         this.collection.sort();
     },
