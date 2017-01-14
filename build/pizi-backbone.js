@@ -567,7 +567,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
     },
 
     events: {
-        'click th': 'orderBy'
+        'click th': 'sort'
     },
     sort: function sort(event, el) {
         this.orderBy(el.dataset.property);

@@ -27,7 +27,7 @@ export default Backbone.View.extend({
         }
     },
     events: {
-        'click th': 'orderBy'
+        'click th': 'sort'
     },
     sort(event, el) {
         this.orderBy(el.dataset.property);
