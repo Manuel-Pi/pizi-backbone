@@ -42,6 +42,7 @@ export default Backbone.View.extend({
         el.getElementsByClassName('order')[0].classList.add(this.order.direction);
         this.collection.comparator = this.order.property;
         this.collection.sort();
+        this.render();
     },
     render(data = {}) {
         this.el.innerHTML = this.template({

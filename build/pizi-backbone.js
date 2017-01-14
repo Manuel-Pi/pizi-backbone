@@ -582,6 +582,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
         el.getElementsByClassName('order')[0].classList.add(this.order.direction);
         this.collection.comparator = this.order.property;
         this.collection.sort();
+        this.render();
     },
     render: function render() {
         var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
