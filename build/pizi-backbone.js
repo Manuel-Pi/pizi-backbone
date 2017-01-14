@@ -569,22 +569,24 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
     events: {
         'click th': 'orderBy'
     },
-    orderBy: function orderBy(event, el) {
+    sort: function sort(event, el) {
+        this.orderBy(el.dataset.property);
+    },
+    orderBy: function orderBy(property, direction) {
         var _this = this;
 
-        if (this.order.property) {
-            var oldOrder = this.el.querySelector('th[data-property="' + this.order.property + '"] .order');
+        var oldProperty = this.order.property;
+        this.order.property = property || this.order.property;
+        this.order.direction = direction || this.order.direction;
+
+        if (oldProperty) {
+            var oldOrder = this.el.querySelector('th[data-property="' + oldProperty + '"] .order');
             oldOrder.classList.remove('asc');
             oldOrder.classList.remove('desc');
         }
-        if (this.order.property === el.dataset.property) {
-            this.order.direction = this.order.direction === 'asc' ? 'desc' : 'asc';
-        } else {
-            this.order.property = el.dataset.property;
-            this.order.direction = 'asc';
-        }
+        this.order.direction = this.order.property === oldProperty && this.order.direction === 'asc' ? 'desc' : 'asc';
+        this.el.querySelector('th[data-property="' + this.order.property + '"] .order')[0].classList.add(this.order.direction);
 
-        el.getElementsByClassName('order')[0].classList.add(this.order.direction);
         this.collection.comparator = function (modelA, modelB) {
             var result = 0;
             var a = modelA.get(_this.order.property);

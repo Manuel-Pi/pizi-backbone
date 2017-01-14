@@ -29,20 +29,22 @@ export default Backbone.View.extend({
     events: {
         'click th': 'orderBy'
     },
-    orderBy(event, el) {
-        if (this.order.property) {
-            let oldOrder = this.el.querySelector('th[data-property="' + this.order.property + '"] .order');
+    sort(event, el) {
+        this.orderBy(el.dataset.property);
+    },
+    orderBy(property, direction) {
+        const oldProperty = this.order.property;
+        this.order.property = property || this.order.property;
+        this.order.direction = direction || this.order.direction;
+
+        if (oldProperty) {
+            let oldOrder = this.el.querySelector('th[data-property="' + oldProperty + '"] .order');
             oldOrder.classList.remove('asc');
             oldOrder.classList.remove('desc');
         }
-        if (this.order.property === el.dataset.property) {
-            this.order.direction = this.order.direction === 'asc' ? 'desc' : 'asc';
-        } else {
-            this.order.property = el.dataset.property;
-            this.order.direction = 'asc';
-        }
+        this.order.direction = (this.order.property === oldProperty && this.order.direction === 'asc') ? 'desc' : 'asc';
+        this.el.querySelector('th[data-property="' + this.order.property + '"] .order')[0].classList.add(this.order.direction);
 
-        el.getElementsByClassName('order')[0].classList.add(this.order.direction);
         this.collection.comparator = (modelA, modelB) => {
             let result = 0;
             let a = modelA.get(this.order.property);
