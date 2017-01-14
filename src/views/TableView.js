@@ -10,8 +10,8 @@ export default Backbone.View.extend({
                                 </tr>
                             </thead>
                             <tbody>
-                                <% data.forEach(function(entry){ %>
-                                    <tr id="<%= entry.id %>" >
+                                <% data.forEach(function(entry, index){ %>
+                                    <tr id="<%= index %>" >
                                         <% columns.forEach(function(column){ %>
                                             <td><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>
                                             <% }) %>
