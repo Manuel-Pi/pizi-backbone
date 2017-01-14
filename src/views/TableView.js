@@ -5,15 +5,15 @@ export default Backbone.View.extend({
     template: _.template(` <thead>
                                 <tr>
                                     <% columns.forEach(function(column){ %>
-                                        <th class="{{ column.class }}">{{ column.header || column.property }}</th>
+                                        <th class="<%= column.class %>"><%= column.header || column.property %></th>
                                         <% }) %>
                                 </tr>
                             </thead>
                             <tbody>
                                 <% data.forEach(function(entry){ %>
-                                    <tr id="{{entry.id }}" >
+                                    <tr id="<%= entry.id %>" >
                                         <% columns.forEach(function(column){ %>
-                                            <td>{{ column.transform ? column.transform(entry[column.property]) : entry[column.property] }}</td>
+                                            <td>{<%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>
                                             <% }) %>
                                     </tr>
                                     <% }) %>
