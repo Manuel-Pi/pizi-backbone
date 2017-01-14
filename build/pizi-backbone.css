@@ -45,7 +45,7 @@ popup {
     position: absolute;
     z-index: 10000;
     background-color: black;
-    opacity: 0.9;
+    opacity: 0.5;
     transition: opacity 1s ease-in; }
 
 .wait-container {
@@ -84,14 +84,19 @@ popup {
     overflow-y: auto;
     min-width: 200px;
     color: black; }
+    popup .container.hide-cross {
+      padding-top: 10px; }
+      popup .container.hide-cross .close {
+        display: none; }
     popup .container .close {
       position: absolute;
-      top: -20px;
+      top: 0px;
       right: 5px;
       cursor: pointer;
       font-size: 2em;
       font-weight: bold;
-      line-height: 2em; }
+      line-height: 30px;
+      height: 30px; }
     popup .container .actions {
       list-style: none;
       margin: 0;
@@ -102,7 +107,18 @@ popup {
         display: inline;
         padding: 10px 20px;
         background-color: #444;
-        color: white; }
+        color: white;
+        cursor: pointer; }
+        popup .container .actions li:hover {
+          background-color: #666; }
+
+form input.error {
+  margin-bottom: 5px;
+  border: 1px solid red; }
+  form input.error + small.error {
+    display: inline-block;
+    color: red;
+    margin-bottom: 10px; }
 
 @keyframes pulse {
   0%,

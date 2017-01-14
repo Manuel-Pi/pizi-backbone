@@ -52,7 +52,7 @@ popup {
         position: absolute;
         z-index: 10000;
         background-color: black;
-        opacity: 0.9;
+        opacity: 0.5;
         transition: opacity 1s ease-in;
     }
 }
@@ -100,14 +100,21 @@ popup {
         overflow-y: auto;
         min-width: 200px;
         color: black;
+        &.hide-cross {
+            padding-top: 10px;
+            .close {
+                display: none;
+            }
+        }
         .close {
             position: absolute;
-            top: -20px;
+            top: 0px;
             right: 5px;
             cursor: pointer;
             font-size: 2em;
             font-weight: bold;
-            line-height: 2em;
+            line-height: 30px;
+            height: 30px;
         }
         .actions {
             list-style: none;
@@ -120,7 +127,23 @@ popup {
                 padding: 10px 20px;
                 background-color: #444;
                 color: white;
+                cursor: pointer;
+                &:hover {
+                    background-color: #666;
+                }
             }
+        }
+    }
+}
+
+form {
+    input.error {
+        margin-bottom: 5px;
+        border: 1px solid red;
+        &+small.error {
+            display: inline-block;
+            color: red;
+            margin-bottom: 10px;
         }
     }
 }

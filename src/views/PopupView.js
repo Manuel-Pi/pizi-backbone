@@ -33,9 +33,10 @@ export default Backbone.View.extend({
         this.custom = params.custom;
         this.el.classList.add(params.class);
         this.resizeOff = params.resizeOff;
+        this.closeType = params.closeType || 'cross';
         var view = this;
         if (params.template) {
-            if (params.isform) {
+            if (params.type === "form") {
                 const view = this;
                 const PopupFormView = FormView.extend({
                     initialize() {
@@ -66,6 +67,7 @@ export default Backbone.View.extend({
     },
     form(options = {}) {
         options.isform = true;
+        options.type = "form";
         this.setParam(options);
         delete options.template;
         this.render(options);
@@ -101,9 +103,10 @@ export default Backbone.View.extend({
     },
     renderActions(staticActions) {
         this.el.getElementsByClassName('ok')[0].style.display = this.ok ? '' : 'none';
-        this.el.getElementsByClassName('cancel')[0].style.display = this.close ? '' : 'none';
+        this.el.getElementsByClassName('container')[0].classList[this.closeType === 'cross' ? 'remove' : 'add']('hide-cross');
+        this.el.getElementsByClassName('cancel')[0].style.display = this.close || this.closeType === 'button' ? '' : 'none';
         this.el.getElementsByClassName('custom')[0].style.display = this.custom ? '' : 'none';
-        this.el.getElementsByClassName('actions')[0].style.display = !this.ok && !this.close && !this.custom ? '' : 'none';
+        this.el.getElementsByClassName('actions')[0].style.display = !this.ok && !this.close && !this.custom ? 'none' : '';
         if (staticActions) {
             this.el.getElementsByClassName('actions')[0].classList.add("static");
             this.el.classList.add("static-actions");

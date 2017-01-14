@@ -26,7 +26,7 @@ module.exports = {
         umdNamedDefine: true,
         sourceMapFilename: 'js/map/[name].map',
     },
-    devtool: 'inline-source-map',
+    // devtool: 'inline-source-map',
     module: {
         loaders: [{
             test: /\.js$/,

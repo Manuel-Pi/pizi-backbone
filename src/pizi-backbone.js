@@ -1,6 +1,7 @@
 import Backbone from 'backbone';
 import WaitView from './views/WaitView';
 import PopupView from './views/PopupView';
+import TableView from './views/TableView';
 import NotificationView from './views/NotificationView';
 import FormView from './views/FormView';
 import Entity from './models/Entity';
@@ -32,7 +33,7 @@ const viewUtils = {
                                 </thead>
                                 <tbody>
                                     <% data.forEach(function(entry){ %>
-                                        <tr>
+                                        <tr id="{{entry.id }}" >
                                             <% columns.forEach(function(column){ %>
                                                 <td>{{ column.transform ? column.transform(entry[column.property]) : entry[column.property] }}</td>
                                                 <% }) %>
@@ -48,6 +49,7 @@ export default {
     PopupView,
     FormView,
     WaitView,
+    TableView,
     viewUtils,
     Entity,
     useJwt

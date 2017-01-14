@@ -17,30 +17,31 @@ export default Backbone.View.extend({
         'click .submit': 'submit'
     },
     inputError(name, error) {
-        this.el.querySelectorAll(`input[name="${name}"]`).className += (this.errorClass);
+        this.el.querySelectorAll(`input[name="${name}"]`).classList.add(this.errorClass);
     },
     getValues() {
-        return this.$el.serializeArray();
+        return new FormData(this.el);
     },
     getObject() {
         let object = {};
         _.each(this.getValues(), (attribute) => object[attribute.name] = attribute.value);
         return object;
     },
-    check() {
+    check(displayError = false) {
         let valid = true;
-        for (const rule in this.validate) {
+        for (const index in this.validate) {
+            const rule = this.validate[index];
             let el = this.el.querySelectorAll('*[name="' + rule.name + '"]');
             if (el.length && !el[0].value.match(rule.regex)) {
-                if (!el.classList.contains(this.errorClass)) {
-                    el.classList.push(this.errorClass);
-                    el.insertAdjacentHTML('afterend', '<small class="' + this.errorClass + '">' + rule.message + '</small>');
+                if (displayError && !el[0].classList.contains(this.errorClass || 'error')) {
+                    el[0].classList.add(this.errorClass || "error");
+                    el[0].insertAdjacentHTML('afterend', '<small class="' + (this.errorClass || "error") + '">' + rule.message + '</small>');
                 }
                 valid = false;
-            } else if (el.length) {
-                el.classList.remove(this.errorClass);
-                let $next = el.nextElementSibling;
-                if ($next.tagName === "small") $next.parentNode.removeChild($next);
+            } else if (displayError && el.length) {
+                el[0].classList.remove(this.errorClass || 'error');
+                let $next = el[0].nextElementSibling;
+                if ($next && $next.tagName === "SMALL") $next.parentNode.removeChild($next);
             }
         }
         this.isValid = valid;
@@ -49,7 +50,6 @@ export default Backbone.View.extend({
     submit(params = {}) {
         params = !params.currentTarget ? _.extend(this.params, params) : this.params;
         if (params.type.toUpperCase() !== 'GET') params.data = new FormData(this.el);
-        $.ajax(params);
         var request = new XMLHttpRequest();
         request.open(params.type, params.url, true);
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
