@@ -43,7 +43,7 @@ export default Backbone.View.extend({
         }
 
         el.getElementsByClassName('order')[0].classList.add(this.order.direction);
-        this.collection.comparator = function(modelA, modelB) {
+        this.collection.comparator = (modelA, modelB) => {
             let comparator;
             let a = modelA.get(this.order.property);
             let b = modelB.get(this.order.property);
@@ -59,7 +59,7 @@ export default Backbone.View.extend({
                 result = result / Math.abs(result);
             }
             return this.order.direction === 'desc' ? -1 * result : result;
-        }
+        };
         this.collection.sort();
         this.render();
     },

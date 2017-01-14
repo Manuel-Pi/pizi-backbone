@@ -570,6 +570,8 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
         'click th': 'orderBy'
     },
     orderBy: function orderBy(event, el) {
+        var _this = this;
+
         if (this.order.property) {
             var oldOrder = this.el.querySelector('th[data-property="' + this.order.property + '"] .order');
             oldOrder.classList.remove('asc');
@@ -585,8 +587,8 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
         el.getElementsByClassName('order')[0].classList.add(this.order.direction);
         this.collection.comparator = function (modelA, modelB) {
             var comparator = void 0;
-            var a = modelA.get(this.order.property);
-            var b = modelB.get(this.order.property);
+            var a = modelA.get(_this.order.property);
+            var b = modelB.get(_this.order.property);
 
             if (typeof a === 'number') {
                 result = a - b;
@@ -598,7 +600,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
                 result = a.localeCompare(b);
                 result = result / Math.abs(result);
             }
-            return this.order.direction === 'desc' ? -1 * result : result;
+            return _this.order.direction === 'desc' ? -1 * result : result;
         };
         this.collection.sort();
         this.render();
