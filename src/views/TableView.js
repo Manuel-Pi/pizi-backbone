@@ -30,7 +30,10 @@ export default Backbone.View.extend({
         'click th': 'orderBy'
     },
     orderBy(event, el) {
-        if (this.order.property) this.el.querSelector('*[data-property="' + this.order.property + '"]').classList.remove('asc').remove('desc');
+        if (this.order.property) {
+            this.el.querySelector('*[data-property="' + this.order.property + '"]').classList.remove('asc');
+            this.el.querySelector('*[data-property="' + this.order.property + '"]').classList.remove('desc');
+        }
         this.order = {
             direction: this.order.direction === 'asc' ? 'desc' : 'asc',
             property: el.dataset.property
