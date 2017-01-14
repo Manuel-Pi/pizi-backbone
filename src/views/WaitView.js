@@ -18,7 +18,7 @@ export default Backbone.View.extend({
         $parent.classList.add('wait-container');
         $parent.classList.add('hide-child');
         if ($el) {
-            let $wait = new Element("wait");
+            let $wait = new document.createElement("wait");
             $wait.style.display = "block";
             $wait.insertBefore($template, $wait.firstChild);
             $parent.insertBefore($wait, parent.firstChild);
