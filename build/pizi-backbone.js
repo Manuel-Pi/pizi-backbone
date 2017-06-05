@@ -283,7 +283,13 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
             if (_.contains(relations, key)) {
                 var definition = _this4.relations[key];
                 attributes[key] = new definition[definition.collection ? 'collection' : 'model'](value, opts);
-                attributes[key].on('all', instance.trigger);
+                attributes[key].on('all', function (event) {
+                    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                        args[_key - 1] = arguments[_key];
+                    }
+
+                    instance.trigger.apply(instance, [key + '.' + event].concat(args));
+                });
             }
             if (_this4.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
                 attributes[key] = new Date(value);
@@ -304,7 +310,13 @@ Model.extend = function (modelDefinition) {
     var instance = this;
     _.each(modelDefinition.relations, function (definition, key) {
         defaultRelations[key] = new definition[definition.collection ? "collection" : "model"](modelDefinition.defaults[key]);
-        defaultRelations[key].on('all', instance.trigger);
+        defaultRelations[key].on('all', function (event) {
+            for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+                args[_key2 - 1] = arguments[_key2];
+            }
+
+            instance.trigger.apply(instance, [key + '.' + event].concat(args));
+        });
     });
     _.extend(modelDefinition.defaults, defaultRelations);
     return __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend.call(this, modelDefinition);
