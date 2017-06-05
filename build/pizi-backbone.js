@@ -302,7 +302,7 @@ Model.extend = function (modelDefinition) {
     var instance = this;
     _.each(modelDefinition.relations, function (definition, key) {
         defaultRelations[key] = new definition[definition.collection ? "collection" : "model"](modelDefinition.defaults[key]);
-        defaultRelations[key].on('change', function () {
+        defaultRelations[key].on('change sync reset update', function () {
             instance.trigger('change');
         });
     });
