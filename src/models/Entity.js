@@ -4,6 +4,17 @@ import Backbone from "backbone";
 
 const Model = Backbone.Model.extend({
     dates: [],
+    initialize() {
+        _.each(this.relations, (definition, key) => {
+            let opts = {};
+            opts[definition.relationAttribute] = this.id;
+            const fetch = this.attributes[key].fetch;
+            this.attributes[key].fetch = (options) => fetch.call(this.attributes[key], _.defaults(options, { data: opts }));
+            this.attributes[key].on('add', (model) => {
+                model.attributes[definition.relationAttribute] = this.id;
+            })
+        });
+    },
     validate(attrs, options) {
         var dates = _.pick(attrs, this.dates.concat(['date']));
         for (var date in dates) {
@@ -30,14 +41,12 @@ const Model = Backbone.Model.extend({
         Backbone.Model.prototype.save.call(this, attrs, options);
     },
     fetch(options = {}) {
-        if (options.all) {
+        if (options.relations === 'all') {
             var success = options.success;
             options.success = (model, resp, opts) => {
                 _.each(this.relations, (relation, key) => {
-                    if (relation.collection && model.get(key) instanceof relation.collection) {
-                        _.each(model.get(key).models, (model) => {
-                            model.fetch({ all: options.all });
-                        });
+                    if (relation.entity.collection && model.get(key) instanceof relation.entity.collection) {
+                        model.get(key).fetch();
                     }
                 });
                 if (success) success.call(this, model, resp, options);
@@ -74,17 +83,7 @@ const Model = Backbone.Model.extend({
         _.each(attributes, (value, key) => {
             if (_.contains(relations, key)) {
                 var definition = this.relations[key];
-                if (definition.model && value instanceof Object) {
-                    this.set(key, new definition.model(value, opts), opts);
-                    delete attributes[key];
-                } else if (definition.collection && value instanceof Array) {
-                    // Check if array is a real array (key = number), if it is it must be id's array
-                    this.get(key).set(new definition.collection(value, opts));
-                    delete attributes[key];
-                } else if (definition.model && !(value instanceof definition.model) || definition.collection && !(value instanceof definition.collection)) {
-                    console.log('Bad model definition: ' + this.get('className'));
-                    delete attributes[key];
-                }
+                attributes[key] = new definition[definition.collection ? 'collection' : 'model'](value, opts);
             }
             if (this.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
                 attributes[key] = new Date(value);
@@ -102,12 +101,12 @@ const Model = Backbone.Model.extend({
 Model.extend = function(modelDefinition) {
     // Set defaults collections for relations
     var defaultRelations = {};
+    var instance = this;
     _.each(modelDefinition.relations, (definition, key) => {
-        if (definition.collection && modelDefinition.defaults[key] instanceof Array) {
-            defaultRelations[key] = new definition.collection(modelDefinition.defaults[key]);
-        } else if (definition.collection && !(modelDefinition.defaults[key] instanceof Array)) {
-            console.log("Bad default value for " + key);
-        }
+        defaultRelations[key] = new definition[definition.collection ? "collection" : "model"](modelDefinition.defaults[key]);
+        defaultRelations[key].on('change', function() {
+            instance.trigger('change');
+        });
     });
     _.extend(modelDefinition.defaults, defaultRelations);
     return Backbone.Model.extend.call(this, modelDefinition);

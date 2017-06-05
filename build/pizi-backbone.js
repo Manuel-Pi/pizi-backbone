@@ -183,6 +183,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
     dates: [],
+    initialize: function initialize() {
+        var _this = this;
+
+        _.each(this.relations, function (definition, key) {
+            var opts = {};
+            opts[definition.relationAttribute] = _this.id;
+            var fetch = _this.attributes[key].fetch;
+            _this.attributes[key].fetch = function (options) {
+                return fetch.call(_this.attributes[key], _.defaults(options, { data: opts }));
+            };
+            _this.attributes[key].on('add', function (model) {
+                model.attributes[definition.relationAttribute] = _this.id;
+            });
+        });
+    },
     validate: function validate(attrs, options) {
         var dates = _.pick(attrs, this.dates.concat(['date']));
         for (var date in dates) {
@@ -192,30 +207,9 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
         }
     },
     save: function save(attrs) {
-        var _this = this;
-
-        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { parse: false };
-
-        if (options.all) {
-            var success = options.success;
-            options.success = function (model, resp, opts) {
-                _.each(_this.relations, function (relation, key) {
-                    if (relation.collection && model.get(key) instanceof relation.collection) {
-                        _.each(model.get(key).models, function (model) {
-                            model.save(null, { all: options.all });
-                        });
-                    }
-                });
-                if (success) success.call(_this, model, resp, options);
-            };
-        }
-        // Proxy the call to the original save function
-        __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.prototype.save.call(this, attrs, options);
-    },
-    fetch: function fetch() {
         var _this2 = this;
 
-        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { parse: false };
 
         if (options.all) {
             var success = options.success;
@@ -223,11 +217,30 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
                 _.each(_this2.relations, function (relation, key) {
                     if (relation.collection && model.get(key) instanceof relation.collection) {
                         _.each(model.get(key).models, function (model) {
-                            model.fetch({ all: options.all });
+                            model.save(null, { all: options.all });
                         });
                     }
                 });
                 if (success) success.call(_this2, model, resp, options);
+            };
+        }
+        // Proxy the call to the original save function
+        __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.prototype.save.call(this, attrs, options);
+    },
+    fetch: function fetch() {
+        var _this3 = this;
+
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+        if (options.relations === 'all') {
+            var success = options.success;
+            options.success = function (model, resp, opts) {
+                _.each(_this3.relations, function (relation, key) {
+                    if (relation.entity.collection && model.get(key) instanceof relation.entity.collection) {
+                        model.get(key).fetch();
+                    }
+                });
+                if (success) success.call(_this3, model, resp, options);
             };
         }
         __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.prototype.fetch.call(this, options);
@@ -253,11 +266,11 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
     },
 
     set: function set(key, val, options) {
-        var _this3 = this;
+        var _this4 = this;
 
         if (key === null) return this;
         var attributes;
-        if ((typeof key === "undefined" ? "undefined" : _typeof(key)) === 'object') {
+        if ((typeof key === 'undefined' ? 'undefined' : _typeof(key)) === 'object') {
             attributes = key;
             options = val;
         } else {
@@ -267,20 +280,10 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
         var relations = _.keys(this.relations);
         _.each(attributes, function (value, key) {
             if (_.contains(relations, key)) {
-                var definition = _this3.relations[key];
-                if (definition.model && value instanceof Object) {
-                    _this3.set(key, new definition.model(value, opts), opts);
-                    delete attributes[key];
-                } else if (definition.collection && value instanceof Array) {
-                    // Check if array is a real array (key = number), if it is it must be id's array
-                    _this3.get(key).set(new definition.collection(value, opts));
-                    delete attributes[key];
-                } else if (definition.model && !(value instanceof definition.model) || definition.collection && !(value instanceof definition.collection)) {
-                    console.log('Bad model definition: ' + _this3.get('className'));
-                    delete attributes[key];
-                }
+                var definition = _this4.relations[key];
+                attributes[key] = new definition[definition.collection ? 'collection' : 'model'](value, opts);
             }
-            if (_this3.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
+            if (_this4.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
                 attributes[key] = new Date(value);
             }
         }, this);
@@ -296,12 +299,12 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
 Model.extend = function (modelDefinition) {
     // Set defaults collections for relations
     var defaultRelations = {};
+    var instance = this;
     _.each(modelDefinition.relations, function (definition, key) {
-        if (definition.collection && modelDefinition.defaults[key] instanceof Array) {
-            defaultRelations[key] = new definition.collection(modelDefinition.defaults[key]);
-        } else if (definition.collection && !(modelDefinition.defaults[key] instanceof Array)) {
-            console.log("Bad default value for " + key);
-        }
+        defaultRelations[key] = new definition[definition.collection ? "collection" : "model"](modelDefinition.defaults[key]);
+        defaultRelations[key].on('change', function () {
+            instance.trigger('change');
+        });
     });
     _.extend(modelDefinition.defaults, defaultRelations);
     return __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend.call(this, modelDefinition);
@@ -429,7 +432,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
         this.ok = params.ok;
         this.close = params.close;
         this.custom = params.custom;
-        this.el.classList.add(params.class);
+        this.el.classList.add(params.className);
         this.resizeOff = params.resizeOff;
         this.closeType = params.closeType || 'cross';
         var view = this;
@@ -483,6 +486,8 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
     },
     onClose: function onClose() {
         if (this.close) this.close.apply(this, [this.callbackArgs()]);
+        this.el.parentNode.style.position = '';
+        this.el.style.justifyContent = '';
         this.closePopup();
     },
     onOk: function onOk() {
@@ -532,12 +537,19 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
             template: ""
         }, _.pick(data, ['message', 'customName', 'template', 'staticActions']));
         this.el.style.display = 'flex';
+        this.el.parentNode.style.position = 'relative';
         this.el.innerHTML = this.template(data);
         this.renderActions(data.staticActions);
         if (this.view) {
             this.view.render();
             this.el.getElementsByClassName('content')[0].appendChild(this.view.el);
         }
+        var scroll = document.body.scrollTop;
+        if (scroll) {
+            this.el.querySelector('.container').style.top = document.body.scrollTop;
+            this.el.style.justifyContent = 'flex-start';
+        }
+
         this.delegateEvents();
     }
 });
@@ -555,7 +567,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
 /* harmony default export */ exports["a"] = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.View.extend({
     tagName: "table",
     className: "tableView",
-    template: _.template(" <thead>\n                                <tr>\n                                    <% columns.forEach(function(column){ %>\n                                        <th class=\"<%= column.class %>\" data-property=\"<%= column.property %>\"><%= column.header || column.property %><div class=\"order <%= order.property === column.property ? order.direction : '' %>\"></div> </th>\n                                        <% }) %>\n                                </tr>\n                            </thead>\n                            <tbody>\n                                <% data.forEach(function(entry, index){ %>\n                                    <tr id=\"<%= index %>\" >\n                                        <% columns.forEach(function(column){ %>\n                                            <td><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>\n                                            <% }) %>\n                                    </tr>\n                                    <% }) %>\n                            </tbody>"),
+    template: _.template(" <thead>\n                                <tr>\n                                    <% columns.forEach(function(column){ %>\n                                        <th class=\"<%= column.class %>\" data-property=\"<%= column.property %>\"><%= column.header || column.property %><div class=\"order <%= order.property === column.property ? order.direction : '' %>\"></div> </th>\n                                        <% }) %>\n                                </tr>\n                            </thead>\n                            <tbody>\n                                <% data.forEach(function(entry, index){ %>\n                                    <tr id=\"<%= entry[idAttribute || \"id\"] %>\" >\n                                        <% columns.forEach(function(column){ %>\n                                            <td class=\"<%= column.class %>\"><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>\n                                            <% }) %>\n                                    </tr>\n                                    <% }) %>\n                            </tbody>"),
     initialize: function initialize() {
         var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -564,6 +576,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
             direction: 'asc',
             property: ""
         };
+        this.idAttribute = options.idAttribute;
         this.orderBy();
     },
 
@@ -571,6 +584,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
         'click th': 'sort'
     },
     sort: function sort(event, el) {
+        this.order.direction = this.order.property === el.dataset.property && this.order.direction === 'asc' ? 'desc' : 'asc';
         this.orderBy(el.dataset.property);
     },
     orderBy: function orderBy(property, direction) {
@@ -579,7 +593,6 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
         var oldProperty = this.order.property;
         this.order.property = property || this.order.property;
         this.order.direction = direction || this.order.direction;
-        this.order.direction = this.order.property === oldProperty && this.order.direction === 'asc' ? 'desc' : 'asc';
 
         this.collection.comparator = function (modelA, modelB) {
             var result = 0;
@@ -607,6 +620,7 @@ var Collection = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Collection.ext
         this.el.innerHTML = this.template({
             columns: this.columns,
             data: this.collection.toJSON(),
+            idAttribute: this.idAttribute,
             order: this.order
         });
         this.delegateEvents();
@@ -727,7 +741,7 @@ var viewUtils = {
     }
 };
 
-/* harmony default export */ exports["default"] = {
+module.exports = {
     NotificationView: __WEBPACK_IMPORTED_MODULE_4__views_NotificationView__["a" /* default */],
     PopupView: __WEBPACK_IMPORTED_MODULE_2__views_PopupView__["a" /* default */],
     FormView: __WEBPACK_IMPORTED_MODULE_5__views_FormView__["a" /* default */],

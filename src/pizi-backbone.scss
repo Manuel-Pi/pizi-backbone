@@ -90,6 +90,7 @@ popup {
     align-items: center;
     justify-content: center;
     height: 100%;
+    overflow: hidden;
     .container {
         z-index: 10002;
         background-color: white;
@@ -97,7 +98,7 @@ popup {
         margin: 10px;
         position: relative;
         text-align: justify;
-        overflow-y: auto;
+        //overflow-y: auto;
         min-width: 200px;
         color: black;
         &.hide-cross {
@@ -139,6 +140,7 @@ popup {
 table.tableView {
     th {
         position: relative;
+        cursor: pointer;
         .order {
             display: none;
             border-color: #333;
@@ -151,11 +153,6 @@ table.tableView {
             top: calc(50% - 5px);
             position: absolute;
             right: 10px;
-            &:hover {
-                border-bottom-color: black;
-                border-top-color: black;
-                cursor: pointer;
-            }
         }
         .asc {
             border-bottom: 10px solid #333;
@@ -173,7 +170,7 @@ form {
         margin-bottom: 5px;
         border: 1px solid red;
         &+small.error {
-            display: inline-block;
+            display: block;
             color: red;
             margin-bottom: 10px;
         }

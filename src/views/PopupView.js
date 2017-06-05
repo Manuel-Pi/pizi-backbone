@@ -31,7 +31,7 @@ export default Backbone.View.extend({
         this.ok = params.ok;
         this.close = params.close;
         this.custom = params.custom;
-        this.el.classList.add(params.class);
+        this.el.classList.add(params.className);
         this.resizeOff = params.resizeOff;
         this.closeType = params.closeType || 'cross';
         var view = this;
@@ -75,6 +75,8 @@ export default Backbone.View.extend({
     },
     onClose() {
         if (this.close) this.close.apply(this, [this.callbackArgs()]);
+        this.el.parentNode.style.position = '';
+        this.el.style.justifyContent = '';
         this.closePopup();
     },
     onOk() {
@@ -122,12 +124,19 @@ export default Backbone.View.extend({
             template: ""
         }, _.pick(data, ['message', 'customName', 'template', 'staticActions']));
         this.el.style.display = 'flex';
+        this.el.parentNode.style.position = 'relative';
         this.el.innerHTML = this.template(data);
         this.renderActions(data.staticActions);
         if (this.view) {
             this.view.render();
             this.el.getElementsByClassName('content')[0].appendChild(this.view.el);
         }
+        const scroll = document.body.scrollTop;
+        if (scroll) {
+            this.el.querySelector('.container').style.top = document.body.scrollTop;
+            this.el.style.justifyContent = 'flex-start';
+        }
+
         this.delegateEvents();
     }
 });

@@ -44,7 +44,7 @@ const viewUtils = {
     }
 };
 
-export default {
+module.exports = {
     NotificationView,
     PopupView,
     FormView,

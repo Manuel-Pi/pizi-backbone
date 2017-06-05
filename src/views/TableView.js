@@ -12,9 +12,9 @@ export default Backbone.View.extend({
                             </thead>
                             <tbody>
                                 <% data.forEach(function(entry, index){ %>
-                                    <tr id="<%= index %>" >
+                                    <tr id="<%= entry[idAttribute || "id"] %>" >
                                         <% columns.forEach(function(column){ %>
-                                            <td><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>
+                                            <td class="<%= column.class %>"><%= column.transform ? column.transform(entry[column.property]) : entry[column.property] %></td>
                                             <% }) %>
                                     </tr>
                                     <% }) %>
@@ -25,19 +25,20 @@ export default Backbone.View.extend({
             direction: 'asc',
             property: ""
         };
+        this.idAttribute = options.idAttribute;
         this.orderBy();
     },
     events: {
         'click th': 'sort'
     },
     sort(event, el) {
+        this.order.direction = (this.order.property === el.dataset.property && this.order.direction === 'asc') ? 'desc' : 'asc';
         this.orderBy(el.dataset.property);
     },
     orderBy(property, direction) {
         const oldProperty = this.order.property;
         this.order.property = property || this.order.property;
         this.order.direction = direction || this.order.direction;
-        this.order.direction = (this.order.property === oldProperty && this.order.direction === 'asc') ? 'desc' : 'asc';
 
         this.collection.comparator = (modelA, modelB) => {
             let result = 0;
@@ -63,6 +64,7 @@ export default Backbone.View.extend({
         this.el.innerHTML = this.template({
             columns: this.columns,
             data: this.collection.toJSON(),
+            idAttribute: this.idAttribute,
             order: this.order
         });
         this.delegateEvents();
