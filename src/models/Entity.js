@@ -80,10 +80,14 @@ const Model = Backbone.Model.extend({
         }
         var opts = _.extend({ validate: true }, options);
         var relations = _.keys(this.relations);
+        var instance = this;
         _.each(attributes, (value, key) => {
             if (_.contains(relations, key)) {
                 var definition = this.relations[key];
                 attributes[key] = new definition[definition.collection ? 'collection' : 'model'](value, opts);
+                attributes[key].on('change sync reset update', function() {
+                    instance.trigger('change');
+                });
             }
             if (this.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
                 attributes[key] = new Date(value);

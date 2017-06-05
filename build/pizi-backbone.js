@@ -278,10 +278,14 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
         }
         var opts = _.extend({ validate: true }, options);
         var relations = _.keys(this.relations);
+        var instance = this;
         _.each(attributes, function (value, key) {
             if (_.contains(relations, key)) {
                 var definition = _this4.relations[key];
                 attributes[key] = new definition[definition.collection ? 'collection' : 'model'](value, opts);
+                attributes[key].on('change sync reset update', function () {
+                    instance.trigger('change');
+                });
             }
             if (_this4.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
                 attributes[key] = new Date(value);
