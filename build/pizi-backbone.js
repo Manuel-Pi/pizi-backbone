@@ -283,9 +283,7 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
             if (_.contains(relations, key)) {
                 var definition = _this4.relations[key];
                 attributes[key] = new definition[definition.collection ? 'collection' : 'model'](value, opts);
-                attributes[key].on('change sync reset update', function () {
-                    instance.trigger('change');
-                });
+                attributes[key].on('all', instance.trigger);
             }
             if (_this4.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
                 attributes[key] = new Date(value);
@@ -306,9 +304,7 @@ Model.extend = function (modelDefinition) {
     var instance = this;
     _.each(modelDefinition.relations, function (definition, key) {
         defaultRelations[key] = new definition[definition.collection ? "collection" : "model"](modelDefinition.defaults[key]);
-        defaultRelations[key].on('change sync reset update', function () {
-            instance.trigger('change');
-        });
+        defaultRelations[key].on('all', instance.trigger);
     });
     _.extend(modelDefinition.defaults, defaultRelations);
     return __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend.call(this, modelDefinition);

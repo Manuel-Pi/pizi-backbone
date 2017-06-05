@@ -85,9 +85,7 @@ const Model = Backbone.Model.extend({
             if (_.contains(relations, key)) {
                 var definition = this.relations[key];
                 attributes[key] = new definition[definition.collection ? 'collection' : 'model'](value, opts);
-                attributes[key].on('change sync reset update', function() {
-                    instance.trigger('change');
-                });
+                attributes[key].on('all', instance.trigger);
             }
             if (this.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
                 attributes[key] = new Date(value);
@@ -108,9 +106,7 @@ Model.extend = function(modelDefinition) {
     var instance = this;
     _.each(modelDefinition.relations, (definition, key) => {
         defaultRelations[key] = new definition[definition.collection ? "collection" : "model"](modelDefinition.defaults[key]);
-        defaultRelations[key].on('change sync reset update', function() {
-            instance.trigger('change');
-        });
+        defaultRelations[key].on('all', instance.trigger);
     });
     _.extend(modelDefinition.defaults, defaultRelations);
     return Backbone.Model.extend.call(this, modelDefinition);
