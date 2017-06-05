@@ -86,7 +86,8 @@ const Model = Backbone.Model.extend({
                 var definition = this.relations[key];
                 attributes[key] = new definition[definition.collection ? 'collection' : 'model'](value, opts);
                 attributes[key].on('all', function(event, ...args) {
-                    instance.trigger(event + '.' + key, ...args);
+                    const index = event.indexOf(':');
+                    instance.trigger(index !== -1 ? event.replace(':', ':' + key + ':') : event + ':' + key, ...args);
                 });
             }
             if (this.dates.concat(['date']).includes(key) && !(value instanceof Date)) {

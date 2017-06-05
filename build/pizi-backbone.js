@@ -284,11 +284,13 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
                 var definition = _this4.relations[key];
                 attributes[key] = new definition[definition.collection ? 'collection' : 'model'](value, opts);
                 attributes[key].on('all', function (event) {
+                    var index = event.indexOf(':');
+
                     for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
                         args[_key - 1] = arguments[_key];
                     }
 
-                    instance.trigger.apply(instance, [event + '.' + key].concat(args));
+                    instance.trigger.apply(instance, [index !== -1 ? event.replace(':', ':' + key + ':') : event + ':' + key].concat(args));
                 });
             }
             if (_this4.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
