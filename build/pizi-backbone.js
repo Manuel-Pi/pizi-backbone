@@ -288,7 +288,7 @@ var Model = __WEBPACK_IMPORTED_MODULE_0_backbone___default.a.Model.extend({
                         args[_key - 1] = arguments[_key];
                     }
 
-                    instance.trigger.apply(instance, [key + '.' + event].concat(args));
+                    instance.trigger.apply(instance, [event + '.' + key].concat(args));
                 });
             }
             if (_this4.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
@@ -315,7 +315,7 @@ Model.extend = function (modelDefinition) {
                 args[_key2 - 1] = arguments[_key2];
             }
 
-            instance.trigger.apply(instance, [key + '.' + event].concat(args));
+            instance.trigger.apply(instance, [event + '.' + key].concat(args));
         });
     });
     _.extend(modelDefinition.defaults, defaultRelations);

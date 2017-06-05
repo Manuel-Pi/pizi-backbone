@@ -86,7 +86,7 @@ const Model = Backbone.Model.extend({
                 var definition = this.relations[key];
                 attributes[key] = new definition[definition.collection ? 'collection' : 'model'](value, opts);
                 attributes[key].on('all', function(event, ...args) {
-                    instance.trigger(key + '.' + event, ...args);
+                    instance.trigger(event + '.' + key, ...args);
                 });
             }
             if (this.dates.concat(['date']).includes(key) && !(value instanceof Date)) {
@@ -109,7 +109,7 @@ Model.extend = function(modelDefinition) {
     _.each(modelDefinition.relations, (definition, key) => {
         defaultRelations[key] = new definition[definition.collection ? "collection" : "model"](modelDefinition.defaults[key]);
         defaultRelations[key].on('all', function(event, ...args) {
-            instance.trigger(key + '.' + event, ...args);
+            instance.trigger(event + '.' + key, ...args);
         });
     });
     _.extend(modelDefinition.defaults, defaultRelations);
